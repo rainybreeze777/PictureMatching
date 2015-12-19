@@ -43,7 +43,6 @@ public class Tile : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 	
-	// NOTHING IS IN HERE
 	}
 
 	public void OnMouseDown() {
