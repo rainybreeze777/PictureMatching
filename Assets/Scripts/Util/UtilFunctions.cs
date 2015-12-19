@@ -9,4 +9,9 @@ public class UtilFunctions {
 		return 0;
 	}
 
+	public static int getSpriteInfo(int index)
+	{
+		return 0;
+	}
+
 }
