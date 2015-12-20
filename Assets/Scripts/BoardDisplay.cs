@@ -38,6 +38,11 @@ public class BoardDisplay : MonoBehaviour {
 			for (int c = 0; c < numOfColumns; c++) {
 				int currentTile = board.GetTileAt(r,c);
 				if (currentTile != -1 && currentTile != 0) {
+					//the tiles array is used to grab the Array of Tile Sprites in Unity, so it starts from 0
+					//however, the currentTile here is the number represented in Board.
+					//In Board, 0 represents an empty tile, and valid tile index starts from 1.
+					//This system should be changed later, possibly with some tile look up system
+					//in order to avoid confusion.
 					GameObject toInstantiate = tiles[currentTile - 1];
 
 					GameObject instance = 
@@ -46,11 +51,13 @@ public class BoardDisplay : MonoBehaviour {
 									, Quaternion.identity)
 						as GameObject;
 
-						instance.transform.localScale = new Vector3(0.5F, 0.5F, 0);
-						instance.transform.SetParent(boardHolder);
+					instance.transform.localScale = new Vector3(0.5F, 0.5F, 0);
+					instance.transform.SetParent(boardHolder);
 					
+					//Get the actual Tile Script class in order to call its functions.
 					Tile tile = instance.GetComponent<Tile>();
-					tile.Initialize(r, c);
+					//Pass in the currentTile for now, just to be consistent with Board's system of indexing.
+					tile.Initialize(r, c, currentTile);
 				}
 			}
 		}

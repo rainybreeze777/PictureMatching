@@ -7,6 +7,7 @@ public class Tile : MonoBehaviour {
 	private bool isSelected = false;
 
 	private int row, column;
+	private int tileNumber;
 
 	public int Row { 
 		get { return row; }
@@ -14,10 +15,14 @@ public class Tile : MonoBehaviour {
 	public int Column { 
 		get { return column; }
 	}
+	public int TileNumber {
+		get { return tileNumber; }
+	}
 
-	public void Initialize(int row, int column) {
+	public void Initialize(int row, int column, int tileNumber) {
 		this.row = row;
 		this.column = column;
+		this.tileNumber = tileNumber;
 	}
 
 	public GameObject GetGameObject() {

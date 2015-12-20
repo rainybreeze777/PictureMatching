@@ -95,7 +95,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 170005096}
-  - 114: {fileID: 170005095}
+  - 114: {fileID: 170005097}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -103,17 +103,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &170005095
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 170005094}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bd0194b3402c864f802f07b86ffa661, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &170005096
 Transform:
   m_ObjectHideFlags: 0
@@ -126,6 +115,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
+--- !u!114 &170005097
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 170005094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5b9212ed0dbce746933ba21de7707c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 178040, guid: 0dc7cf9f8688b594f80c908fda7249b9, type: 2}
+  - {fileID: 162974, guid: 4bfa051a0e2460a4aacb990c7d2b6356, type: 2}
+  - {fileID: 107648, guid: c6e90fb7daeb6534e9159c73d7699a4c, type: 2}
+  - {fileID: 173322, guid: be59064068703e644876048558ccf8a2, type: 2}
+  - {fileID: 198680, guid: 6306a339bb1f51a419cfac3e87f94642, type: 2}
 --- !u!1 &652094566
 GameObject:
   m_ObjectHideFlags: 0
@@ -249,6 +255,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5278fa069636de4aa8a2d1ec75054d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  comboController: {fileID: 170005097}
 --- !u!1 &823568086
 GameObject:
   m_ObjectHideFlags: 0

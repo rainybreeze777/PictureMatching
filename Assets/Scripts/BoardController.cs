@@ -3,6 +3,8 @@ using System.Collections;
 
 public class BoardController : MonoBehaviour {
 
+	public ComboController comboController;
+
 	private Board board;
 
 	private Tile tile1;
@@ -21,8 +23,9 @@ public class BoardController : MonoBehaviour {
 									tile2.Row, 
 									tile2.Column)) {
 				board.remove(tile1.Row, tile1.Column, tile2.Row, tile2.Column);
+				//Tell ComboController to add this removed tile to list of cancelled tiles.
+				comboController.AddToCancelSequence(tile1.TileNumber);
 				Destroy(tile1.GetGameObject());
-
 				Destroy(tile2.GetGameObject());
 
 			} else {
