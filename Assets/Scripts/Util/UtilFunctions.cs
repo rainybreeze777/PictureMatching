@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
+using System.IO;
 using System.Collections;
 using Random = UnityEngine.Random;
+using SimpleJSON;
 
 public class UtilFunctions {
 
@@ -9,9 +11,13 @@ public class UtilFunctions {
 		return 0;
 	}
 
-	public static int getSpriteInfo(int index)
-	{
-		return 0;
+	public static string getSpriteInfo(int index)
+    {
+        TextAsset jsonText = Resources.Load("SpritesInfo") as TextAsset;
+        // Debug.Log(jsonText.text);
+        var jsonData = JSON.Parse(jsonText.text);
+        var tileRay = jsonData["tiles"];
+        return tileRay[index]["name"];
 	}
 
 }

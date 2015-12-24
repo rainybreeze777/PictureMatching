@@ -54,6 +54,8 @@ public class Tile : MonoBehaviour {
 		isSelected = !isSelected;
 
 		Sprite loadSprite;
+		string tmp = UtilFunctions.getSpriteInfo(0);
+		string tmp2 = UtilFunctions.getSpriteInfo(1);
 
 		if(isSelected) {
 			boardController.TileSelected(this);

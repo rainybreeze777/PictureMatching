@@ -1,0 +1,16 @@
+{
+    "tiles":[
+        {
+            "id": 1,
+            "name": "earth",
+            "sprite": "selected_earthTile.png",
+            "high_sprite": "earth2"
+        },
+        {
+            "id": 2,
+            "name": "water",
+            "sprite": "water1",
+            "high_sprite": "water2"
+        }
+    ]
+}
