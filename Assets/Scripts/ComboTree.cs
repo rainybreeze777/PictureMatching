@@ -12,7 +12,7 @@ public class ComboTree {
 		rootNode = new ComboNode(-1, true);
 	}
 
-	public ComboTree GetInstance() {
+	public static ComboTree GetInstance() {
 		if (instance == null) {
 			instance = new ComboTree();
 		}

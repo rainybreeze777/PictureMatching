@@ -12,7 +12,7 @@ public class TileInfoFetcher {
 		spriteJsonSheet = JSON.Parse(jsonText.text);
 	}
 
-	public TileInfoFetcher GetInstance() {
+	public static TileInfoFetcher GetInstance() {
 		if (fetcher == null)
 			fetcher = new TileInfoFetcher();
 

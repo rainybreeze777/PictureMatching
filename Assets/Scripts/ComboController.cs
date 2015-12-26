@@ -20,9 +20,20 @@ public class ComboController : MonoBehaviour {
 	private const int numOfTilesOnComboSequence = 5;
 
 	private Transform comboDisplayer;
+	private ComboTree comboTree;
+	private ComboListFetcher comboListFetcher;
+
+	private GameObject comboButton;
 
 	void Awake() {
+		comboButton = GameObject.Find("MakeComboButton");
+		comboButton.SetActive(false);
 		comboDisplayer = new GameObject ("ComboDisplayer").transform;
+		comboTree = ComboTree.GetInstance();
+		comboListFetcher = ComboListFetcher.GetInstance();
+		foreach(List<int> combo in comboListFetcher.GetList()) {
+			comboTree.AddCombo(combo, "nameGoesHere");
+		}
 	}
 
 	public void ClearCancelSequence() {
@@ -59,6 +70,21 @@ public class ComboController : MonoBehaviour {
 
 		onScreenSequence.Add(instance);
 
+		int startIndex = System.Math.Max(0, cancelSequence.Count - numOfTilesOnComboSequence);
+		//Combo length is at least 2
+		for (int i = startIndex; i < cancelSequence.Count - 2; i++ ) {
+
+			List<int> subSequence = cancelSequence.GetRange(i, cancelSequence.Count - i);
+			string comboName = comboTree.GetCombo(subSequence);
+			if (!comboName.Equals("")) {
+				comboButton.SetActive(true);
+				break;
+			}
+			comboButton.SetActive(false);
+		}
+	}
+
+	public void MakeCombo() {
 
 	}
 
