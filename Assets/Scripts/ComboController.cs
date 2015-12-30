@@ -19,9 +19,10 @@ public class ComboController : MonoBehaviour {
 	private List<GameObject> onScreenSequence = new List<GameObject>();
 	private int onScreenSequenceCount = 0;
 
-	public const float movementSpeed = 10.0f;
 	private const float distanceBetweenTile = 2.0f;
 	private const int numOfTilesOnComboSequence = 5;
+	private const float xOffset = 6.5f;
+	private const float yOffset = 0.77f;
 
 	private Transform comboDisplayer;
 	private ComboTree comboTree;
@@ -68,7 +69,7 @@ public class ComboController : MonoBehaviour {
 
 		GameObject instance = 
 			Instantiate(toInstantiate
-						, new Vector3((onScreenSequenceCount - 1) * distanceBetweenTile, 0F, 0F)
+						, new Vector3( xOffset + (onScreenSequenceCount - 1) * distanceBetweenTile, yOffset, 0F)
 						, Quaternion.identity) as GameObject;
 
 		instance.transform.localScale = new Vector3(0.5F, 0.5F, 0);

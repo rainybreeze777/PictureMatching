@@ -7,8 +7,8 @@ public class GameController : MonoBehaviour {
 	private bool countingDown = true;
 	private Camera mainCam;
 
-	private Vector3 cancelTileCamPos = new Vector3(5f, 4.5f, -10f);
-	private Vector3 battleResolveCamPos = new Vector3(5f, 20f, -10f);
+	private Vector3 cancelTileCamPos = new Vector3(10.5f, 5f, -10f);
+	private Vector3 battleResolveCamPos = new Vector3(10.5f, 20f, -10f);
 
 	void Start () {
 		mainCam = Camera.main;

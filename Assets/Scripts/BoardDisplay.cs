@@ -6,6 +6,8 @@ public class BoardDisplay : MonoBehaviour {
 	private Board board;
 
 	private Transform boardHolder;
+	private const float xOffset = 5.5f;
+	private const float yOffset = 0.8f;
 
 	//0 = Metal
 	//1 = Wood
@@ -47,7 +49,7 @@ public class BoardDisplay : MonoBehaviour {
 
 					GameObject instance = 
 						Instantiate(toInstantiate
-									, new Vector3(c*1.45F, r*1.45F, 0f)
+									, new Vector3(xOffset + c*1.45F, yOffset + r*1.45F, 0f)
 									, Quaternion.identity)
 						as GameObject;
 
