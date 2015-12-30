@@ -11,6 +11,10 @@ public class ComboController : MonoBehaviour {
 	//4 = Earth
 	public GameObject[] tiles;
 	private List<int> cancelSequence = new List<int>();
+	//List used to track the range of formed combos
+	//For example, combo may start from index 2 and end at index 6
+	//Then comboTracker will be [2, 6]
+	private List<int> comboTracker = new List<int>();
 
 	private List<GameObject> onScreenSequence = new List<GameObject>();
 	private int onScreenSequenceCount = 0;
@@ -24,6 +28,8 @@ public class ComboController : MonoBehaviour {
 	private ComboListFetcher comboListFetcher;
 
 	private GameObject comboButton;
+
+	private int comboStart, comboEnd;
 
 	void Awake() {
 		comboButton = GameObject.Find("MakeComboButton");
@@ -78,6 +84,8 @@ public class ComboController : MonoBehaviour {
 			string comboName = comboTree.GetCombo(subSequence);
 			if (!comboName.Equals("")) {
 				comboButton.SetActive(true);
+				comboStart = i;
+				comboEnd = cancelSequence.Count - i;
 				break;
 			}
 			comboButton.SetActive(false);
@@ -85,7 +93,8 @@ public class ComboController : MonoBehaviour {
 	}
 
 	public void MakeCombo() {
-
+		comboTracker.Add(comboStart);
+		comboTracker.Add(comboEnd);
 	}
 
 }
