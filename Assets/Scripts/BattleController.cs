@@ -18,6 +18,17 @@ public class BattleController : MonoBehaviour {
 	private enum Tiles { Metal, Wood, Water, Fire, Earth };
 	private Dictionary<int, Tiles> numToTileMap = new Dictionary<int, Tiles>();
 
+	private Transform battleResolveContainer;
+	private Camera mainCam = null;
+
+	private float widthSegment = 1F / 10F ;
+	private float heightSegment = 1F / 7F ;
+	private bool shouldMove = false;
+	private bool initiateMove = false;
+	private float startTime;
+	private Vector3 startPoint, endPoint;
+	private float speed = 5.0f;
+
 	void Awake () {
 		infoFetcher = TileInfoFetcher.GetInstance();
 
@@ -25,11 +36,44 @@ public class BattleController : MonoBehaviour {
 			int theId = infoFetcher.GetTileNumberFromName(tile.ToString());
 			numToTileMap[theId] = tile;
 		}
+
+		battleResolveContainer = new GameObject("BattleResolveContainer").transform;
+	}
+
+	void Start () {
+		mainCam = Camera.main;
+		/*
+		for (int i = 1; i < 6; i++) {
+			GameObject instance = 
+				Instantiate(toInstantiate
+							, camCoordToWorldCoord((2 + i) * widthSegment, 2 * heightSegment)
+							, Quaternion.identity) as GameObject;
+
+			instance.transform.SetParent(battleResolveContainer);
+		}
+		*/
+	}
+
+	void Update () {
+		if (initiateMove) {
+			startPoint = battleResolveContainer.transform.position;
+			endPoint = new Vector3(startPoint.x - camCoordToWorldCoord(widthSegment, 0).x, startPoint.y, startPoint.z);
+			startTime = Time.time;
+			initiateMove = false;
+			shouldMove = true;
+		}
+		if (shouldMove) {
+			float percentComplete = speed * (Time.time - startTime);
+			battleResolveContainer.transform.position = Vector3.Lerp(startPoint, endPoint, percentComplete);
+			Debug.Log("Moving");
+			if (percentComplete > 1)
+				shouldMove = false;
+		}
 	}
 
 	//Returns 0 if tie, 1 if tile1 wins, 2 if tile2 wins
 	//-1 if parameters are invalid
-	public int ResolveAttack(int tile1, int tile2) {
+	private int ResolveAttack(int tile1, int tile2) {
 
 		int result = 0;
 		Tiles? firstTile = null;
@@ -79,5 +123,40 @@ public class BattleController : MonoBehaviour {
 		}
 
 		return result;
+	}
+
+	public void InitiateBattleResolution(List<int> playerSeq) {
+		List<int> enemySeq = EnemyCancellationGenerator.GenerateSequence();
+		
+		int maxCount = System.Math.Max(playerSeq.Count, enemySeq.Count);
+
+		for (int i = 0; i < maxCount; i++) {
+
+			string prefabPath = "Prefabs/ComboPrefabs/";
+			prefabPath += infoFetcher.GetInfoFromNumber(playerSeq[i], "comboPrefab");
+			GameObject toInstantiate = Resources.Load(prefabPath) as GameObject;
+
+			if (toInstantiate == null) {
+				Debug.LogError("BattleController Error: toInstantiate is null!");
+				break;
+			}
+
+			GameObject instance = 
+				Instantiate(toInstantiate
+							, camCoordToWorldCoord((5 + i) * widthSegment, 2 * heightSegment)
+							, Quaternion.identity) as GameObject;
+
+			instance.transform.SetParent(battleResolveContainer);
+		}
+
+	}
+
+	private Vector3 camCoordToWorldCoord(float x, float y) {
+		if (mainCam == null)
+			throw new System.NullReferenceException("BattleController Error: mainCam is null!");
+
+		Vector3 newVec = mainCam.ViewportToWorldPoint(new Vector3(x, y, 10));
+
+		return newVec;
 	}
 }

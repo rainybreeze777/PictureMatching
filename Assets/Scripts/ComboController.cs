@@ -98,4 +98,8 @@ public class ComboController : MonoBehaviour {
 		comboTracker.Add(comboEnd);
 	}
 
+	public List<int> GetCancelSeq() {
+		return cancelSequence;
+	}
+
 }

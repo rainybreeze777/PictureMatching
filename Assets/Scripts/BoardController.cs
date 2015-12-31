@@ -44,6 +44,10 @@ public class BoardController : MonoBehaviour {
 			tile2 = null; 
 	}
 
+	public bool BoardIsEmpty() {
+		return board.isEmpty();
+	}
+
 	// Use this for initialization
 	void Awake () {
 		board = Board.getInstance();

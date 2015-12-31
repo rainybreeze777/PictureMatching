@@ -10,6 +10,16 @@ public class GameController : MonoBehaviour {
 	private Vector3 cancelTileCamPos = new Vector3(10.5f, 5f, -10f);
 	private Vector3 battleResolveCamPos = new Vector3(10.5f, 20f, -10f);
 
+	private BattleController battleController;
+	private ComboController comboController;
+	private BoardController boardController;
+
+	void Awake () {
+		battleController = GameObject.Find("BattleController").GetComponent<BattleController>() as BattleController;
+		comboController = GameObject.Find("ComboController").GetComponent<ComboController>() as ComboController;
+		boardController = GameObject.Find("BoardController").GetComponent<BoardController>() as BoardController;
+	}
+
 	void Start () {
 		mainCam = Camera.main;
 		mainCam.transform.position = cancelTileCamPos;
@@ -19,7 +29,7 @@ public class GameController : MonoBehaviour {
 		if (countingDown)
 			timer -= Time.deltaTime;
 
-		if (timer <= 0 && countingDown) {
+		if ((timer <= 0  || boardController.BoardIsEmpty()) && countingDown) {
 			switchToBattleResolve();
 		}
 	}
@@ -29,12 +39,13 @@ public class GameController : MonoBehaviour {
 	}
 
 	private void switchToBattleResolve() {
-		countingDown = true;
+		countingDown = false;
 		mainCam.transform.position = battleResolveCamPos;
+		battleController.InitiateBattleResolution(comboController.GetCancelSeq());
 	}
 
 	private void switchToCancelTiles() {
-		countingDown = false;
+		countingDown = true;
 		mainCam.transform.position = cancelTileCamPos;
 	}
 }

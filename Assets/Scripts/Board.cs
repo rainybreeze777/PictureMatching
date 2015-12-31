@@ -103,6 +103,10 @@ public class Board {
 		return beatenGame;
 	}
 	
+	public bool isEmpty() {
+		return pairs == 0;
+	}
+
 	private class RemainingTileGenerator {
 		
 		List<OneRow> freeTiles = new List<OneRow>();
@@ -325,7 +329,6 @@ public class Board {
 		
 		return false;
 	}
-
 	
 	private Board() {
 		//Empty Constructor

@@ -4,31 +4,41 @@
             "id": 1,
             "name": "Metal",
             "normalSprite": "high_metalTile.png",
-            "selectedSprite": "selected_metalTile.png"
+            "selectedSprite": "selected_metalTile.png",
+            "prefab": "MetalTile",
+            "comboPrefab": "Combo_MetalTile"
         },
         {
             "id": 2,
             "name": "Wood",
             "normalSprite": "high_woodTile.png",
-            "selectedSprite": "selected_woodTile.png"
+            "selectedSprite": "selected_woodTile.png",
+            "prefab": "WoodTile",
+            "comboPrefab": "Combo_WoodTile"
         },
         {
             "id": 3,
             "name": "Water",
             "normalSprite": "high_waterTile.png",
-            "selectedSprite": "selected_waterTile.png"
+            "selectedSprite": "selected_waterTile.png",
+            "prefab": "WaterTile",
+            "comboPrefab": "Combo_WaterTile"
         },
         {
             "id": 4,
             "name": "Fire",
             "normalSprite": "high_fireTile.png",
-            "selectedSprite": "selected_fireTile.png"
+            "selectedSprite": "selected_fireTile.png",
+            "prefab": "FireTile",
+            "comboPrefab": "Combo_FireTile"
         },
         {
             "id": 5,
             "name": "Earth",
             "normalSprite": "high_earthTile.png",
-            "selectedSprite": "selected_earthTile.png"
+            "selectedSprite": "selected_earthTile.png",
+            "prefab": "EarthTile",
+            "comboPrefab": "Combo_EarthTile"
         }
     ]
 }
