@@ -171,7 +171,7 @@ public class Board {
 				return Eppy.Tuple.Create(-1, -1);
 			}
 			
-			int randRowIndex = (int) Random.Range(0F, (float) (freeTiles.Count - 0.0001));
+			int randRowIndex = Random.Range(0, freeTiles.Count);
 			OneRow randRow = freeTiles[randRowIndex];
 			
 			return Eppy.Tuple.Create(randRow.getThisRowNumber(), randRow.getRandAvailColumn());

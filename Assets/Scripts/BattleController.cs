@@ -24,9 +24,11 @@ public class BattleController : MonoBehaviour {
 
 	private Transform battleResolveContainer;
 	private Camera mainCam = null;
+	private GameObject resultTile = null;
 
 	private float widthSegment = 1F / 10F ;
 	private float heightSegment = 1F / 7F ;
+	private const string prefabPath = "Prefabs/ComboPrefabs/";
 
 	//Update Function Control Flags
 	private bool shouldMove = false;
@@ -50,37 +52,38 @@ public class BattleController : MonoBehaviour {
 
 	void Start () {
 		mainCam = Camera.main;
-		/*
-		for (int i = 1; i < 6; i++) {
-			GameObject instance = 
-				Instantiate(toInstantiate
-							, camCoordToWorldCoord((2 + i) * widthSegment, 2 * heightSegment)
-							, Quaternion.identity) as GameObject;
-
-			instance.transform.SetParent(battleResolveContainer);
-		}
-		*/
 	}
 
 	void Update () {
+
 		if (shouldResolve) {
 			//Do resolution here
 
+			if (resultTile != null) {
+				Destroy(resultTile);
+				resultTile = null;
+			}
+
 			int playerMove = (resolvingIndex < playerSeq.Count) ? playerSeq[resolvingIndex] : -1;
 			int enemyMove = (resolvingIndex < enemySeq.Count) ? enemySeq[resolvingIndex] : -1;
-			
+
+			GameObject resultTileToInstantiate = null;
+
 			if (playerMove != -1 || enemyMove != -1) {
 				int compareResult = ResolveAttack(playerMove, enemyMove);
 				switch (compareResult) {
 
 					case 0:
 						Debug.Log("Ties round " + (resolvingIndex + 1));
+						resultTileToInstantiate = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(playerSeq[resolvingIndex], "comboPrefab")) as GameObject;
 						break;
 					case 1:
 						Debug.Log("Player wins round " + (resolvingIndex + 1 ));
+						resultTileToInstantiate = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(playerSeq[resolvingIndex], "comboPrefab")) as GameObject;
 						break;
 					case 2:
 						Debug.Log("Enemy wins round " + (resolvingIndex + 1));
+						resultTileToInstantiate = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(enemySeq[resolvingIndex], "comboPrefab")) as GameObject;
 						break;
 					case -1:
 						Debug.LogError("ResolveAttack got Invalid Parameters!");
@@ -89,6 +92,12 @@ public class BattleController : MonoBehaviour {
 						Debug.LogError("Unrecognized result!");
 						break;
 				}
+
+				resultTile = 
+					Instantiate(resultTileToInstantiate
+								, camCoordToWorldCoord(5.02f * widthSegment, 3.5f * heightSegment)
+								, Quaternion.identity) as GameObject;
+				resultTile.transform.localScale = new Vector3(0.75F, 0.75F, 0);
 
 				resolvingIndex++;
 				StartCoroutine(WaitBeforeMoving(0.5f));
@@ -128,8 +137,6 @@ public class BattleController : MonoBehaviour {
 		int maxCount = System.Math.Max(playerSeq.Count, enemySeq.Count);
 
 		for (int i = 0; i < maxCount; i++) {
-
-			string prefabPath = "Prefabs/ComboPrefabs/";
 
 			//Generate Player Cancel Sequence
 			if (i < playerSeq.Count) {

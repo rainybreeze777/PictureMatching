@@ -11,7 +11,6 @@ public class EnemyCancellationGenerator {
 		//Suppose Enemy right now can have from 9 to 15 cancellations
 		int randomSequenceSize = Random.Range(9, 16);
 		for (int i = 0; i < randomSequenceSize; i++) {
-			Random.seed = (int)System.DateTime.Now.Ticks;
 			seq.Add( Random.Range(1, 6) ); // 0 is reserved for empty
 		}
 
