@@ -91,7 +91,7 @@ public class BattleController : MonoBehaviour {
 				}
 
 				resolvingIndex++;
-				initiateMove = true;
+				StartCoroutine(WaitBeforeMoving(0.5f));
 			}
 
 			shouldResolve = false;
@@ -111,6 +111,62 @@ public class BattleController : MonoBehaviour {
 				shouldResolve = true;
 			}
 		}
+	}
+
+	IEnumerator WaitBeforeMoving(float seconds) {
+		yield return new WaitForSeconds(seconds);
+		initiateMove = true;
+	}
+
+	public void InitiateBattleResolution(List<int> seq) {
+
+		playerSeq = seq;
+		enemySeq = EnemyCancellationGenerator.GenerateSequence();
+
+		resolvingIndex = 0;
+		
+		int maxCount = System.Math.Max(playerSeq.Count, enemySeq.Count);
+
+		for (int i = 0; i < maxCount; i++) {
+
+			string prefabPath = "Prefabs/ComboPrefabs/";
+
+			//Generate Player Cancel Sequence
+			if (i < playerSeq.Count) {
+				GameObject toInstantiatePlayer = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(playerSeq[i], "comboPrefab")) as GameObject;
+
+				if (toInstantiatePlayer == null) {
+					Debug.LogError("BattleController Error: toInstantiatePlayer is null!");
+					break;
+				}
+
+				GameObject instance = 
+					Instantiate(toInstantiatePlayer
+								, camCoordToWorldCoord((5 + i) * widthSegment, 2 * heightSegment)
+								, Quaternion.identity) as GameObject;
+
+				instance.transform.SetParent(battleResolveContainer);
+			}
+
+			//Generate Enemy Cancel Sequence
+			if (i < enemySeq.Count) {
+				GameObject toInstantiateEnemy = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(enemySeq[i], "comboPrefab")) as GameObject;
+
+				if (toInstantiateEnemy == null) {
+					Debug.LogError("BattleController Error: toInstantiateEnemy is null!");
+					break;
+				}
+
+				GameObject instance = 
+					Instantiate(toInstantiateEnemy
+								, camCoordToWorldCoord((5 + i) * widthSegment, 5 * heightSegment)
+								, Quaternion.identity) as GameObject;
+
+				instance.transform.SetParent(battleResolveContainer);
+			}
+		}
+
+		shouldResolve = true;
 	}
 
 	//Returns 0 if tie, 1 if tile1 wins, 2 if tile2 wins
@@ -179,57 +235,6 @@ public class BattleController : MonoBehaviour {
 		}
 
 		return result;
-	}
-
-	public void InitiateBattleResolution(List<int> seq) {
-
-		playerSeq = seq;
-		enemySeq = EnemyCancellationGenerator.GenerateSequence();
-
-		resolvingIndex = 0;
-		
-		int maxCount = System.Math.Max(playerSeq.Count, enemySeq.Count);
-
-		for (int i = 0; i < maxCount; i++) {
-
-			string prefabPath = "Prefabs/ComboPrefabs/";
-
-			//Generate Player Cancel Sequence
-			if (i < playerSeq.Count) {
-				GameObject toInstantiatePlayer = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(playerSeq[i], "comboPrefab")) as GameObject;
-
-				if (toInstantiatePlayer == null) {
-					Debug.LogError("BattleController Error: toInstantiatePlayer is null!");
-					break;
-				}
-
-				GameObject instance = 
-					Instantiate(toInstantiatePlayer
-								, camCoordToWorldCoord((5 + i) * widthSegment, 2 * heightSegment)
-								, Quaternion.identity) as GameObject;
-
-				instance.transform.SetParent(battleResolveContainer);
-			}
-
-			//Generate Enemy Cancel Sequence
-			if (i < enemySeq.Count) {
-				GameObject toInstantiateEnemy = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(enemySeq[i], "comboPrefab")) as GameObject;
-
-				if (toInstantiateEnemy == null) {
-					Debug.LogError("BattleController Error: toInstantiateEnemy is null!");
-					break;
-				}
-
-				GameObject instance = 
-					Instantiate(toInstantiateEnemy
-								, camCoordToWorldCoord((5 + i) * widthSegment, 5 * heightSegment)
-								, Quaternion.identity) as GameObject;
-
-				instance.transform.SetParent(battleResolveContainer);
-			}
-		}
-
-		shouldResolve = true;
 	}
 
 	private Vector3 camCoordToWorldCoord(float x, float y) {

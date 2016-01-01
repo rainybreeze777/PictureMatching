@@ -41,7 +41,7 @@ public class Board {
 		
 		while (remainingPairs > 0) {
 			Random.seed = (int)System.DateTime.Now.Ticks;
-			randomSuit = (int) Random.Range(1F, 5.9999F); //0 is reserved for empty tile
+			randomSuit = (int) Random.Range(1, 6); //0 is reserved for empty tile
 
 			Eppy.Tuple<int, int> tileOne;
 			Eppy.Tuple<int, int> tileTwo;
@@ -130,7 +130,7 @@ public class Board {
 			public int getRandAvailColumn() { 
 				Random.seed = (int)System.DateTime.Now.Ticks;
 				
-				int randIndex = (int) Random.Range(0F, (float) (theColumns.Count - 0.0001));
+				int randIndex = Random.Range(0, theColumns.Count);
 				
 				return theColumns[randIndex];
 			}
