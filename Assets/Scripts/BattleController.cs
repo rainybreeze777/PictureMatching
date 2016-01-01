@@ -18,13 +18,21 @@ public class BattleController : MonoBehaviour {
 	private enum Tiles { Metal, Wood, Water, Fire, Earth };
 	private Dictionary<int, Tiles> numToTileMap = new Dictionary<int, Tiles>();
 
+	private List<int> playerSeq;
+	private List<int> enemySeq;
+	private int resolvingIndex = 0;
+
 	private Transform battleResolveContainer;
 	private Camera mainCam = null;
 
 	private float widthSegment = 1F / 10F ;
 	private float heightSegment = 1F / 7F ;
+
+	//Update Function Control Flags
 	private bool shouldMove = false;
 	private bool initiateMove = false;
+	private bool shouldResolve = false;
+
 	private float startTime;
 	private Vector3 startPoint, endPoint;
 	private float speed = 5.0f;
@@ -55,6 +63,39 @@ public class BattleController : MonoBehaviour {
 	}
 
 	void Update () {
+		if (shouldResolve) {
+			//Do resolution here
+
+			int playerMove = (resolvingIndex < playerSeq.Count) ? playerSeq[resolvingIndex] : -1;
+			int enemyMove = (resolvingIndex < enemySeq.Count) ? enemySeq[resolvingIndex] : -1;
+			
+			if (playerMove != -1 || enemyMove != -1) {
+				int compareResult = ResolveAttack(playerMove, enemyMove);
+				switch (compareResult) {
+
+					case 0:
+						Debug.Log("Ties round " + (resolvingIndex + 1));
+						break;
+					case 1:
+						Debug.Log("Player wins round " + (resolvingIndex + 1 ));
+						break;
+					case 2:
+						Debug.Log("Enemy wins round " + (resolvingIndex + 1));
+						break;
+					case -1:
+						Debug.LogError("ResolveAttack got Invalid Parameters!");
+						break;
+					default:
+						Debug.LogError("Unrecognized result!");
+						break;
+				}
+
+				resolvingIndex++;
+				initiateMove = true;
+			}
+
+			shouldResolve = false;
+		}
 		if (initiateMove) {
 			startPoint = battleResolveContainer.transform.position;
 			endPoint = new Vector3(startPoint.x - camCoordToWorldCoord(widthSegment, 0).x, startPoint.y, startPoint.z);
@@ -65,25 +106,40 @@ public class BattleController : MonoBehaviour {
 		if (shouldMove) {
 			float percentComplete = speed * (Time.time - startTime);
 			battleResolveContainer.transform.position = Vector3.Lerp(startPoint, endPoint, percentComplete);
-			Debug.Log("Moving");
-			if (percentComplete > 1)
+			if (percentComplete > 1) {
 				shouldMove = false;
+				shouldResolve = true;
+			}
 		}
 	}
 
 	//Returns 0 if tie, 1 if tile1 wins, 2 if tile2 wins
 	//-1 if parameters are invalid
+	//Parameters: tileNumbers as specified in SpritesInfo.json
+	//-1 if tile is empty
 	private int ResolveAttack(int tile1, int tile2) {
+
+		if (tile1 == -1 && tile2 == -1)
+			return 0; //Both are empty Case
 
 		int result = 0;
 		Tiles? firstTile = null;
 		Tiles? secondTile = null;
 		try {
-			firstTile = numToTileMap[tile1];
-			secondTile = numToTileMap[tile2];
+			if (tile1 != -1)
+				firstTile = numToTileMap[tile1];
+			if (tile2 != -1)
+				secondTile = numToTileMap[tile2];
 		} catch (KeyNotFoundException) {
 			return -1;
 		}
+
+		//Check if there are empty tiles
+		//One valid tile wins if the other tile is empty
+		if (firstTile == null && secondTile != null) 
+			return 2;
+		if (firstTile != null && secondTile == null)
+			return 1;
 
 		if (firstTile == secondTile) {
 			return result;
@@ -125,30 +181,55 @@ public class BattleController : MonoBehaviour {
 		return result;
 	}
 
-	public void InitiateBattleResolution(List<int> playerSeq) {
-		List<int> enemySeq = EnemyCancellationGenerator.GenerateSequence();
+	public void InitiateBattleResolution(List<int> seq) {
+
+		playerSeq = seq;
+		enemySeq = EnemyCancellationGenerator.GenerateSequence();
+
+		resolvingIndex = 0;
 		
 		int maxCount = System.Math.Max(playerSeq.Count, enemySeq.Count);
 
 		for (int i = 0; i < maxCount; i++) {
 
 			string prefabPath = "Prefabs/ComboPrefabs/";
-			prefabPath += infoFetcher.GetInfoFromNumber(playerSeq[i], "comboPrefab");
-			GameObject toInstantiate = Resources.Load(prefabPath) as GameObject;
 
-			if (toInstantiate == null) {
-				Debug.LogError("BattleController Error: toInstantiate is null!");
-				break;
+			//Generate Player Cancel Sequence
+			if (i < playerSeq.Count) {
+				GameObject toInstantiatePlayer = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(playerSeq[i], "comboPrefab")) as GameObject;
+
+				if (toInstantiatePlayer == null) {
+					Debug.LogError("BattleController Error: toInstantiatePlayer is null!");
+					break;
+				}
+
+				GameObject instance = 
+					Instantiate(toInstantiatePlayer
+								, camCoordToWorldCoord((5 + i) * widthSegment, 2 * heightSegment)
+								, Quaternion.identity) as GameObject;
+
+				instance.transform.SetParent(battleResolveContainer);
 			}
 
-			GameObject instance = 
-				Instantiate(toInstantiate
-							, camCoordToWorldCoord((5 + i) * widthSegment, 2 * heightSegment)
-							, Quaternion.identity) as GameObject;
+			//Generate Enemy Cancel Sequence
+			if (i < enemySeq.Count) {
+				GameObject toInstantiateEnemy = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(enemySeq[i], "comboPrefab")) as GameObject;
 
-			instance.transform.SetParent(battleResolveContainer);
+				if (toInstantiateEnemy == null) {
+					Debug.LogError("BattleController Error: toInstantiateEnemy is null!");
+					break;
+				}
+
+				GameObject instance = 
+					Instantiate(toInstantiateEnemy
+								, camCoordToWorldCoord((5 + i) * widthSegment, 5 * heightSegment)
+								, Quaternion.identity) as GameObject;
+
+				instance.transform.SetParent(battleResolveContainer);
+			}
 		}
 
+		shouldResolve = true;
 	}
 
 	private Vector3 camCoordToWorldCoord(float x, float y) {

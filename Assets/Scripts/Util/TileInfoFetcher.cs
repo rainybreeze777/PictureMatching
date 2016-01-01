@@ -37,7 +37,8 @@ public class TileInfoFetcher {
 		for (int i = 0; i < tilesArray.Count; i++) {
 			if (tilesArray[i] == null)
 				break;
-			if (tilesArray[i]["name"].Equals(tileName))
+			string name = tilesArray[i]["name"].ToString().Replace("\"", "");
+			if (name.Equals(tileName))
 				return tilesArray[i]["id"].AsInt;
 		}
 
