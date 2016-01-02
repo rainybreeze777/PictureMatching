@@ -4,6 +4,7 @@ using System.Collections;
 public class BoardController : MonoBehaviour {
 
 	public ComboController comboController;
+	public BoardDisplay boardDisplay;
 
 	private Board board;
 
@@ -46,6 +47,10 @@ public class BoardController : MonoBehaviour {
 
 	public bool BoardIsEmpty() {
 		return board.isEmpty();
+	}
+
+	public void ResetBoard() {
+		boardDisplay.ResetBoard();
 	}
 
 	// Use this for initialization

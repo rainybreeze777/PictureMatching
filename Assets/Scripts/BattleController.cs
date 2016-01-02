@@ -45,6 +45,19 @@ public class BattleController : MonoBehaviour {
 	private Vector3 startPoint, endPoint;
 	private float speed = 5.0f;
 
+	//This is meant to get a reference to GameController
+	//However, this is bad design... We should avoid
+	//Getting unnecessary references to produce tight coupling
+	//Really what we need is DI and Signal&Slots
+	//Checkout StrangeIoC
+	//For now this is temporary code to get project going
+	public GameController gameController;
+
+	//Mock state-identifiers
+	public const string won = "Won";
+	public const string lost = "Lost";
+	public const string unresolved = "Unresolved";
+
 	void Awake () {
 		infoFetcher = TileInfoFetcher.GetInstance();
 
@@ -116,6 +129,13 @@ public class BattleController : MonoBehaviour {
 
 				resolvingIndex++;
 				StartCoroutine(WaitBeforeMoving(0.5f));
+			} else {
+				if (playerStatus.IsDead && !enemyStatus.IsDead)
+					gameController.ChangeActiveState(lost);
+				else if (!playerStatus.IsDead && enemyStatus.IsDead)
+					gameController.ChangeActiveState(won);
+				else if (!playerStatus.IsDead && !enemyStatus.IsDead)
+					gameController.ChangeActiveState(unresolved);
 			}
 
 			shouldResolve = false;

@@ -388,6 +388,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   comboController: {fileID: 170005097}
+  boardDisplay: {fileID: 823568087}
 --- !u!1 &823568086
 GameObject:
   m_ObjectHideFlags: 0
@@ -757,6 +758,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a5870109d2cc1b4fa28b78bf7a6ac3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameController: {fileID: 1492991070}
 --- !u!4 &1847344121
 Transform:
   m_ObjectHideFlags: 0

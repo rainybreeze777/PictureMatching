@@ -5,7 +5,7 @@ public class BoardDisplay : MonoBehaviour {
 
 	private Board board;
 
-	private Transform boardHolder;
+	private GameObject boardHolder;
 	private const float xOffset = 5.5f;
 	private const float yOffset = 0.8f;
 
@@ -30,8 +30,18 @@ public class BoardDisplay : MonoBehaviour {
 	
 	}
 
+
+	public void ResetBoard () {
+		if (boardHolder != null) {
+			Destroy(boardHolder);
+		}
+
+		board.GenerateBoard();
+		BoardSetup();
+	}
+
 	void BoardSetup () {
-		boardHolder = new GameObject ("Board").transform;
+		boardHolder = new GameObject ("Board");
 
 		int numOfRows = board.numOfRows();
 		int numOfColumns = board.numOfColumns();
@@ -54,7 +64,7 @@ public class BoardDisplay : MonoBehaviour {
 						as GameObject;
 
 					instance.transform.localScale = new Vector3(0.5F, 0.5F, 0);
-					instance.transform.SetParent(boardHolder);
+					instance.transform.SetParent(boardHolder.transform);
 					
 					//Get the actual Tile Script class in order to call its functions.
 					Tile tile = instance.GetComponent<Tile>();

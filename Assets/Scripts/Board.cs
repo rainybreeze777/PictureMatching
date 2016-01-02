@@ -34,7 +34,7 @@ public class Board {
 	public void GenerateBoard() {
 		
 		RemainingTileGenerator tileGen = new RemainingTileGenerator(numOfRow - 2, numOfColumn - 2);
-		
+		pairs = (numOfRow - 2) * (numOfColumn - 2) / 2;
 		int remainingPairs = pairs;
 
 		int randomSuit;

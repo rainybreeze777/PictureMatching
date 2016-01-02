@@ -30,7 +30,7 @@ public class GameController : MonoBehaviour {
 			timer -= Time.deltaTime;
 
 		if ((timer <= 0  || boardController.BoardIsEmpty()) && countingDown) {
-			switchToBattleResolve();
+			SwitchToBattleResolve();
 		}
 	}
 
@@ -39,14 +39,27 @@ public class GameController : MonoBehaviour {
 			GUI.Box(new Rect(50, 50, 100, 90), "" + timer.ToString("0"));
 	}
 
-	private void switchToBattleResolve() {
+	private void SwitchToBattleResolve() {
 		countingDown = false;
 		mainCam.transform.position = battleResolveCamPos;
 		battleController.InitiateBattleResolution(comboController.GetCancelSeq());
 	}
 
-	private void switchToCancelTiles() {
+	private void SwitchToCancelTiles() {
 		countingDown = true;
 		mainCam.transform.position = cancelTileCamPos;
+	}
+
+	public void ChangeActiveState(string battleResult) {
+		if (battleResult.Equals(BattleController.won)) {
+
+		} else if (battleResult.Equals(BattleController.lost)) {
+
+		} else if (battleResult.Equals(BattleController.unresolved)) {
+			timer = 30.0f;
+			boardController.ResetBoard();
+			comboController.ClearCancelSequence();
+			SwitchToCancelTiles();
+		}
 	}
 }

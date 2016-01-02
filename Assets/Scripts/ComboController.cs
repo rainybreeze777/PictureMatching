@@ -45,6 +45,10 @@ public class ComboController : MonoBehaviour {
 
 	public void ClearCancelSequence() {
 		cancelSequence.Clear();
+		foreach(GameObject obj in onScreenSequence)
+			Destroy(obj);
+		onScreenSequence.Clear();
+		onScreenSequenceCount = 0;
 	}
 
 	public void AddToCancelSequence(int tileNumber)
