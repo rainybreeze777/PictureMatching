@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -22,9 +23,14 @@ public class BattleController : MonoBehaviour {
 	private List<int> enemySeq;
 	private int resolvingIndex = 0;
 
+	private InBattleStatus playerStatus;
+	private InBattleStatus enemyStatus;
+
 	private Transform battleResolveContainer;
 	private Camera mainCam = null;
 	private GameObject resultTile = null;
+	private Text playerHealthText;
+	private Text enemyHealthText;
 
 	private float widthSegment = 1F / 10F ;
 	private float heightSegment = 1F / 7F ;
@@ -48,6 +54,10 @@ public class BattleController : MonoBehaviour {
 		}
 
 		battleResolveContainer = new GameObject("BattleResolveContainer").transform;
+		playerStatus = new InBattleStatus();
+		enemyStatus = new InBattleStatus();
+		playerHealthText = GameObject.Find("PlayerHealth").GetComponent<Text>();
+		enemyHealthText = GameObject.Find("EnemyHealth").GetComponent<Text>();
 	}
 
 	void Start () {
@@ -55,6 +65,9 @@ public class BattleController : MonoBehaviour {
 	}
 
 	void Update () {
+
+		playerHealthText.text = playerStatus.CurrentHealth + " / " + playerStatus.MaxHealth;
+		enemyHealthText.text = enemyStatus.CurrentHealth + " / " + enemyStatus.MaxHealth;
 
 		if (shouldResolve) {
 			//Do resolution here
@@ -80,10 +93,12 @@ public class BattleController : MonoBehaviour {
 					case 1:
 						Debug.Log("Player wins round " + (resolvingIndex + 1 ));
 						resultTileToInstantiate = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(playerSeq[resolvingIndex], "comboPrefab")) as GameObject;
+						enemyStatus.DealDmg(playerStatus.Damage);
 						break;
 					case 2:
 						Debug.Log("Enemy wins round " + (resolvingIndex + 1));
 						resultTileToInstantiate = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(enemySeq[resolvingIndex], "comboPrefab")) as GameObject;
+						playerStatus.DealDmg(enemyStatus.Damage);
 						break;
 					case -1:
 						Debug.LogError("ResolveAttack got Invalid Parameters!");

@@ -35,7 +35,8 @@ public class GameController : MonoBehaviour {
 	}
 
 	void OnGUI () {
-		GUI.Box(new Rect(50, 50, 100, 90), "" + timer.ToString("0"));
+		if (countingDown)
+			GUI.Box(new Rect(50, 50, 100, 90), "" + timer.ToString("0"));
 	}
 
 	private void switchToBattleResolve() {
