@@ -81,6 +81,7 @@ public class BattleController : MonoBehaviour {
 
 		playerHealthText.text = playerStatus.CurrentHealth + " / " + playerStatus.MaxHealth;
 		enemyHealthText.text = enemyStatus.CurrentHealth + " / " + enemyStatus.MaxHealth;
+		bool gameShouldEnd = false;
 
 		if (shouldResolve) {
 			//Do resolution here
@@ -128,8 +129,15 @@ public class BattleController : MonoBehaviour {
 				resultTile.transform.localScale = new Vector3(0.75F, 0.75F, 0);
 
 				resolvingIndex++;
-				StartCoroutine(WaitBeforeMoving(0.5f));
+				if (playerStatus.IsDead || enemyStatus.IsDead)
+					gameShouldEnd = true;
+				else
+					StartCoroutine(WaitBeforeMoving(0.5f));
 			} else {
+				gameShouldEnd = true;
+			}
+
+			if (gameShouldEnd) {
 				if (playerStatus.IsDead && !enemyStatus.IsDead)
 					gameController.ChangeActiveState(lost);
 				else if (!playerStatus.IsDead && enemyStatus.IsDead)
@@ -160,6 +168,14 @@ public class BattleController : MonoBehaviour {
 	IEnumerator WaitBeforeMoving(float seconds) {
 		yield return new WaitForSeconds(seconds);
 		initiateMove = true;
+	}
+
+	public void ResetBattle() {
+		if (battleResolveContainer != null)
+			Destroy(battleResolveContainer.gameObject);
+		battleResolveContainer = new GameObject("BattleResolveContainer").transform;
+		playerStatus.ResetHealth();
+		enemyStatus.ResetHealth();
 	}
 
 	public void InitiateBattleResolution(List<int> seq) {
