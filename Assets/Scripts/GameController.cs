@@ -20,6 +20,7 @@ public class GameController : MonoBehaviour {
 	private Text enemyHealthText;
 	private Text titleText;
 	private GameObject startGameButton;
+	private GameObject quitButton;
 
 	void Awake () {
 		battleController = GameObject.Find("BattleController").GetComponent<BattleController>() as BattleController;
@@ -30,6 +31,7 @@ public class GameController : MonoBehaviour {
 		enemyHealthText = GameObject.Find("EnemyHealth").GetComponent<Text>();
 		titleText = GameObject.Find("TitleText").GetComponent<Text>();
 		startGameButton = GameObject.Find("StartGameButton");
+		quitButton = GameObject.Find("QuitButton");
 	}
 
 	void Start () {
@@ -44,8 +46,13 @@ public class GameController : MonoBehaviour {
 		startGameButton.GetComponent<Button>().onClick.AddListener(
 			() => {
 				startGameButton.SetActive(false);
+				quitButton.SetActive(false);
 				titleText.enabled = false;
 				SwitchToCancelTiles();
+			});
+		quitButton.GetComponent<Button>().onClick.AddListener(
+			() => {
+				Application.Quit();
 			});
 	}
 
@@ -80,6 +87,7 @@ public class GameController : MonoBehaviour {
 
 	private void SwitchToEdScreen(string setText) {
 		startGameButton.SetActive(true);
+		quitButton.SetActive(true);
 		countingDown = false;
 		titleText.text = setText;
 		titleText.enabled = true;
