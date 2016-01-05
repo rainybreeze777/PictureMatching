@@ -7,6 +7,8 @@ public class BoardController : MonoBehaviour {
 	public BoardDisplay boardDisplay;
 
 	private Board board;
+    private TileInfoFetcher infoFetcher;
+    private const string spritePath = "Sprites/";
 
 	private Tile tile1;
 	private Tile tile2;
@@ -14,6 +16,7 @@ public class BoardController : MonoBehaviour {
 	public void TileSelected(Tile aTile) {
 		if (tile1 == null) {
 			tile1 = aTile;
+            tile1.GetGameObject().GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spritePath + infoFetcher.GetInfoFromNumber(tile1.TileNumber, "selectedSprite"));
 		} else if (tile2 == null) {
 			tile2 = aTile;
 		}
@@ -39,8 +42,10 @@ public class BoardController : MonoBehaviour {
 	}
 
 	public void TileDeselected(Tile aTile) {
-		if (aTile.Equals(tile1))
+		if (aTile.Equals(tile1)) {
+            tile1.GetGameObject().GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spritePath + infoFetcher.GetInfoFromNumber(tile1.TileNumber, "normalSprite"));
 			tile1 = null;
+        }
 		else if (aTile.Equals(tile2))
 			tile2 = null; 
 	}
@@ -56,6 +61,7 @@ public class BoardController : MonoBehaviour {
 	// Use this for initialization
 	void Awake () {
 		board = Board.getInstance();
+        infoFetcher = TileInfoFetcher.GetInstance();
 	}
 	
 	// Update is called once per frame
