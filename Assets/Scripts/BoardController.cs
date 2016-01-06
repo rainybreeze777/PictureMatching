@@ -33,6 +33,7 @@ public class BoardController : MonoBehaviour {
                 Destroy(tile2.GetGameObject());
 
             } else {
+                tile1.GetGameObject().GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>(spritePath + infoFetcher.GetInfoFromNumber(tile1.TileNumber, "normalSprite"));
                 tile1.Deselect();
                 tile2.Deselect();
             }
