@@ -43,6 +43,7 @@ public class BattleController : MonoBehaviour {
 
     private float startTime;
     private Vector3 startPoint, endPoint;
+    private float widthBetweenTwoComboTiles;
     private float speed = 5.0f;
 
     //This is meant to get a reference to GameController
@@ -150,7 +151,7 @@ public class BattleController : MonoBehaviour {
         }
         if (initiateMove) {
             startPoint = battleResolveContainer.transform.position;
-            endPoint = new Vector3(startPoint.x - camCoordToWorldCoord(widthSegment, 0).x, startPoint.y, startPoint.z);
+            endPoint = new Vector3(startPoint.x - widthBetweenTwoComboTiles, startPoint.y, startPoint.z);
             startTime = Time.time;
             initiateMove = false;
             shouldMove = true;
@@ -187,6 +188,10 @@ public class BattleController : MonoBehaviour {
         
         int maxCount = System.Math.Max(playerSeq.Count, enemySeq.Count);
 
+        startPoint = Vector3.zero;
+        endPoint = Vector3.zero;
+        widthBetweenTwoComboTiles = 0f;
+
         for (int i = 0; i < maxCount; i++) {
 
             //Generate Player Cancel Sequence
@@ -204,6 +209,13 @@ public class BattleController : MonoBehaviour {
                                 , Quaternion.identity) as GameObject;
 
                 instance.transform.SetParent(battleResolveContainer);
+                
+                if (startPoint == Vector3.zero) {
+                    startPoint = instance.transform.position;
+                }
+                else if (widthBetweenTwoComboTiles == 0f){
+                    widthBetweenTwoComboTiles = instance.transform.position.x - startPoint.x;
+                }
             }
 
             //Generate Enemy Cancel Sequence
