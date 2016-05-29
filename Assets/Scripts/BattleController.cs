@@ -46,13 +46,13 @@ public class BattleController : MonoBehaviour {
     private float widthBetweenTwoComboTiles;
     private float speed = 5.0f;
 
-    //This is meant to get a reference to GameController
+    //This is meant to get a reference to GameView
     //However, this is bad design... We should avoid
     //Getting unnecessary references to produce tight coupling
     //Really what we need is DI and Signal&Slots
     //Checkout StrangeIoC
     //For now this is temporary code to get project going
-    public GameController gameController;
+    public GameView gameView;
 
     //Mock state-identifiers
     public const string won = "Won";
@@ -76,6 +76,7 @@ public class BattleController : MonoBehaviour {
 
     void Start () {
         mainCam = Camera.main;
+        gameView = GameObject.Find("GameView").GetComponent<GameView>() as GameView;
     }
 
     void Update () {
@@ -140,11 +141,11 @@ public class BattleController : MonoBehaviour {
 
             if (gameShouldEnd) {
                 if (playerStatus.IsDead && !enemyStatus.IsDead)
-                    gameController.ChangeActiveState(lost);
+                    gameView.ChangeActiveState(lost);
                 else if (!playerStatus.IsDead && enemyStatus.IsDead)
-                    gameController.ChangeActiveState(won);
+                    gameView.ChangeActiveState(won);
                 else if (!playerStatus.IsDead && !enemyStatus.IsDead)
-                    gameController.ChangeActiveState(unresolved);
+                    gameView.ChangeActiveState(unresolved);
             }
 
             shouldResolve = false;

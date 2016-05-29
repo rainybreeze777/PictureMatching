@@ -1,8 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System;
+using strange.extensions.dispatcher.eventdispatcher.api;
+using strange.extensions.mediation.impl;
+using strange.extensions.signal.impl;
 
-public class GameController : MonoBehaviour {
+public class GameView : View {
 
     private float timer = 30.0f;
     private bool countingDown = false;
@@ -28,7 +32,7 @@ public class GameController : MonoBehaviour {
     private GameObject resButton2;
     private GameObject backButton;
 
-    void Awake () {
+    internal void Init() {
         Screen.SetResolution (1024, 768, false);
         battleController = GameObject.Find("BattleController").GetComponent<BattleController>() as BattleController;
         comboController = GameObject.Find("ComboController").GetComponent<ComboController>() as ComboController;
@@ -45,9 +49,7 @@ public class GameController : MonoBehaviour {
         resButton1 = GameObject.Find("ResolutionButton1");
         resButton2 = GameObject.Find("ResolutionButton2");
         backButton = GameObject.Find("BackButton");
-    }
 
-    void Start () {
         mainCam = Camera.main;
         mainCam.transform.position = opEdCamPos;
 
