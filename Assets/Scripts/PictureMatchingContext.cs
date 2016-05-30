@@ -38,7 +38,14 @@ public class PictureMatchingContext : MVCSContext {
 	{
 		// Binding Mediators with Views
 		mediationBinder.Bind<GameView>().To<GameViewMediator>();
+		mediationBinder.Bind<BattleView>().To<BattleViewMediator>();
+		mediationBinder.Bind<BattleViewMediator>().To<BattleView>();
 		// Binding Signals with Commands
 		commandBinder.Bind<StartSignal>().To<StartCommand>().Once();
+		commandBinder.Bind<ResetBattleSignal>().To<ResetBattleCommand>();
+		// Instantiating Signals that are triggered manually
+		injectionBinder.Bind<BattleWonSignal>().ToSingleton();
+		injectionBinder.Bind<BattleLostSignal>().ToSingleton();
+		injectionBinder.Bind<BattleUnresolvedSignal>().ToSingleton();
 	}
 }

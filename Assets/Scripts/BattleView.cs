@@ -1,9 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using strange.extensions.dispatcher.eventdispatcher.api;
+using strange.extensions.mediation.impl;
+using strange.extensions.signal.impl;
 
-public class BattleController : MonoBehaviour {
+public class BattleView : View {
 
     //Win & Loss Rules
     //金克木 木克土 土克水 水克火 火克金
@@ -13,6 +17,8 @@ public class BattleController : MonoBehaviour {
     //Water beats Fire and Metal, beaten by Earth and Wood
     //Fire beats Metal and Wood, beaten by Water and Earth
     //Earth beats Water and Fire, beaten by Wood and Metal
+
+    private ComboController comboController;
 
     private TileInfoFetcher infoFetcher;
 
@@ -52,14 +58,22 @@ public class BattleController : MonoBehaviour {
     //Really what we need is DI and Signal&Slots
     //Checkout StrangeIoC
     //For now this is temporary code to get project going
-    public GameView gameView;
+    // public GameView gameView;
 
     //Mock state-identifiers
     public const string won = "Won";
     public const string lost = "Lost";
     public const string unresolved = "Unresolved";
 
-    void Awake () {
+    // Injected Signals
+    [Inject]
+    public BattleWonSignal battleWonSignal{ get; set;}
+    [Inject]
+    public BattleLostSignal battleLostSignal{ get; set;}
+    [Inject]
+    public BattleUnresolvedSignal battleUnresolvedSignal{ get; set;}
+
+    internal void Init() {
         infoFetcher = TileInfoFetcher.GetInstance();
 
         foreach (Tiles tile in System.Enum.GetValues(typeof(Tiles))) {
@@ -67,16 +81,14 @@ public class BattleController : MonoBehaviour {
             numToTileMap[theId] = tile;
         }
 
+        comboController = GameObject.Find("ComboController").GetComponent<ComboController>() as ComboController;
         battleResolveContainer = new GameObject("BattleResolveContainer").transform;
         playerStatus = new InBattleStatus();
         enemyStatus = new InBattleStatus();
         playerHealthText = GameObject.Find("PlayerHealth").GetComponent<Text>();
         enemyHealthText = GameObject.Find("EnemyHealth").GetComponent<Text>();
-    }
-
-    void Start () {
         mainCam = Camera.main;
-        gameView = GameObject.Find("GameView").GetComponent<GameView>() as GameView;
+        // gameView = GameObject.Find("GameView").GetComponent<GameView>() as GameView;
     }
 
     void Update () {
@@ -141,11 +153,11 @@ public class BattleController : MonoBehaviour {
 
             if (gameShouldEnd) {
                 if (playerStatus.IsDead && !enemyStatus.IsDead)
-                    gameView.ChangeActiveState(lost);
+                    battleLostSignal.Dispatch();
                 else if (!playerStatus.IsDead && enemyStatus.IsDead)
-                    gameView.ChangeActiveState(won);
+                    battleWonSignal.Dispatch();
                 else if (!playerStatus.IsDead && !enemyStatus.IsDead)
-                    gameView.ChangeActiveState(unresolved);
+                    battleUnresolvedSignal.Dispatch();
             }
 
             shouldResolve = false;
@@ -180,9 +192,9 @@ public class BattleController : MonoBehaviour {
         enemyStatus.ResetHealth();
     }
 
-    public void InitiateBattleResolution(List<int> seq) {
+    public void InitiateBattleResolution() {
 
-        playerSeq = seq;
+        playerSeq = comboController.GetCancelSeq();
         enemySeq = EnemyCancellationGenerator.GenerateSequence();
 
         resolvingIndex = 0;
@@ -200,7 +212,7 @@ public class BattleController : MonoBehaviour {
                 GameObject toInstantiatePlayer = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(playerSeq[i], "comboPrefab")) as GameObject;
 
                 if (toInstantiatePlayer == null) {
-                    Debug.LogError("BattleController Error: toInstantiatePlayer is null!");
+                    Debug.LogError("BattleView Error: toInstantiatePlayer is null!");
                     break;
                 }
 
@@ -224,7 +236,7 @@ public class BattleController : MonoBehaviour {
                 GameObject toInstantiateEnemy = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(enemySeq[i], "comboPrefab")) as GameObject;
 
                 if (toInstantiateEnemy == null) {
-                    Debug.LogError("BattleController Error: toInstantiateEnemy is null!");
+                    Debug.LogError("BattleView Error: toInstantiateEnemy is null!");
                     break;
                 }
 
@@ -310,7 +322,7 @@ public class BattleController : MonoBehaviour {
 
     private Vector3 camCoordToWorldCoord(float x, float y) {
         if (mainCam == null)
-            throw new System.NullReferenceException("BattleController Error: mainCam is null!");
+            throw new System.NullReferenceException("BattleView Error: mainCam is null!");
 
         Vector3 newVec = mainCam.ViewportToWorldPoint(new Vector3(x, y, 10));
 

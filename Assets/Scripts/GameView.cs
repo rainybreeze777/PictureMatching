@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 using System;
+using System.Collections;
 using strange.extensions.dispatcher.eventdispatcher.api;
 using strange.extensions.mediation.impl;
 using strange.extensions.signal.impl;
@@ -16,7 +16,7 @@ public class GameView : View {
     private Vector3 battleResolveCamPos = new Vector3(10.5f, 20f, -10f);
     private Vector3 opEdCamPos = new Vector3(10.5f, -10f, -10f);
 
-    private BattleController battleController;
+    // private BattleController battleController;
     private ComboController comboController;
     private BoardController boardController;
 
@@ -34,7 +34,7 @@ public class GameView : View {
 
     internal void Init() {
         Screen.SetResolution (1024, 768, false);
-        battleController = GameObject.Find("BattleController").GetComponent<BattleController>() as BattleController;
+        // battleController = GameObject.Find("BattleController").GetComponent<BattleController>() as BattleController;
         comboController = GameObject.Find("ComboController").GetComponent<ComboController>() as ComboController;
         boardController = GameObject.Find("BoardController").GetComponent<BoardController>() as BoardController;
     
@@ -99,15 +99,16 @@ public class GameView : View {
             GUI.Box(new Rect(50, 50, 100, 90), "" + timer.ToString("0"));
     }
 
-    private void SwitchToBattleResolve() {
+    public void SwitchToBattleResolve() {
         countingDown = false;
         playerHealthText.enabled = true;
         enemyHealthText.enabled = true;
         mainCam.transform.position = battleResolveCamPos;
-        battleController.InitiateBattleResolution(comboController.GetCancelSeq());
+        //TODO: Separate this
+        // battleController.InitiateBattleResolution(comboController.GetCancelSeq());
     }
 
-    private void SwitchToCancelTiles() {
+    public void SwitchToCancelTiles() {
         countingDown = true;
         playerHealthText.enabled = false;
         enemyHealthText.enabled = false;
@@ -149,11 +150,11 @@ public class GameView : View {
         playerHealthText.enabled = false;
         enemyHealthText.enabled = false;
         resolutionText.enabled = false;
-        battleController.ResetBattle();
+        // mediator.ResetBattle();
         mainCam.transform.position = opEdCamPos;
     }
 
-    private void SwitchToEdScreen(string setText) {
+    public void SwitchToEdScreen(string setText) {
         resButton1.SetActive(false);
         resButton2.SetActive(false);
         backButton.SetActive(false);
@@ -166,21 +167,27 @@ public class GameView : View {
         playerHealthText.enabled = false;
         enemyHealthText.enabled = false;
         resolutionText.enabled = false;
-        battleController.ResetBattle();
+        // mediator.ResetBattle();
         startGameButton.GetComponent<Button>().GetComponentInChildren<Text>().text = "Restart";
         mainCam.transform.position = opEdCamPos;
     }
 
-    public void ChangeActiveState(string battleResult) {
+    public void ResetActiveState() {
         timer = 30.0f;
         boardController.ResetBoard();
         comboController.ClearCancelSequence();
+    }
+
+    /*
+    public void ChangeActiveState(string battleResult) {
+        ResetActiveState();
         if (battleResult.Equals(BattleController.won)) {
-            SwitchToEdScreen("You Win!");
+            
         } else if (battleResult.Equals(BattleController.lost)) {
             SwitchToEdScreen("You Lost!");
         } else if (battleResult.Equals(BattleController.unresolved)) {
             SwitchToCancelTiles();
         }
     }
+    */
 }
