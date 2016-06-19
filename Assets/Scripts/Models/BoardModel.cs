@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using Random = UnityEngine.Random;
 
-public class Board {
+public class BoardModel : IBoardModel {
 
     public int r1 = 4, c1 = 2, r2 = 2, c2 = 2;
     
@@ -13,8 +13,6 @@ public class Board {
     int pairs = (numOfRow - 2) * (numOfColumn - 2) / 2;
     
     int[,] gameBoard = new int[numOfRow, numOfColumn];
-    
-    static Board instance;
     
     public int numOfRows () {
         return numOfRow;
@@ -60,13 +58,6 @@ public class Board {
         }
     }
     
-    public static Board getInstance() {
-        if (instance == null)
-            instance = new Board();
-        
-        return instance;
-    }
-    
     public bool isRemovable(int r1, int c1, int r2, int c2) {
         
         //If the tile isn't the same, not removable
@@ -83,9 +74,6 @@ public class Board {
             return true;
         else
             return stage3Check(r1, c1, r2, c2);
-        
-        
-
     }
     
     public bool remove(int r1, int c1, int r2, int c2) {
@@ -329,9 +317,4 @@ public class Board {
         
         return false;
     }
-    
-    private Board() {
-        //Empty Constructor
-    }
-
 }

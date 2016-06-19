@@ -18,8 +18,6 @@ public class BattleView : View {
     //Fire beats Metal and Wood, beaten by Water and Earth
     //Earth beats Water and Fire, beaten by Wood and Metal
 
-    private ComboController comboController;
-
     private TileInfoFetcher infoFetcher;
 
     private enum Tiles { Metal, Wood, Water, Fire, Earth };
@@ -81,7 +79,6 @@ public class BattleView : View {
             numToTileMap[theId] = tile;
         }
 
-        comboController = GameObject.Find("ComboController").GetComponent<ComboController>() as ComboController;
         battleResolveContainer = new GameObject("BattleResolveContainer").transform;
         playerStatus = new InBattleStatus();
         enemyStatus = new InBattleStatus();
@@ -192,14 +189,17 @@ public class BattleView : View {
         enemyStatus.ResetHealth();
     }
 
-    public void InitiateBattleResolution() {
+    public void InitiateBattleResolution(List<int> playerSequence) {
 
-        playerSeq = comboController.GetCancelSeq();
+        playerSeq = playerSequence;
         enemySeq = EnemyCancellationGenerator.GenerateSequence();
 
         resolvingIndex = 0;
         
         int maxCount = System.Math.Max(playerSeq.Count, enemySeq.Count);
+
+        Debug.LogWarning("playerSeq Count " + playerSeq.Count);
+        Debug.LogWarning("enemySeq Count " + enemySeq.Count);
 
         startPoint = Vector3.zero;
         endPoint = Vector3.zero;

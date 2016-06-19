@@ -1,13 +1,18 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System;
+using UnityEngine;
+using strange.extensions.mediation.impl;
+using strange.extensions.signal.impl;
 
-public class Tile : MonoBehaviour {
+public class Tile : View {
 
-    private BoardController boardController;
+    // private BoardController boardController;
     private bool isSelected = false;
 
     private int row, column;
     private int tileNumber;
+
+    public Signal<Tile> selectSignal = new Signal<Tile>();
+    public Signal<Tile> deselectSignal = new Signal<Tile>();
 
     public int Row { 
         get { return row; }
@@ -40,23 +45,15 @@ public class Tile : MonoBehaviour {
         return (row == otherTile.Row && column == otherTile.Column);
     }
 
-    // Use this for initialization
-    void Awake () {
-        boardController = GameObject.Find("BoardController").GetComponent<BoardController>() as BoardController;
-    }
-    
-    // Update is called once per frame
-    void Update () {
-    
-    }
-
     public void OnMouseDown() {
         isSelected = !isSelected;
 
         if(isSelected) {
-            boardController.TileSelected(this);
+            // boardController.TileSelected(this);
+            selectSignal.Dispatch(this);
         } else {
-            boardController.TileDeselected(this);
+            // boardController.TileDeselected(this);
+            deselectSignal.Dispatch(this);
         }
     }
 }

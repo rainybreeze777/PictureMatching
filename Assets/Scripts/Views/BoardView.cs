@@ -1,54 +1,59 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using strange.extensions.dispatcher.eventdispatcher.api;
+using strange.extensions.mediation.impl;
+using strange.extensions.signal.impl;
 
-public class BoardDisplay : MonoBehaviour {
+public class BoardView : View {
 
-    private Board board;
+    public Signal<Tile> tileSelectedSignal = new Signal<Tile>();
+    public Signal<Tile> tileDeselectedSignal = new Signal<Tile>();
 
     private GameObject boardHolder;
     private const float xOffset = 5.5f;
     private const float yOffset = 0.8f;
+
+    private const string prefabPath = "Prefabs/";
+    private TileInfoFetcher infoFetcher;
 
     //0 = Metal
     //1 = Wood
     //2 = Water
     //3 = Fire
     //4 = Earth
-    public GameObject[] tiles;
+    private List<GameObject> tiles = new List<GameObject>();
 
-    // Use this for initialization
-    void Awake () {
-        board = Board.getInstance();
+    internal void Init(IBoardModel boardModel) {
 
-        board.GenerateBoard();
+        infoFetcher = TileInfoFetcher.GetInstance();
 
-        BoardSetup();
+        for (int i = 1; i <= 5; ++i) {
+           tiles.Add(Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(i, "prefab")) as GameObject);
+        }
+
+        BoardSetup(boardModel);
     }
 
-    // Update is called once per frame
-    void Update () {
-    
-    }
-
-
-    public void ResetBoard () {
+    public void ResetBoard (IBoardModel boardModel) {
         if (boardHolder != null) {
             Destroy(boardHolder);
         }
 
-        board.GenerateBoard();
-        BoardSetup();
+        BoardSetup(boardModel);
     }
 
-    void BoardSetup () {
+    void BoardSetup (IBoardModel boardModel) {
         boardHolder = new GameObject ("Board");
 
-        int numOfRows = board.numOfRows();
-        int numOfColumns = board.numOfColumns();
+        int numOfRows = boardModel.numOfRows();
+        int numOfColumns = boardModel.numOfColumns();
 
         for (int r = 0; r < numOfRows; r++) {
             for (int c = 0; c < numOfColumns; c++) {
-                int currentTile = board.GetTileAt(r,c);
+                int currentTile = boardModel.GetTileAt(r,c);
                 if (currentTile != -1 && currentTile != 0) {
                     //the tiles array is used to grab the Array of Tile Sprites in Unity, so it starts from 0
                     //however, the currentTile here is the number represented in Board.
@@ -68,6 +73,8 @@ public class BoardDisplay : MonoBehaviour {
                     
                     //Get the actual Tile Script class in order to call its functions.
                     Tile tile = instance.GetComponent<Tile>();
+                    tile.selectSignal.AddListener(tileSelectedSignal.Dispatch);
+                    tile.deselectSignal.AddListener(tileDeselectedSignal.Dispatch);
                     //Pass in the currentTile for now, just to be consistent with Board's system of indexing.
                     tile.Initialize(r, c, currentTile);
                 }

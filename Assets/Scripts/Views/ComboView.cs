@@ -1,50 +1,55 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using strange.extensions.dispatcher.eventdispatcher.api;
+using strange.extensions.mediation.impl;
+using strange.extensions.signal.impl;
 
-public class ComboController : MonoBehaviour {
+public class ComboView : View {
+
+    [Inject]
+    public MakeComboSignal makeComboSignal { get; set; }
 
     //0 = Metal
     //1 = Wood
     //2 = Water
     //3 = Fire
     //4 = Earth
-    public GameObject[] tiles;
-    private List<int> cancelSequence = new List<int>();
-    //List used to track the range of formed combos
-    //For example, combo may start from index 2 and end at index 6
-    //Then comboTracker will be [2, 6]
-    private List<int> comboTracker = new List<int>();
+    private List<GameObject> tiles = new List<GameObject>();
 
     private List<GameObject> onScreenSequence = new List<GameObject>();
     private int onScreenSequenceCount = 0;
 
     private const float distanceBetweenTile = 2.0f;
-    private const int numOfTilesOnComboSequence = 5;
+    private int numOfTilesOnComboSequence;
     private const float xOffset = 6.5f;
     private const float yOffset = 0.77f;
 
     private Transform comboDisplayer;
-    private ComboTree comboTree;
-    private ComboListFetcher comboListFetcher;
 
     private GameObject comboButton;
 
-    private int comboStart, comboEnd;
+    private TileInfoFetcher infoFetcher;
+    private const string prefabPath = "Prefabs/ComboPrefabs/";
 
-    void Awake() {
+    internal void Init(int comboSequenceLength) {
+
+        infoFetcher = TileInfoFetcher.GetInstance();
+
+        for (int i = 1; i <= 5; ++i) {
+           tiles.Add(Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(i, "comboPrefab")) as GameObject);
+        }
+
+        numOfTilesOnComboSequence = comboSequenceLength;
         comboButton = GameObject.Find("MakeComboButton");
+        comboButton.GetComponent<Button>().onClick.AddListener( makeComboSignal.Dispatch );
         comboButton.SetActive(false);
         comboDisplayer = new GameObject ("ComboDisplayer").transform;
-        comboTree = ComboTree.GetInstance();
-        comboListFetcher = ComboListFetcher.GetInstance();
-        foreach(List<int> combo in comboListFetcher.GetList()) {
-            comboTree.AddCombo(combo, "nameGoesHere");
-        }
     }
 
-    public void ClearCancelSequence() {
-        cancelSequence.Clear();
+    public void ClearOnScreenSequence() {
         foreach(GameObject obj in onScreenSequence)
             Destroy(obj);
         onScreenSequence.Clear();
@@ -53,8 +58,6 @@ public class ComboController : MonoBehaviour {
 
     public void AddToCancelSequence(int tileNumber)
     {
-        cancelSequence.Add(tileNumber);
-
         GameObject toInstantiate = tiles[tileNumber - 1];
 
         if (onScreenSequenceCount >= numOfTilesOnComboSequence) {
@@ -80,30 +83,9 @@ public class ComboController : MonoBehaviour {
         instance.transform.SetParent(comboDisplayer);
 
         onScreenSequence.Add(instance);
-
-        int startIndex = System.Math.Max(0, cancelSequence.Count - numOfTilesOnComboSequence);
-        //Combo length is at least 2
-        for (int i = startIndex; i < cancelSequence.Count - 2; i++ ) {
-
-            List<int> subSequence = cancelSequence.GetRange(i, cancelSequence.Count - i);
-            string comboName = comboTree.GetCombo(subSequence);
-            if (!comboName.Equals("")) {
-                comboButton.SetActive(true);
-                comboStart = i;
-                comboEnd = cancelSequence.Count - i;
-                break;
-            }
-            comboButton.SetActive(false);
-        }
     }
 
-    public void MakeCombo() {
-        comboTracker.Add(comboStart);
-        comboTracker.Add(comboEnd);
+    public void ComboButtonSetActive(bool active) {
+        comboButton.SetActive(active);
     }
-
-    public List<int> GetCancelSeq() {
-        return cancelSequence;
-    }
-
 }

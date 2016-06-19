@@ -8,8 +8,7 @@ using strange.extensions.signal.impl;
 
 public class GameView : View {
 
-    private float timer = 30.0f;
-    private bool countingDown = false;
+
     private Camera mainCam;
 
     private Vector3 cancelTileCamPos = new Vector3(10.5f, 5f, -10f);
@@ -17,8 +16,8 @@ public class GameView : View {
     private Vector3 opEdCamPos = new Vector3(10.5f, -10f, -10f);
 
     // private BattleController battleController;
-    private ComboController comboController;
-    private BoardController boardController;
+    // private ComboController comboController;
+    // private BoardController boardController;
 
     private Text playerHealthText;
     private Text enemyHealthText;
@@ -35,8 +34,8 @@ public class GameView : View {
     internal void Init() {
         Screen.SetResolution (1024, 768, false);
         // battleController = GameObject.Find("BattleController").GetComponent<BattleController>() as BattleController;
-        comboController = GameObject.Find("ComboController").GetComponent<ComboController>() as ComboController;
-        boardController = GameObject.Find("BoardController").GetComponent<BoardController>() as BoardController;
+        // comboController = GameObject.Find("ComboController").GetComponent<ComboController>() as ComboController;
+        // boardController = GameObject.Find("BoardController").GetComponent<BoardController>() as BoardController;
     
         playerHealthText = GameObject.Find("PlayerHealth").GetComponent<Text>();
         enemyHealthText = GameObject.Find("EnemyHealth").GetComponent<Text>();
@@ -85,22 +84,14 @@ public class GameView : View {
             });
     }
 
-    void Update () {
-        if (countingDown)
-            timer -= Time.deltaTime;
-
-        if ((timer <= 0  || boardController.BoardIsEmpty()) && countingDown) {
-            SwitchToBattleResolve();
-        }
-    }
-
+    /*
     void OnGUI () {
         if (countingDown)
             GUI.Box(new Rect(50, 50, 100, 90), "" + timer.ToString("0"));
     }
+    */
 
     public void SwitchToBattleResolve() {
-        countingDown = false;
         playerHealthText.enabled = true;
         enemyHealthText.enabled = true;
         mainCam.transform.position = battleResolveCamPos;
@@ -109,7 +100,6 @@ public class GameView : View {
     }
 
     public void SwitchToCancelTiles() {
-        countingDown = true;
         playerHealthText.enabled = false;
         enemyHealthText.enabled = false;
         mainCam.transform.position = cancelTileCamPos;
@@ -144,7 +134,7 @@ public class GameView : View {
         startGameButton.SetActive(true);
         optionButton.SetActive(true);
         quitButton.SetActive(true);
-        countingDown = false;
+        // countingDown = false;
         titleText.text = "Picture Matching";
         titleText.enabled = true;
         playerHealthText.enabled = false;
@@ -161,7 +151,7 @@ public class GameView : View {
         startGameButton.SetActive(true);
         optionButton.SetActive(true);
         quitButton.SetActive(true);
-        countingDown = false;
+        // countingDown = false;
         titleText.text = setText;
         titleText.enabled = true;
         playerHealthText.enabled = false;
@@ -170,12 +160,6 @@ public class GameView : View {
         // mediator.ResetBattle();
         startGameButton.GetComponent<Button>().GetComponentInChildren<Text>().text = "Restart";
         mainCam.transform.position = opEdCamPos;
-    }
-
-    public void ResetActiveState() {
-        timer = 30.0f;
-        boardController.ResetBoard();
-        comboController.ClearCancelSequence();
     }
 
     /*

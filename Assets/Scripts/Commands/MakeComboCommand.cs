@@ -4,12 +4,13 @@ using strange.extensions.context.api;
 using strange.extensions.command.impl;
 using strange.extensions.dispatcher.eventdispatcher.impl;
 
-public class ResetBattleCommand : Command {
-
+public class MakeComboCommand : Command
+{
 	[Inject]
-	public BattleViewMediator battleViewMediator { get; set; }
+	public IComboModel comboModel{ get; set; }
 
-	public override void Execute() {
-		battleViewMediator.ResetBattle();
+	public override void Execute()
+	{
+		comboModel.MakeCombo();
 	}
 }
