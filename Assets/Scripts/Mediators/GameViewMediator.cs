@@ -23,12 +23,15 @@ public class GameViewMediator : Mediator {
     [Inject]
     public InitiateBattleResolutionSignal initiateBattleResolutionSignal { get; set; }
 
-    private float timer = 30.0f;
+    private const float TIME_PER_CANCEL = 30.0f;
+    private float timer = TIME_PER_CANCEL;
     private bool countingDown = false;
 
     void Update () {
-        if (countingDown)
+        if (countingDown) {
             timer -= Time.deltaTime;
+            gameView.UpdateProgressBar((int) (timer / TIME_PER_CANCEL * 100));
+        }
 
         if (timer <= 0 && countingDown) {
             SwitchToBattleResolve();
@@ -42,7 +45,7 @@ public class GameViewMediator : Mediator {
         battleLostSignal.AddListener(OnBattleLost);
         battleUnresolvedSignal.AddListener(OnBattleUnresolved);
         boardIsEmptySignal.AddListener(SwitchToBattleResolve);       
-
+        gameView.gameStartSignal.AddListener(SwitchToCancelTiles);
         gameView.Init();
     }
 
@@ -69,7 +72,7 @@ public class GameViewMediator : Mediator {
 
     private void ResetActiveState()
     {
-        timer = 30.0f;
+        timer = TIME_PER_CANCEL;
         resetActiveStateSignal.Dispatch();
     }
 
@@ -78,6 +81,12 @@ public class GameViewMediator : Mediator {
         countingDown = false;
         gameView.SwitchToBattleResolve();
         initiateBattleResolutionSignal.Dispatch();
-        Debug.Log("GameViewMediator SwitchToBattleResolve");
+    }
+
+    private void SwitchToCancelTiles()
+    {
+        countingDown = true;
+        gameView.UpdateProgressBar(100);
+        gameView.SwitchToCancelTiles();
     }
 }

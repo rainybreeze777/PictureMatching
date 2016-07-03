@@ -8,16 +8,11 @@ using strange.extensions.signal.impl;
 
 public class GameView : View {
 
-
     private Camera mainCam;
 
     private Vector3 cancelTileCamPos = new Vector3(10.5f, 5f, -10f);
     private Vector3 battleResolveCamPos = new Vector3(10.5f, 20f, -10f);
     private Vector3 opEdCamPos = new Vector3(10.5f, -10f, -10f);
-
-    // private BattleController battleController;
-    // private ComboController comboController;
-    // private BoardController boardController;
 
     private Text playerHealthText;
     private Text enemyHealthText;
@@ -30,6 +25,11 @@ public class GameView : View {
     private GameObject resButton1;
     private GameObject resButton2;
     private GameObject backButton;
+
+    private GameObject timeLeftPBPanel;
+    private ProgressBar timeLeftPB;
+
+    public Signal gameStartSignal = new Signal();
 
     internal void Init() {
         Screen.SetResolution (1024, 768, false);
@@ -49,6 +49,9 @@ public class GameView : View {
         resButton2 = GameObject.Find("ResolutionButton2");
         backButton = GameObject.Find("BackButton");
 
+        timeLeftPBPanel = GameObject.Find("TimeLeftPBPanel");
+        timeLeftPB = GameObject.Find("TimeLeftPBFG").GetComponent<ProgressBar>();
+
         mainCam = Camera.main;
         mainCam.transform.position = opEdCamPos;
 
@@ -62,13 +65,16 @@ public class GameView : View {
         resButton2.SetActive(false);
         backButton.SetActive(false);
 
+        timeLeftPBPanel.SetActive(false);
+        timeLeftPB.Value = 100;
+
         startGameButton.GetComponent<Button>().onClick.AddListener(
             () => {
                 startGameButton.SetActive(false);
                 optionButton.SetActive(false);
                 quitButton.SetActive(false);
                 titleText.enabled = false;
-                SwitchToCancelTiles();
+                gameStartSignal.Dispatch();
             });
         optionButton.GetComponent<Button>().onClick.AddListener(
             () => {
@@ -84,25 +90,18 @@ public class GameView : View {
             });
     }
 
-    /*
-    void OnGUI () {
-        if (countingDown)
-            GUI.Box(new Rect(50, 50, 100, 90), "" + timer.ToString("0"));
-    }
-    */
-
     public void SwitchToBattleResolve() {
         playerHealthText.enabled = true;
         enemyHealthText.enabled = true;
         mainCam.transform.position = battleResolveCamPos;
-        //TODO: Separate this
-        // battleController.InitiateBattleResolution(comboController.GetCancelSeq());
+        timeLeftPBPanel.SetActive(false);
     }
 
     public void SwitchToCancelTiles() {
         playerHealthText.enabled = false;
         enemyHealthText.enabled = false;
         mainCam.transform.position = cancelTileCamPos;
+        timeLeftPBPanel.SetActive(true);
     }
 
     private void SwitchToOptionsMenu() {
@@ -162,16 +161,7 @@ public class GameView : View {
         mainCam.transform.position = opEdCamPos;
     }
 
-    /*
-    public void ChangeActiveState(string battleResult) {
-        ResetActiveState();
-        if (battleResult.Equals(BattleController.won)) {
-            
-        } else if (battleResult.Equals(BattleController.lost)) {
-            SwitchToEdScreen("You Lost!");
-        } else if (battleResult.Equals(BattleController.unresolved)) {
-            SwitchToCancelTiles();
-        }
+    public void UpdateProgressBar(int percent) {
+        timeLeftPB.Value = percent;
     }
-    */
 }
