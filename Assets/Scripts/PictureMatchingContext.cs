@@ -43,7 +43,7 @@ public class PictureMatchingContext : MVCSContext {
         mediationBinder.Bind<BoardView>().To<BoardViewMediator>();
         // Binding Signals with Commands
         commandBinder.Bind<StartSignal>().To<StartCommand>().Once();
-        commandBinder.Bind<TileCancelledSignal>().To<TileCancelledCommand>();
+        commandBinder.Bind<AttemptTileCancelSignal>().To<AttemptTileCancelCommand>();
         commandBinder.Bind<MakeComboSignal>().To<MakeComboCommand>();
         // Dependency Injection Binding
         injectionBinder.Bind<IComboModel>().To<ComboModel>().ToSingleton();
@@ -57,6 +57,6 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<InitiateBattleResolutionSignal>().ToSingleton();
         injectionBinder.Bind<ResetActiveStateSignal>().ToSingleton();
         injectionBinder.Bind<ResetBattleSignal>().ToSingleton();
-
+        injectionBinder.Bind<TileDestroyedSignal>().ToSingleton();
     }
 }

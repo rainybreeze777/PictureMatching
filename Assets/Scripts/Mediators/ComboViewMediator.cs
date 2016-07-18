@@ -12,14 +12,12 @@ public class ComboViewMediator : Mediator {
     [Inject]
     public IComboModel comboModel { get; set; }
     [Inject]
-    public TileCancelledSignal tileCancelledSignal { get; set; }
-    [Inject]
     public ResetActiveStateSignal resetActiveStateSignal { get; set; }
 
     public override void OnRegister() {
         view.Init(comboModel.NumOfTilesOnComboSequence);
 
-        tileCancelledSignal.AddListener(OnTileCancelled);
+        comboModel.CancelAddedSignal.AddListener(OnTileCancelled);
         comboPossibleSignal.AddListener(OnComboPossible);
         resetActiveStateSignal.AddListener(ClearCancelSequence);
     }

@@ -56,4 +56,8 @@ public class TileInfoFetcher {
 
         return "";
     }
+
+    public int GetTotalNumOfTiles() {
+        return tilesArray.Count;
+    }
 }

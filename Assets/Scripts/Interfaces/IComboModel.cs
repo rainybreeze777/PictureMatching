@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using strange.extensions.signal.impl;
 
 public interface IComboModel {
 
@@ -12,4 +13,6 @@ public interface IComboModel {
     void MakeCombo();
 
     void ClearCancelSequence();
+
+    Signal<int> CancelAddedSignal { get; }
 }

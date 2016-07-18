@@ -26,11 +26,13 @@ public class BoardView : View {
     //4 = Earth
     private List<GameObject> tiles = new List<GameObject>();
 
+    private List<List<GameObject>> onScreenTiles = new List<List<GameObject>>();
+
     internal void Init(IBoardModel boardModel) {
 
         infoFetcher = TileInfoFetcher.GetInstance();
 
-        for (int i = 1; i <= 5; ++i) {
+        for (int i = 1; i <= infoFetcher.GetTotalNumOfTiles(); ++i) {
            tiles.Add(Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(i, "prefab")) as GameObject);
         }
 
@@ -41,8 +43,15 @@ public class BoardView : View {
         if (boardHolder != null) {
             Destroy(boardHolder);
         }
+        onScreenTiles = new List<List<GameObject>>();
 
         BoardSetup(boardModel);
+    }
+
+    public void DestroyTile(int row, int col) {
+        Debug.Log("Destroying tile at row " + (row-1) + " col " + (col-1));
+        Destroy(onScreenTiles[row-1][col-1]);
+        onScreenTiles[row-1][col-1] = null;
     }
 
     void BoardSetup (IBoardModel boardModel) {
@@ -50,6 +59,10 @@ public class BoardView : View {
 
         int numOfRows = boardModel.numOfRows();
         int numOfColumns = boardModel.numOfColumns();
+
+        // Boolean flag to skip those invalid Tiles that are marked as -1
+        bool shouldAddRow = true;
+        int onScreenRow = 0;
 
         for (int r = 0; r < numOfRows; r++) {
             for (int c = 0; c < numOfColumns; c++) {
@@ -71,6 +84,12 @@ public class BoardView : View {
                     instance.transform.localScale = new Vector3(0.5F, 0.5F, 0);
                     instance.transform.SetParent(boardHolder.transform);
                     
+                    if (shouldAddRow) {
+                        onScreenTiles.Add(new List<GameObject>());
+                        shouldAddRow = false;
+                    }
+                    onScreenTiles[onScreenRow].Add(instance);
+
                     //Get the actual Tile Script class in order to call its functions.
                     Tile tile = instance.GetComponent<Tile>();
                     tile.selectSignal.AddListener(tileSelectedSignal.Dispatch);
@@ -79,6 +98,10 @@ public class BoardView : View {
                     tile.Initialize(r, c, currentTile);
                 }
             }
+            if (!shouldAddRow) {
+                onScreenRow++;
+            }
+            shouldAddRow = true;
         }
     }
 }

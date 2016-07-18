@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using strange.extensions.signal.impl;
 
 public class ComboModel : IComboModel {
 
     [Inject]
     public ComboPossibleSignal comboPossibleSignal { get; set; }
+    public Signal<int> cancelAddedSignal = new Signal<int>();
+    public Signal<int> CancelAddedSignal 
+    {
+        get { return cancelAddedSignal; }
+    }
 
     private List<int> cancelSequence = new List<int>();
     //List used to track the range of formed combos
@@ -36,6 +42,7 @@ public class ComboModel : IComboModel {
 
     public void AddToCancelSequence(int tileNumber) {
         cancelSequence.Add(tileNumber);
+        cancelAddedSignal.Dispatch(tileNumber);
 
         int startIndex = System.Math.Max(0, cancelSequence.Count - numOfTilesOnComboSequence);
         //Combo length is at least 2

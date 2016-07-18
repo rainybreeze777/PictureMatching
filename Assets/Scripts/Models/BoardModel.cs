@@ -4,6 +4,11 @@ using Random = UnityEngine.Random;
 
 public class BoardModel : IBoardModel {
 
+    [Inject]
+    public BoardIsEmptySignal boardIsEmptySignal{ get; set; }
+    [Inject]
+    public TileDestroyedSignal tileDestroyedSignal{ get; set; }
+
     public int r1 = 4, c1 = 2, r2 = 2, c2 = 2;
     
     const int numOfRow = 7;
@@ -84,7 +89,11 @@ public class BoardModel : IBoardModel {
         gameBoard[r2 , c2] = 0;
         pairs--;
 
+        tileDestroyedSignal.Dispatch(r1, c1);
+        tileDestroyedSignal.Dispatch(r2, c2);
+
         if (pairs == 0) {
+            boardIsEmptySignal.Dispatch();
             beatenGame = true;
         }
         
