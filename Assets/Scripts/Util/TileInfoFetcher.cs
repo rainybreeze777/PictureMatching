@@ -22,17 +22,6 @@ public class TileInfoFetcher {
     }
 
     public int GetTileNumberFromName(string tileName) {
-        /*
-        int index = 0;
-        while (true) {
-            if (tilesArray[index] == null)
-                break;
-            if (tilesArray[index]["name"].Equals(tileName))
-                return tilesArray[index]["id"].AsInt;
-
-            index++;
-        }
-        */
 
         for (int i = 0; i < tilesArray.Count; i++) {
             if (tilesArray[i] == null)

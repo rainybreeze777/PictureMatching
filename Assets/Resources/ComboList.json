@@ -1,0 +1,24 @@
+{
+    "combos" : [
+        {
+            "id" : 1,
+            "englishName" : "comboOne",
+            "comboSeq" : [
+                "Wood",
+                "Wood",
+                "Wood",
+                "Wood"
+            ]
+        },
+        {
+            "id" : 2,
+            "englishName" : "comboTwo",
+            "comboSeq" : [
+                "Wood",
+                "Wood",
+                "Water",
+                "Fire"
+            ]
+        }
+    ]
+}

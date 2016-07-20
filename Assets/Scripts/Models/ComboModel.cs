@@ -18,33 +18,27 @@ public class ComboModel : IComboModel {
     //Then comboTracker will be [2, 6]
     private List<int> comboTracker = new List<int>();
 
-    private ComboListFetcher comboListFetcher;
-
     private ComboTree comboTree;
 
-    private int numOfTilesOnComboSequence;
+    private int onScreenNumOfTilesOnComboSequence;
     public int NumOfTilesOnComboSequence 
     {
-        get { return numOfTilesOnComboSequence; }
-        set { numOfTilesOnComboSequence = value; }
+        get { return onScreenNumOfTilesOnComboSequence; }
+        set { onScreenNumOfTilesOnComboSequence = value; }
     }
 
     private int comboStart, comboEnd;
 
     public ComboModel() {
-        numOfTilesOnComboSequence = 5;
-        comboTree = ComboTree.GetInstance();
-        comboListFetcher = ComboListFetcher.GetInstance();
-        foreach(List<int> combo in comboListFetcher.GetList()) {
-            comboTree.AddCombo(combo, "nameGoesHere");
-        }
+        onScreenNumOfTilesOnComboSequence = 5;
+        comboTree = ComboTree.GetInstance();       
     }
 
     public void AddToCancelSequence(int tileNumber) {
         cancelSequence.Add(tileNumber);
         cancelAddedSignal.Dispatch(tileNumber);
 
-        int startIndex = System.Math.Max(0, cancelSequence.Count - numOfTilesOnComboSequence);
+        int startIndex = System.Math.Max(0, cancelSequence.Count - onScreenNumOfTilesOnComboSequence);
         //Combo length is at least 2
         for (int i = startIndex; i < cancelSequence.Count - 2; i++ ) {
 

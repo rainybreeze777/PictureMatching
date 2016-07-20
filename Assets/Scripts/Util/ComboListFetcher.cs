@@ -1,12 +1,20 @@
 ﻿using UnityEngine;
+using SimpleJSON;
 using System.Collections;
 using System.Collections.Generic;
 
 public class ComboListFetcher {
 
+    private JSONNode comboJsonSheet = null;
+    private JSONArray combosArray = null;
+
     private static ComboListFetcher instance = null;
 
-    private List<List<int>> comboList;
+    private Dictionary<int, OneCombo> comboMap = new Dictionary<int, OneCombo>();
+    // In-cache quick access
+    private Dictionary<int, List<int>> comboList = new Dictionary<int, List<int>>();
+
+    private TileInfoFetcher tileInfoFetcher;
 
     public static ComboListFetcher GetInstance() {
         if (instance == null) {
@@ -16,17 +24,41 @@ public class ComboListFetcher {
         return instance;
     }
 
-    public List<List<int>> GetList() {
+    public Dictionary<int, List<int>> GetList() {
         return comboList;
     }
 
-    private ComboListFetcher () {
-        int[] combo1Array = { 2, 2, 2, 2 };
-        int[] combo2Array = { 2, 2, 3, 4 };
-        List<int> combo1 = new List<int>(combo1Array);
-        List<int> combo2 = new List<int>(combo2Array);
+    public string GetComboNameById(int id) {
+        OneCombo aCombo;
+        if (comboMap.TryGetValue(id, out aCombo)) {
+            return aCombo.Name;
+        } else {
+            return "";
+        }
+    }
 
-        comboList = new List<List<int>>() { combo1, combo2 };
+    private ComboListFetcher () {
+
+        comboJsonSheet = JSON.Parse((Resources.Load("ComboList") as TextAsset).text);
+        combosArray = comboJsonSheet["combos"] as JSONArray;
+
+        tileInfoFetcher = TileInfoFetcher.GetInstance();
+
+        for(int i = 0; i < combosArray.Count; ++i) {
+
+            if (combosArray[i] == null) {
+                break;
+            }
+
+            OneCombo aCombo = JsonUtility.FromJson<OneCombo>(combosArray[i].ToString());
+            comboMap.Add(aCombo.ComboId, aCombo);
+            // List that tracks tiles using tile numbers instead of names
+            List<int> tileNumberList = new List<int>();
+            foreach(string tileName in aCombo.ComboSeq) {
+                tileNumberList.Add(tileInfoFetcher.GetTileNumberFromName(tileName));
+            }
+            comboList.Add(aCombo.ComboId, tileNumberList);
+        }
     }
 
 }

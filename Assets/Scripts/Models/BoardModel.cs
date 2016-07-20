@@ -8,16 +8,15 @@ public class BoardModel : IBoardModel {
     public BoardIsEmptySignal boardIsEmptySignal{ get; set; }
     [Inject]
     public TileDestroyedSignal tileDestroyedSignal{ get; set; }
+    
+    private const int numOfRow = 7;
+    private const int numOfColumn = 8;
+    private const int numOfSuits = 5;
+    
+    private int numOfTiles = (numOfRow - 2) * (numOfColumn - 2);
+    private int pairs = (numOfRow - 2) * (numOfColumn - 2) / 2;
 
-    public int r1 = 4, c1 = 2, r2 = 2, c2 = 2;
-    
-    const int numOfRow = 7;
-    const int numOfColumn = 8;
-    const int numOfSuits = 5;
-    
-    int pairs = (numOfRow - 2) * (numOfColumn - 2) / 2;
-    
-    int[,] gameBoard = new int[numOfRow, numOfColumn];
+    private int[,] gameBoard = new int[numOfRow, numOfColumn];
     
     public int numOfRows () {
         return numOfRow;
@@ -37,7 +36,8 @@ public class BoardModel : IBoardModel {
     public void GenerateBoard() {
         
         RemainingTileGenerator tileGen = new RemainingTileGenerator(numOfRow - 2, numOfColumn - 2);
-        pairs = (numOfRow - 2) * (numOfColumn - 2) / 2;
+        numOfTiles = (numOfRow - 2) * (numOfColumn - 2);
+        pairs = numOfTiles / 2;
         int remainingPairs = pairs;
 
         int randomSuit;
@@ -81,27 +81,34 @@ public class BoardModel : IBoardModel {
             return stage3Check(r1, c1, r2, c2);
     }
     
-    public bool remove(int r1, int c1, int r2, int c2) {
-        
-        bool beatenGame = false;
-        
+    public void remove(int r, int c) {
+        gameBoard[r, c] = 0;
+
+        numOfTiles -= 1;
+
+        tileDestroyedSignal.Dispatch(r, c);
+
+        if (numOfTiles == 0) {
+            boardIsEmptySignal.Dispatch();
+        }
+    }
+
+    public void remove(int r1, int c1, int r2, int c2) {
+                
         gameBoard[r1 , c1] = 0;
         gameBoard[r2 , c2] = 0;
-        pairs--;
+        numOfTiles -= 2;
 
         tileDestroyedSignal.Dispatch(r1, c1);
         tileDestroyedSignal.Dispatch(r2, c2);
 
-        if (pairs == 0) {
+        if (numOfTiles == 0) {
             boardIsEmptySignal.Dispatch();
-            beatenGame = true;
         }
-        
-        return beatenGame;
     }
     
     public bool isEmpty() {
-        return pairs == 0;
+        return numOfTiles == 0;
     }
 
     private class RemainingTileGenerator {

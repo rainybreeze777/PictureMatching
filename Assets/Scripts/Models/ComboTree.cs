@@ -8,8 +8,15 @@ public class ComboTree {
 
     private ComboNode rootNode;
 
+    private ComboListFetcher comboListFetcher;
+
     private ComboTree () {
         rootNode = new ComboNode(-1, true);
+        comboListFetcher = ComboListFetcher.GetInstance();
+
+        foreach(KeyValuePair<int, List<int>> aCombo in comboListFetcher.GetList()) {
+            AddCombo(aCombo.Value, comboListFetcher.GetComboNameById(aCombo.Key));
+        }
     }
 
     public static ComboTree GetInstance() {

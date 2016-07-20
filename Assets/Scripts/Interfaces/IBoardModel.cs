@@ -7,6 +7,7 @@ public interface IBoardModel {
 	int GetTileAt(int row, int column);
 	void GenerateBoard();
 	bool isRemovable(int r1, int c1, int r2, int c2);
-	bool remove(int r1, int c1, int r2, int c2);
+	void remove(int r, int c);
+	void remove(int r1, int c1, int r2, int c2);
 	bool isEmpty();
 }
