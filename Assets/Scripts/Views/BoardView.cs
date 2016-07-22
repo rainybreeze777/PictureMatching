@@ -28,6 +28,12 @@ public class BoardView : View {
 
     private List<List<GameObject>> onScreenTiles = new List<List<GameObject>>();
 
+    // Flags used to control interactions with the board elements
+    public bool highlightingColumn = false;
+
+    // Variables associated with interaction controls
+    private int prevHoverCol = -1;
+
     internal void Init(IBoardModel boardModel) {
 
         infoFetcher = TileInfoFetcher.GetInstance();
@@ -50,11 +56,38 @@ public class BoardView : View {
 
     public void DestroyTile(int row, int col) {
         Debug.Log("Destroying tile at row " + (row-1) + " col " + (col-1));
+        // -1 for Row and Col because BoardModel has extra tiles around the whole
+        // board for cancel checks. Thus it has 1 extra row and 1 extra column
+        // at start that the onScreenTiles doesn't record
         Destroy(onScreenTiles[row-1][col-1]);
         onScreenTiles[row-1][col-1] = null;
     }
 
-    void BoardSetup (IBoardModel boardModel) {
+    void Update() {
+
+        if (highlightingColumn) {
+            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+
+            if (hit.collider != null) {
+                Tile hitTile = hit.transform.GetComponent<Tile>();
+                if (hitTile != null && prevHoverCol != hitTile.Column) {
+                    if (prevHoverCol != -1) {
+                        DehighlightColumn(prevHoverCol);
+                    }
+                    HighlightColumn(hitTile.Column);
+                    prevHoverCol = hitTile.Column;
+                }
+            } else if (prevHoverCol != -1){
+                DehighlightColumn(prevHoverCol);
+                prevHoverCol = -1;
+            }
+        } else {
+            prevHoverCol = -1;
+        }
+
+    }
+
+    private void BoardSetup (IBoardModel boardModel) {
         boardHolder = new GameObject ("Board");
 
         int numOfRows = boardModel.numOfRows();
@@ -102,6 +135,20 @@ public class BoardView : View {
                 onScreenRow++;
             }
             shouldAddRow = true;
+        }
+    }
+
+    private void HighlightColumn(int col) {
+        for (int i = 0; i < onScreenTiles.Count; ++i) {
+            // -1 for the extra starting column in BoardModel
+            onScreenTiles[i][col-1].GetComponent<Tile>().Highlight();
+        }
+    }
+
+    private void DehighlightColumn(int col) {
+        for (int i = 0; i < onScreenTiles.Count; ++i) {
+            // -1 for the extra starting column in BoardModel
+            onScreenTiles[i][col-1].GetComponent<Tile>().Dehighlight();
         }
     }
 }

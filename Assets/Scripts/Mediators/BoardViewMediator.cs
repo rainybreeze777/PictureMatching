@@ -37,28 +37,6 @@ public class BoardViewMediator : Mediator {
 
             tile1 = null;
             tile2 = null;
-
-            // if (boardModel.isRemovable(tile1.Row, 
-            //                             tile1.Column, 
-            //                             tile2.Row, 
-            //                             tile2.Column)) {
-
-            //     attemptTileCancelSignal.Dispatch(tile1.TileNumber);
-            //     Destroy(tile1.GetGameObject());
-            //     Destroy(tile2.GetGameObject());
-                
-            //     boardModel.remove(tile1.Row, tile1.Column, tile2.Row, tile2.Column);
-            //     if (boardModel.isEmpty()) {
-            //         Debug.Log("Dispatching boardIsEmptySignal");
-            //         boardIsEmptySignal.Dispatch();
-            //     }
-
-            // } else {
-            //     tile1.Deselect();
-            //     tile2.Deselect();
-            // }
-            // tile1 = null;
-            // tile2 = null;
         }
     }
 
@@ -76,6 +54,10 @@ public class BoardViewMediator : Mediator {
     public void ResetBoard() {
         boardModel.GenerateBoard();
         boardView.ResetBoard(boardModel);
+    }
+
+    public void EnableHighlightCol(bool enable) {
+        boardView.highlightingColumn = enable;
     }
 
     public override void OnRegister() {

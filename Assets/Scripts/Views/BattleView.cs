@@ -50,19 +50,6 @@ public class BattleView : View {
     private float widthBetweenTwoComboTiles;
     private float speed = 5.0f;
 
-    //This is meant to get a reference to GameView
-    //However, this is bad design... We should avoid
-    //Getting unnecessary references to produce tight coupling
-    //Really what we need is DI and Signal&Slots
-    //Checkout StrangeIoC
-    //For now this is temporary code to get project going
-    // public GameView gameView;
-
-    //Mock state-identifiers
-    public const string won = "Won";
-    public const string lost = "Lost";
-    public const string unresolved = "Unresolved";
-
     // Injected Signals
     [Inject]
     public BattleWonSignal battleWonSignal{ get; set;}

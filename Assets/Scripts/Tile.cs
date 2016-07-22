@@ -73,4 +73,12 @@ public class Tile : View {
             deselectSignal.Dispatch(this);
         }
     }
+
+    public void Highlight() {
+        spriteRenderer.sprite = selectedSprite;
+    }
+
+    public void Dehighlight() {
+        spriteRenderer.sprite = normalSprite;
+    }
 }
