@@ -107,6 +107,15 @@ public class BoardModel : IBoardModel {
         }
     }
     
+    public void removeColumn(int col) {
+        for (int r = 0; r < numOfRow; ++r) {
+            if (gameBoard[r, col] != 0) {
+                gameBoard[r, col] = 0;
+                tileDestroyedSignal.Dispatch(r, col);
+            }
+        }
+    }
+
     public bool isEmpty() {
         return numOfTiles == 0;
     }

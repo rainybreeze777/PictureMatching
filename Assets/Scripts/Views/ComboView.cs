@@ -44,7 +44,7 @@ public class ComboView : View {
 
         numOfTilesOnComboSequence = comboSequenceLength;
         comboButton = GameObject.Find("MakeComboButton");
-        comboButton.GetComponent<Button>().onClick.AddListener( makeComboSignal.Dispatch );
+        comboButton.GetComponent<Button>().onClick.AddListener( FireMakeComboSignal );
         comboButton.SetActive(false);
         comboDisplayer = new GameObject ("ComboDisplayer").transform;
     }
@@ -87,5 +87,10 @@ public class ComboView : View {
 
     public void ComboButtonSetActive(bool active) {
         comboButton.SetActive(active);
+    }
+
+    private void FireMakeComboSignal() {
+        comboButton.SetActive(false);
+        makeComboSignal.Dispatch();
     }
 }

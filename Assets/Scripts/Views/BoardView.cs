@@ -55,7 +55,6 @@ public class BoardView : View {
     }
 
     public void DestroyTile(int row, int col) {
-        Debug.Log("Destroying tile at row " + (row-1) + " col " + (col-1));
         // -1 for Row and Col because BoardModel has extra tiles around the whole
         // board for cancel checks. Thus it has 1 extra row and 1 extra column
         // at start that the onScreenTiles doesn't record
@@ -141,14 +140,18 @@ public class BoardView : View {
     private void HighlightColumn(int col) {
         for (int i = 0; i < onScreenTiles.Count; ++i) {
             // -1 for the extra starting column in BoardModel
-            onScreenTiles[i][col-1].GetComponent<Tile>().Highlight();
+            if (onScreenTiles[i][col-1] != null) {
+                onScreenTiles[i][col-1].GetComponent<Tile>().Highlight();
+            }
         }
     }
 
     private void DehighlightColumn(int col) {
         for (int i = 0; i < onScreenTiles.Count; ++i) {
             // -1 for the extra starting column in BoardModel
-            onScreenTiles[i][col-1].GetComponent<Tile>().Dehighlight();
+            if (onScreenTiles[i][col-1] != null) {
+                onScreenTiles[i][col-1].GetComponent<Tile>().Dehighlight();
+            }
         }
     }
 }

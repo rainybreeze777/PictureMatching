@@ -37,6 +37,15 @@ public class ComboListFetcher {
         }
     }
 
+    public int GetComboSkillIdById(int id) {
+        OneCombo aCombo;
+        if (comboMap.TryGetValue(id, out aCombo)) {
+            return aCombo.SkillId;
+        } else {
+            return -1;
+        }
+    }
+
     private ComboListFetcher () {
 
         comboJsonSheet = JSON.Parse((Resources.Load("ComboList") as TextAsset).text);

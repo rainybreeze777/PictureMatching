@@ -2,6 +2,7 @@
     "combos" : [
         {
             "id" : 1,
+            "skillId" : 0,
             "englishName" : "comboOne",
             "comboSeq" : [
                 "Wood",
@@ -12,6 +13,7 @@
         },
         {
             "id" : 2,
+            "skillId" : 1,
             "englishName" : "comboTwo",
             "comboSeq" : [
                 "Wood",

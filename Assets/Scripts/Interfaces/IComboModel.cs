@@ -10,7 +10,7 @@ public interface IComboModel {
 
     int NumOfTilesOnComboSequence { get; set; }
 
-    void MakeCombo();
+    int MakeCombo();
 
     void ClearCancelSequence();
 

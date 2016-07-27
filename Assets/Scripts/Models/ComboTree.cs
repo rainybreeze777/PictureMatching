@@ -15,7 +15,9 @@ public class ComboTree {
         comboListFetcher = ComboListFetcher.GetInstance();
 
         foreach(KeyValuePair<int, List<int>> aCombo in comboListFetcher.GetList()) {
-            AddCombo(aCombo.Value, comboListFetcher.GetComboNameById(aCombo.Key));
+            AddCombo(aCombo.Value, 
+                        comboListFetcher.GetComboNameById(aCombo.Key), 
+                        comboListFetcher.GetComboSkillIdById(aCombo.Key));
         }
     }
 
@@ -27,7 +29,7 @@ public class ComboTree {
         return instance;
     }
 
-    public void AddCombo(List<int> comboSequence, string name) {
+    public void AddCombo(List<int> comboSequence, string name, int skillId) {
 
         if (comboSequence.Count < 2) {
             throw new System.ArgumentException("combo length must be larger than 1");
@@ -47,7 +49,7 @@ public class ComboTree {
         }
 
         //At this point, currentNode should point to the last combo
-        currentNode.FormCombo(name);
+        currentNode.FormCombo(name, skillId);
     }
 
     //Will return the name of the combo if it exists
@@ -68,6 +70,24 @@ public class ComboTree {
             return "";
         }
     }
+    //Will return the id of the combo's skill if it exists
+    //-1 if not
+    public int GetComboSkillId(List<int> comboSequence) {
+        ComboNode currentNode = rootNode;
+        foreach (int tile in comboSequence) {
+            ComboNode tempNode = currentNode.GetChild(tile);
+            if (tempNode == null) {
+                return -1;
+            }
+            currentNode = tempNode;
+        }
+
+        if (currentNode.IsACombo) {
+            return currentNode.SkillId;
+        } else {
+            return -1;
+        }
+    }
 
     private class ComboNode {
 
@@ -79,6 +99,8 @@ public class ComboTree {
         private bool isACombo = false;
         //comboName should be empty if this is not a combo
         private string comboName = "";
+        //Associated Skill ID
+        private int skillId = -1;
         //Use to indicate whether this node is root.
         private bool isRoot;
 
@@ -101,9 +123,14 @@ public class ComboTree {
             get { return comboName; }
         }
 
-        public void FormCombo (string name) {
+        public int SkillId {
+            get { return skillId; }
+        }
+
+        public void FormCombo (string name, int skillId) {
             isACombo = true;
             comboName = name;
+            this.skillId = skillId;
         }
 
         public void ClearCombo () {

@@ -48,6 +48,7 @@ public class PictureMatchingContext : MVCSContext {
         // Dependency Injection Binding
         injectionBinder.Bind<IComboModel>().To<ComboModel>().ToSingleton();
         injectionBinder.Bind<IBoardModel>().To<BoardModel>().ToSingleton();
+        injectionBinder.Bind<ISkillInitiator>().To<SkillInitiator>().ToSingleton();
         // Instantiating Signals that are triggered manually
         injectionBinder.Bind<BattleWonSignal>().ToSingleton();
         injectionBinder.Bind<BattleLostSignal>().ToSingleton();
@@ -58,5 +59,9 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<ResetActiveStateSignal>().ToSingleton();
         injectionBinder.Bind<ResetBattleSignal>().ToSingleton();
         injectionBinder.Bind<TileDestroyedSignal>().ToSingleton();
+        injectionBinder.Bind<UserInputDataRequestSignal>().ToSingleton();
+        injectionBinder.Bind<UserInputDataResponseSignal>().ToSingleton();
+
+        injectionBinder.GetInstance<ISkillInitiator>().InjectInitialize(injectionBinder);
     }
 }

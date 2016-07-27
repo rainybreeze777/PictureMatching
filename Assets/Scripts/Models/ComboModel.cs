@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
 using strange.extensions.signal.impl;
 
@@ -28,6 +29,7 @@ public class ComboModel : IComboModel {
     }
 
     private int comboStart, comboEnd;
+    private int comboSkillId = -1;
 
     public ComboModel() {
         onScreenNumOfTilesOnComboSequence = 5;
@@ -43,8 +45,8 @@ public class ComboModel : IComboModel {
         for (int i = startIndex; i < cancelSequence.Count - 2; i++ ) {
 
             List<int> subSequence = cancelSequence.GetRange(i, cancelSequence.Count - i);
-            string comboName = comboTree.GetCombo(subSequence);
-            if (!comboName.Equals("")) {
+            comboSkillId = comboTree.GetComboSkillId(subSequence);
+            if (comboSkillId != -1) {
                 comboPossibleSignal.Dispatch(true);
                 comboStart = i;
                 comboEnd = cancelSequence.Count - i;
@@ -58,9 +60,17 @@ public class ComboModel : IComboModel {
         return cancelSequence;
     }
 
-    public void MakeCombo() {
+    [PostConstruct]
+    public void PostConstruct()
+    {
+        Debug.LogWarning("ComboModel injection ready");
+    }
+
+    public int MakeCombo() {
         comboTracker.Add(comboStart);
         comboTracker.Add(comboEnd);
+
+        return comboSkillId;
     }
 
     public void ClearCancelSequence() {
