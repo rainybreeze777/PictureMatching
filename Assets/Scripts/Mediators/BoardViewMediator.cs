@@ -96,16 +96,21 @@ public class BoardViewMediator : Mediator {
 
             if (userInputRequest.Equals(BoardViewRequest.SELECT_COL)) {
                 boardView.highlightingColumn = true;
+            } else if (userInputRequest.Equals(BoardViewRequest.SELECT_SQUARE2)) {
+                boardView.EnableHighlightArea(3, 3); //TODO: correct implementation to cancel 2x2
             }
         }
     }
 
     private void ReplyToRequest(Tile aTile) {
         ActionParams paramsList = new ActionParams();
+
         if (pendingRequestType.Equals(BoardViewRequest.SELECT_COL)) {
             paramsList.AddToParamList(aTile.Column);
             dataResponseSignal.Dispatch(pendingRequestType, paramsList);
             boardView.highlightingColumn = false;
+        } else if (pendingRequestType.Equals(BoardViewRequest.SELECT_SQUARE2)) {
+
         }
 
         requestingUserInput = false;

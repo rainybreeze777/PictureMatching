@@ -59,9 +59,10 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<ResetActiveStateSignal>().ToSingleton();
         injectionBinder.Bind<ResetBattleSignal>().ToSingleton();
         injectionBinder.Bind<TileDestroyedSignal>().ToSingleton();
+        injectionBinder.Bind<TileRangeDestroyedSignal>().ToSingleton();
         injectionBinder.Bind<UserInputDataRequestSignal>().ToSingleton();
         injectionBinder.Bind<UserInputDataResponseSignal>().ToSingleton();
-
+        // Manuall Instantiate SkillInitiator and inject to skill classes
         injectionBinder.GetInstance<ISkillInitiator>().InjectInitialize(injectionBinder);
     }
 }

@@ -8,6 +8,8 @@ public class BoardModel : IBoardModel {
     public BoardIsEmptySignal boardIsEmptySignal{ get; set; }
     [Inject]
     public TileDestroyedSignal tileDestroyedSignal{ get; set; }
+    [Inject]
+    public TileRangeDestroyedSignal tileRangeDestroyedSignal{ get; set; }
     
     private const int numOfRow = 7;
     private const int numOfColumn = 8;
@@ -114,6 +116,19 @@ public class BoardModel : IBoardModel {
                 tileDestroyedSignal.Dispatch(r, col);
             }
         }
+    }
+
+    // Removing indices are inclusive
+    public void removeRange(int startRow, int endRow, int startCol, int endCol)
+    {
+        for (int r = startRow; r <= endRow; ++r ) {
+            for (int c = startCol; c <= endCol; ++c ) {
+                if (gameBoard[r, c] != 0) {
+                    gameBoard[r, c] = 0;
+                }
+            }
+        }
+        tileRangeDestroyedSignal.Dispatch(startRow, endRow, startCol, endCol);
     }
 
     public bool isEmpty() {

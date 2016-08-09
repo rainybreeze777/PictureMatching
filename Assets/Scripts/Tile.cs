@@ -13,6 +13,7 @@ public class Tile : View {
     private TileInfoFetcher infoFetcher;
 
     private bool isSelected = false;
+    private bool isHightlighted = false;
 
     private int row, column;
     private int tileNumber;
@@ -75,10 +76,16 @@ public class Tile : View {
     }
 
     public void Highlight() {
-        spriteRenderer.sprite = selectedSprite;
+        if (!isHightlighted) {
+            spriteRenderer.sprite = selectedSprite;
+            isHightlighted = true;
+        }
     }
 
     public void Dehighlight() {
-        spriteRenderer.sprite = normalSprite;
+        if (isHightlighted) {
+            spriteRenderer.sprite = normalSprite;
+            isHightlighted = false;
+        }
     }
 }

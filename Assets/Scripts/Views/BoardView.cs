@@ -30,9 +30,15 @@ public class BoardView : View {
 
     // Flags used to control interactions with the board elements
     public bool highlightingColumn = false;
+    private bool highlightingRange = false;
 
     // Variables associated with interaction controls
     private int prevHoverCol = -1;
+    private int prevHoverRow = -1;
+    private int prevHoverTileQuadrant = -1;
+    private int currentMouseOverTileQuadrant;
+    private int rangeDimensionRow;
+    private int rangeDimensionCol;
 
     internal void Init(IBoardModel boardModel) {
 
@@ -62,6 +68,26 @@ public class BoardView : View {
         onScreenTiles[row-1][col-1] = null;
     }
 
+    public void EnableHighlightArea(int rowDimension, int columnDimension) {
+        if (rowDimension < 1) {
+            throw new ArgumentOutOfRangeException("BoardView EnableHighlightArea received row dimension request that is smaller than 1");
+        } else if (rowDimension > onScreenTiles.Count) {
+            throw new ArgumentOutOfRangeException("BoardView EnableHighlightArea received row dimension request that is larger than the board");
+        } else if (columnDimension < 1) {
+            throw new ArgumentOutOfRangeException("BoardView EnableHighlightArea received column dimension request that is smaller than 1");
+        } else if (columnDimension > onScreenTiles[0].Count) {
+            throw new ArgumentOutOfRangeException("BoardView EnableHighlightArea received column dimension request that is larger than the board");
+        }
+
+        rangeDimensionRow = rowDimension;
+        rangeDimensionCol = columnDimension;
+        highlightingRange = true;
+    }
+
+    public void DisableHighlightArea() {
+        highlightingRange = false;
+    }
+
     void Update() {
 
         if (highlightingColumn) {
@@ -79,6 +105,21 @@ public class BoardView : View {
             } else if (prevHoverCol != -1){
                 DehighlightColumn(prevHoverCol);
                 prevHoverCol = -1;
+            }
+        } else if (highlightingRange) {
+            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+
+            if (hit.collider != null) {
+                Tile hitTile = hit.transform.GetComponent<Tile>();
+                
+                HighlightRange(hitTile);
+                prevHoverRow = hitTile.Row;
+                prevHoverCol = hitTile.Column;
+
+            } else if (prevHoverCol != -1 || prevHoverRow != -1) {
+                DehighlightPrevSelection();
+                prevHoverCol = -1;
+                prevHoverRow = -1;
             }
         } else {
             prevHoverCol = -1;
@@ -152,6 +193,127 @@ public class BoardView : View {
             if (onScreenTiles[i][col-1] != null) {
                 onScreenTiles[i][col-1].GetComponent<Tile>().Dehighlight();
             }
+        }
+    }
+
+    private void HighlightRange(Tile selected, int quadrant = -1) {
+
+        int onScreenTileRow = selected.Row - 1;
+        int onScreenTileCol = selected.Column - 1;
+
+        int numOfRows = onScreenTiles.Count;
+        int numOfColumns = onScreenTiles[0].Count;
+
+        int halfHeight = rangeDimensionRow / 2;
+        int halfWidth = rangeDimensionCol / 2;
+
+        if ((rangeDimensionRow % 2 == 1) && (rangeDimensionCol % 2 == 1)) {
+            // Easy case where the selection square is based
+            // on the actual tile squares
+
+            // the end coordinates have +1 because the toggle function end marker
+            // is exclusive, thus loop needs 1 extra count to end properly
+            ToggleRectHighlight(true, 
+                onScreenTileRow - halfHeight,
+                onScreenTileRow + halfHeight + 1,
+                onScreenTileCol - halfWidth,
+                onScreenTileCol + halfWidth + 1 );
+
+            // Placeholder initializations to bypass compiler's check for
+            // usage of uninitialized variables
+            int rowLoopStart = -1;
+            int rowLoopEnd = -1;
+            int colLoopStart = -1;
+            int colLoopEnd = -1;
+            bool shouldDehighlightRow = false;
+            bool shouldDehighlightCol = false;
+
+            // Dehighlight columns when moving
+            if ( prevHoverCol != -1 && prevHoverCol < selected.Column ) {
+                shouldDehighlightCol = true;
+                // When moving to the larger col count
+                // first convert the tile into onScreenTile coordinates, i.e. -1
+                // then - halfwidth to account for the extra col at the left
+                colLoopStart = prevHoverCol - halfWidth - 1;
+                colLoopEnd = selected.Column - halfWidth - 1;
+            } else if ( prevHoverCol != -1 && prevHoverCol > selected.Column) {
+                shouldDehighlightCol = true;
+                // When moving to the smaller col count
+                // first convert the tile into onScreenTile coordinates, i.e. -1
+                // then + halfwidth to account for the extra col at the right
+                // finally +1 to get the index of the column to be deleted
+                // because the deletion loop is in the reverse order
+                // so the indexing needs 1 offset
+                colLoopStart = selected.Column + halfWidth;
+                colLoopEnd = prevHoverCol + halfWidth;
+            }
+            if (shouldDehighlightCol) {
+                ToggleRectHighlight(false, 0, numOfRows, colLoopStart, colLoopEnd);
+            }
+
+            // Dehighlight rows when moving
+            if ( prevHoverRow != -1 && prevHoverRow < selected.Row ) {
+                shouldDehighlightRow = true;
+                // Similar reasoning with col
+                rowLoopStart = prevHoverRow - halfHeight - 1;
+                rowLoopEnd = selected.Row - halfHeight - 1;
+            } else if (prevHoverRow != -1 && prevHoverRow > selected.Row ) {
+                shouldDehighlightRow = true;
+                // similar reasoning with col
+                rowLoopStart = selected.Row + halfHeight;
+                rowLoopEnd = prevHoverRow + halfHeight;
+            }
+            if (shouldDehighlightRow) {
+                ToggleRectHighlight(false, rowLoopStart, rowLoopEnd, 0, numOfColumns);
+            }
+        }
+    }
+
+    // End marker is exclusive
+    private void ToggleRectHighlight(
+        bool shouldHighlight
+        , int onScreenRowStart
+        , int onScreenRowEnd
+        , int onScreenColStart
+        , int onScreenColEnd)
+    {
+        
+        int numOfRows = onScreenTiles.Count;
+        int numOfColumns = onScreenTiles[0].Count;
+
+        for (int r = onScreenRowStart; r < onScreenRowEnd; ++r) {
+            
+            if (r < 0 || r >= numOfRows) { continue; }
+
+            for (int c = onScreenColStart; c < onScreenColEnd; ++c) {
+                
+                if (c < 0 || c >= numOfColumns) { continue; }
+
+                if (onScreenTiles[r][c] != null) {
+                    if (shouldHighlight) {
+                        onScreenTiles[r][c].GetComponent<Tile>().Highlight();
+                    } else {
+                        onScreenTiles[r][c].GetComponent<Tile>().Dehighlight();
+                    }
+                }
+            }
+        }
+    }
+
+    private void DehighlightPrevSelection() {
+
+        int onScreenTileRow = prevHoverRow - 1;
+        int onScreenTileCol = prevHoverCol - 1;
+
+        int halfHeight = rangeDimensionRow / 2;
+        int halfWidth = rangeDimensionCol / 2;
+
+        if ((rangeDimensionRow % 2 == 1) && (rangeDimensionCol % 2 == 1)) {
+            ToggleRectHighlight(false, 
+                onScreenTileRow - halfHeight,
+                onScreenTileRow + halfHeight + 1,
+                onScreenTileCol - halfWidth,
+                onScreenTileCol + halfWidth + 1 );
         }
     }
 }

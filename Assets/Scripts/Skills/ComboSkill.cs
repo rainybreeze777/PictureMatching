@@ -16,12 +16,6 @@ public class ComboSkill : IComboSkill {
     protected ActionParams inputData = null;
     protected IBoardModel boardModel = null;
 
-    private int skillId;
-    public int SkillId
-    {
-        get { return skillId; }
-    }
-
     private bool needInputData = false;
     private bool requestingData = false;
 
@@ -42,7 +36,6 @@ public class ComboSkill : IComboSkill {
     }
 
     protected virtual void ExecuteSkill() {
-        
     }
 
     protected void NeedUserInput (Enum userInputType) {
@@ -50,8 +43,7 @@ public class ComboSkill : IComboSkill {
         userInputEnum = userInputType;
     }
 
-    protected ComboSkill(int skillId) {
-        this.skillId = skillId;
+    protected ComboSkill() {
     }
 
     [PostConstruct]

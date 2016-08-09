@@ -14,6 +14,8 @@ public class SkillInitiator : ISkillInitiator {
 
     private Dictionary<int, IComboSkill> skillMap = new Dictionary<int, IComboSkill>();
 
+    private int keyCount = 0;
+
     public void InvokeSkillFuncFromSkillId(int skillId) {
         skillMap[skillId].CancelStageExecute(boardModel);
     }
@@ -22,20 +24,24 @@ public class SkillInitiator : ISkillInitiator {
         
     }
 
-    // [PostConstruct]
-    // public void PostConstruct() {
-    //     Debug.LogWarning("SkillInitiator PostConstruct");
-    //     // TODO: For now hard-code skillIds with each individual functions
-    //     // Need more investigation as to whether there are better ways
-    //     // to achieve this
-    //     // IComboSkill comboSkill = new CancelColumnSkill(1);
-    //     // skillMap.Add(1, comboSkill);
-    // }
-
     public void InjectInitialize(ICrossContextInjectionBinder injectionBinder) {
-        CancelColumnSkill comboSkill = new CancelColumnSkill(1);
+        // TODO: For now hard-code skillIds with each individual functions
+
+        // *****ORDER MATTERS HERE, THE ORDER OF INJECTION DETERMINES *****
+        // *****THE SKILL IDS *****
+
+        // Need more investigation as to whether there are better ways
+        // to achieve this
+        
+        // Skill 0
+        InjectHelper(injectionBinder, new CancelSquare2By2Skill());
+        // Skill 1
+        InjectHelper(injectionBinder, new CancelColumnSkill());
+    }
+
+    private void InjectHelper(ICrossContextInjectionBinder injectionBinder, IComboSkill comboSkill) {
         injectionBinder.injector.Inject(comboSkill);
-        skillMap.Add(1, comboSkill);
+        skillMap.Add(keyCount++, comboSkill);
     }
 
 }
