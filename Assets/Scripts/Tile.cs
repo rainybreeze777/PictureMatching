@@ -58,7 +58,9 @@ public class Tile : View {
         if ((object)otherTile == null)
             return false;
 
-        return (row == otherTile.Row && column == otherTile.Column);
+        return (row == otherTile.Row 
+                && column == otherTile.Column 
+                && tileNumber == otherTile.TileNumber);
     }
 
     public void OnMouseDown() {

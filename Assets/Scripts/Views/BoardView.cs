@@ -37,8 +37,9 @@ public class BoardView : View {
 
     // Variables associated with interaction controls
     private int prevHoverCol = -1;
-    private int prevHoverRow = -1;
+    // private int prevHoverRow = -1;
     private int prevHoverTileQuadrant = -1;
+    private Tile prevHoverTile = null;
     private int currentMouseOverTileQuadrant;
     private int rangeDimensionRow;
     private int rangeDimensionCol;
@@ -115,12 +116,16 @@ public class BoardView : View {
 
             if (hit.collider != null) {
                 Tile hitTile = hit.transform.GetComponent<Tile>();
-                
-                HighlightRange(hitTile, DetermineTileHitQuadrant(hit.collider.bounds, hit.point));
+                int hitQuadrant = DetermineTileHitQuadrant(hit.collider.bounds, hit.point);
+                HighlightRange(hitTile, hitQuadrant);
+                prevHoverTile = hitTile;
+                prevHoverTileQuadrant = hitQuadrant;
             } else  {
                 DehighlightPrevSelection();
                 // prevHoverCol = -1;
                 // prevHoverRow = -1;
+                prevHoverTile = null;
+                prevHoverTileQuadrant = -1;
             }
         } else {
             prevHoverCol = -1;
@@ -204,8 +209,8 @@ public class BoardView : View {
         int onScreenTileRow = selected.Row - 1;
         int onScreenTileCol = selected.Column - 1;
 
-        int numOfRows = onScreenTiles.Count;
-        int numOfColumns = onScreenTiles[0].Count;
+        // int numOfRows = onScreenTiles.Count;
+        // int numOfColumns = onScreenTiles[0].Count;
 
         int halfHeight = rangeDimensionRow / 2;
         int halfWidth = rangeDimensionCol / 2;
@@ -213,6 +218,10 @@ public class BoardView : View {
         if ((rangeDimensionRow % 2 == 1) && (rangeDimensionCol % 2 == 1)) {
             // Easy case where the selection square is based
             // on the actual tile squares
+
+            if (prevHoverTile != null && prevHoverTile.Equals(selected)) {
+                return;
+            }
 
             // the end coordinates have +1 because the toggle function end marker
             // is exclusive, thus loop needs 1 extra count to end properly
@@ -275,6 +284,10 @@ public class BoardView : View {
             // Slightly harder case where the imaginary selection square
             // has to depend on which quadrant the cursor currently resides
             Assert.AreNotEqual(-1, quadrant);
+
+            if (prevHoverTile != null && prevHoverTile.Equals(selected) && prevHoverTileQuadrant == quadrant) {
+                return;
+            } 
 
             int onScreenRowStart = onScreenTileRow;
             int onScreenRowEnd = onScreenTileRow;
@@ -371,6 +384,8 @@ public class BoardView : View {
             foreach(Tile t in highlightedTiles) {
                 t.Dehighlight();
             }
+            highlightedTiles.Clear();
+            highlightedTiles = null;
         }
     }
 
