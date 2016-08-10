@@ -97,7 +97,7 @@ public class BoardViewMediator : Mediator {
             if (userInputRequest.Equals(BoardViewRequest.SELECT_COL)) {
                 boardView.highlightingColumn = true;
             } else if (userInputRequest.Equals(BoardViewRequest.SELECT_SQUARE2)) {
-                boardView.EnableHighlightArea(3, 3); //TODO: correct implementation to cancel 2x2
+                boardView.EnableHighlightArea(2, 2);
             }
         }
     }

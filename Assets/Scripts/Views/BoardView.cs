@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Assertions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,6 +28,8 @@ public class BoardView : View {
     private List<GameObject> tiles = new List<GameObject>();
 
     private List<List<GameObject>> onScreenTiles = new List<List<GameObject>>();
+    private List<Tile> highlightedTiles = null;
+    private List<Tile> tilesToBeHighlighted = null;
 
     // Flags used to control interactions with the board elements
     public bool highlightingColumn = false;
@@ -49,6 +52,7 @@ public class BoardView : View {
         }
 
         BoardSetup(boardModel);
+        EnableHighlightArea(2, 2);
     }
 
     public void ResetBoard (IBoardModel boardModel) {
@@ -112,14 +116,11 @@ public class BoardView : View {
             if (hit.collider != null) {
                 Tile hitTile = hit.transform.GetComponent<Tile>();
                 
-                HighlightRange(hitTile);
-                prevHoverRow = hitTile.Row;
-                prevHoverCol = hitTile.Column;
-
-            } else if (prevHoverCol != -1 || prevHoverRow != -1) {
+                HighlightRange(hitTile, DetermineTileHitQuadrant(hit.collider.bounds, hit.point));
+            } else  {
                 DehighlightPrevSelection();
-                prevHoverCol = -1;
-                prevHoverRow = -1;
+                // prevHoverCol = -1;
+                // prevHoverRow = -1;
             }
         } else {
             prevHoverCol = -1;
@@ -196,6 +197,8 @@ public class BoardView : View {
         }
     }
 
+    // quadrant is using Cartesian Coordinate system that splits
+    // a cartesian plane into 4 quadrants
     private void HighlightRange(Tile selected, int quadrant = -1) {
 
         int onScreenTileRow = selected.Row - 1;
@@ -213,12 +216,12 @@ public class BoardView : View {
 
             // the end coordinates have +1 because the toggle function end marker
             // is exclusive, thus loop needs 1 extra count to end properly
-            ToggleRectHighlight(true, 
-                onScreenTileRow - halfHeight,
-                onScreenTileRow + halfHeight + 1,
-                onScreenTileCol - halfWidth,
-                onScreenTileCol + halfWidth + 1 );
+            HighlightRect( onScreenTileRow - halfHeight,
+                            onScreenTileRow + halfHeight + 1,
+                            onScreenTileCol - halfWidth,
+                            onScreenTileCol + halfWidth + 1 );
 
+            /*
             // Placeholder initializations to bypass compiler's check for
             // usage of uninitialized variables
             int rowLoopStart = -1;
@@ -248,7 +251,7 @@ public class BoardView : View {
                 colLoopEnd = prevHoverCol + halfWidth;
             }
             if (shouldDehighlightCol) {
-                ToggleRectHighlight(false, 0, numOfRows, colLoopStart, colLoopEnd);
+                HighlightRect(false, 0, numOfRows, colLoopStart, colLoopEnd);
             }
 
             // Dehighlight rows when moving
@@ -264,22 +267,61 @@ public class BoardView : View {
                 rowLoopEnd = prevHoverRow + halfHeight;
             }
             if (shouldDehighlightRow) {
-                ToggleRectHighlight(false, rowLoopStart, rowLoopEnd, 0, numOfColumns);
+                HighlightRect(false, rowLoopStart, rowLoopEnd, 0, numOfColumns);
             }
+
+            */
+        } else if ((rangeDimensionRow % 2 == 0) && (rangeDimensionCol % 2 == 0)) {
+            // Slightly harder case where the imaginary selection square
+            // has to depend on which quadrant the cursor currently resides
+            Assert.AreNotEqual(-1, quadrant);
+
+            int onScreenRowStart = onScreenTileRow;
+            int onScreenRowEnd = onScreenTileRow;
+            int onScreenColStart = onScreenTileCol;
+            int onScreenColEnd = onScreenTileCol;
+
+            switch (quadrant) {
+                case 1:
+                    onScreenRowStart = onScreenTileRow - halfHeight + 1;
+                    onScreenRowEnd = onScreenTileRow + halfHeight + 1;
+                    onScreenColStart = onScreenTileCol - halfWidth + 1;
+                    onScreenColEnd = onScreenTileCol + halfWidth + 1;
+                    break;
+                case 2:
+                    onScreenRowStart = onScreenTileRow - halfHeight + 1;
+                    onScreenRowEnd = onScreenTileRow + halfHeight + 1;
+                    onScreenColStart = onScreenTileCol - halfWidth;
+                    onScreenColEnd = onScreenTileCol + halfWidth;
+                    break;
+                case 3:
+                    onScreenRowStart = onScreenTileRow - halfHeight;
+                    onScreenRowEnd = onScreenTileRow + halfHeight;
+                    onScreenColStart = onScreenTileCol - halfWidth;
+                    onScreenColEnd = onScreenTileCol + halfWidth;
+                    break;
+                case 4:
+                    onScreenRowStart = onScreenTileRow - halfHeight;
+                    onScreenRowEnd = onScreenTileRow + halfHeight;
+                    onScreenColStart = onScreenTileCol - halfWidth + 1;
+                    onScreenColEnd = onScreenTileCol + halfWidth + 1;
+                    break;
+            }
+
+            HighlightRect(onScreenRowStart, onScreenRowEnd, onScreenColStart, onScreenColEnd);
         }
     }
 
     // End marker is exclusive
-    private void ToggleRectHighlight(
-        bool shouldHighlight
-        , int onScreenRowStart
+    private void HighlightRect(
+        int onScreenRowStart
         , int onScreenRowEnd
         , int onScreenColStart
         , int onScreenColEnd)
     {
-        
         int numOfRows = onScreenTiles.Count;
         int numOfColumns = onScreenTiles[0].Count;
+        tilesToBeHighlighted = new List<Tile>();
 
         for (int r = onScreenRowStart; r < onScreenRowEnd; ++r) {
             
@@ -289,19 +331,28 @@ public class BoardView : View {
                 
                 if (c < 0 || c >= numOfColumns) { continue; }
 
-                if (onScreenTiles[r][c] != null) {
-                    if (shouldHighlight) {
-                        onScreenTiles[r][c].GetComponent<Tile>().Highlight();
-                    } else {
-                        onScreenTiles[r][c].GetComponent<Tile>().Dehighlight();
-                    }
+                Tile t = onScreenTiles[r][c].GetComponent<Tile>();
+                tilesToBeHighlighted.Add(t);
+                t.Highlight();
+            }
+        }
+
+        // Dehighlight previously highlighted tiles if they are
+        // not in range
+        if (highlightedTiles != null) {
+            foreach (Tile t in highlightedTiles) {
+                if (!tilesToBeHighlighted.Contains(t)) {
+                    t.Dehighlight();
                 }
             }
         }
+        highlightedTiles = tilesToBeHighlighted; // Reassign the reference to the new list
+        tilesToBeHighlighted = null; // Set reference to null to indicate highlight is done
     }
 
     private void DehighlightPrevSelection() {
 
+        /*
         int onScreenTileRow = prevHoverRow - 1;
         int onScreenTileCol = prevHoverCol - 1;
 
@@ -309,11 +360,25 @@ public class BoardView : View {
         int halfWidth = rangeDimensionCol / 2;
 
         if ((rangeDimensionRow % 2 == 1) && (rangeDimensionCol % 2 == 1)) {
-            ToggleRectHighlight(false, 
+            HighlightRect(false, 
                 onScreenTileRow - halfHeight,
                 onScreenTileRow + halfHeight + 1,
                 onScreenTileCol - halfWidth,
                 onScreenTileCol + halfWidth + 1 );
+        }
+        */
+        if (highlightedTiles != null) {
+            foreach(Tile t in highlightedTiles) {
+                t.Dehighlight();
+            }
+        }
+    }
+
+    private int DetermineTileHitQuadrant(Bounds tileBound, Vector2 hitPoint) {
+        if (hitPoint.x > tileBound.center.x) {
+            return hitPoint.y > tileBound.center.y ? 1 : 4;
+        } else {
+            return hitPoint.y > tileBound.center.y ? 2 : 3;
         }
     }
 }
