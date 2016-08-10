@@ -95,7 +95,7 @@ public class BoardViewMediator : Mediator {
             pendingRequestType = userInputRequest;
 
             if (userInputRequest.Equals(BoardViewRequest.SELECT_COL)) {
-                boardView.highlightingColumn = true;
+                boardView.EnableHighlightColumn();
             } else if (userInputRequest.Equals(BoardViewRequest.SELECT_SQUARE2)) {
                 boardView.EnableHighlightArea(2, 2);
             }
@@ -108,7 +108,7 @@ public class BoardViewMediator : Mediator {
         if (pendingRequestType.Equals(BoardViewRequest.SELECT_COL)) {
             paramsList.AddToParamList(aTile.Column);
             dataResponseSignal.Dispatch(pendingRequestType, paramsList);
-            boardView.highlightingColumn = false;
+            boardView.DisableHighlightingColumn();
         } else if (pendingRequestType.Equals(BoardViewRequest.SELECT_SQUARE2)) {
 
         }

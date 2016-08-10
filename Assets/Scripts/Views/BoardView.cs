@@ -32,7 +32,7 @@ public class BoardView : View {
     private List<Tile> tilesToBeHighlighted = null;
 
     // Flags used to control interactions with the board elements
-    public bool highlightingColumn = false;
+    private bool highlightingColumn = false;
     private bool highlightingRange = false;
 
     // Variables associated with interaction controls
@@ -53,7 +53,6 @@ public class BoardView : View {
         }
 
         BoardSetup(boardModel);
-        EnableHighlightArea(2, 2);
     }
 
     public void ResetBoard (IBoardModel boardModel) {
@@ -89,8 +88,16 @@ public class BoardView : View {
         highlightingRange = true;
     }
 
-    public void DisableHighlightArea() {
+    public void DisableHighlight() {
         highlightingRange = false;
+    }
+
+    public void EnableHighlightColumn() {
+        highlightingColumn = true;
+    }
+
+    public void DisableHighlightingColumn() {
+        highlightingColumn = false;
     }
 
     void Update() {
@@ -183,6 +190,7 @@ public class BoardView : View {
             shouldAddRow = true;
         }
     }
+
 
     private void HighlightColumn(int col) {
         for (int i = 0; i < onScreenTiles.Count; ++i) {
@@ -344,9 +352,11 @@ public class BoardView : View {
                 
                 if (c < 0 || c >= numOfColumns) { continue; }
 
-                Tile t = onScreenTiles[r][c].GetComponent<Tile>();
-                tilesToBeHighlighted.Add(t);
-                t.Highlight();
+                if (onScreenTiles[r][c] != null) {
+                    Tile t = onScreenTiles[r][c].GetComponent<Tile>();
+                    tilesToBeHighlighted.Add(t);
+                    t.Highlight();
+                }
             }
         }
 
