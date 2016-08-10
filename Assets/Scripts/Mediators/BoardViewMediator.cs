@@ -24,6 +24,8 @@ public class BoardViewMediator : Mediator {
     [Inject]
     public TileDestroyedSignal tileDestroyedSignal { get; set; }
     [Inject]
+    public TileRangeDestroyedSignal tileRangeDestroyedSignal { get; set; }
+    [Inject]
     public UserInputDataRequestSignal dataRequestSignal { get; set; }
     [Inject]
     public UserInputDataResponseSignal dataResponseSignal { get; set; }
@@ -85,6 +87,7 @@ public class BoardViewMediator : Mediator {
         boardView.tileDeselectedSignal.AddListener(TileDeselected);
 
         tileDestroyedSignal.AddListener(boardView.DestroyTile);
+        tileRangeDestroyedSignal.AddListener(DestroyTileRange);
 
         dataRequestSignal.AddListener(ResolveRequest);
     }
@@ -107,13 +110,31 @@ public class BoardViewMediator : Mediator {
 
         if (pendingRequestType.Equals(BoardViewRequest.SELECT_COL)) {
             paramsList.AddToParamList(aTile.Column);
-            dataResponseSignal.Dispatch(pendingRequestType, paramsList);
             boardView.DisableHighlightingColumn();
         } else if (pendingRequestType.Equals(BoardViewRequest.SELECT_SQUARE2)) {
-
+            paramsList.AddToParamList(boardView.SelectedAreaModelRowStart);
+            paramsList.AddToParamList(boardView.SelectedAreaModelRowEnd);
+            paramsList.AddToParamList(boardView.SelectedAreaModelColStart);
+            paramsList.AddToParamList(boardView.SelectedAreaModelColEnd);
+            boardView.DisableHighlightArea();
         }
+
+        dataResponseSignal.Dispatch(pendingRequestType, paramsList);
 
         requestingUserInput = false;
         pendingRequestType = null;
+    }
+
+    private void DestroyTileRange(
+        int rowStart
+        , int rowEnd
+        , int colStart
+        , int colEnd)
+    {
+        for (int r = rowStart; r <= rowEnd; ++r) {
+            for (int c = colStart; c <= colEnd; ++c) {
+                boardView.DestroyTile(r, c);
+            }
+        }
     }
 }

@@ -44,6 +44,36 @@ public class BoardView : View {
     private int rangeDimensionRow;
     private int rangeDimensionCol;
 
+    private int onScreenRowStart = -1;
+    public int SelectedAreaModelRowStart {
+        // +1 to account for the extra always empty row in BoardModel at the bottom
+        get { return onScreenRowStart + 1; }
+    }
+
+    private int onScreenRowEnd = -1;
+    public int SelectedAreaModelRowEnd {
+        // +1 to account for the extra always empty row in BoardModel at the bottom
+        // -1 because onScreenRowEnd is exclusive, whereas
+        // the BoardModel is looking for an inclusive number
+        // Thus leaving it unchanged
+        get { return onScreenRowEnd; }
+    }
+
+    private int onScreenColStart = -1;
+    public int SelectedAreaModelColStart {
+        // +1 to account for the extra always empty col in BoardModel at the left
+        get { return onScreenColStart + 1; }
+    }
+
+    private int onScreenColEnd = -1;
+    public int SelectedAreaModelColEnd {
+        // +1 to account for the extra always empty col in BoardModel at the left
+        // -1 because onScreenColEnd is exclusive, whereas
+        // the BoardModel is looking for an inclusive number
+        // Thus leaving it unchanged
+        get { return onScreenColEnd; }
+    }
+
     internal void Init(IBoardModel boardModel) {
 
         infoFetcher = TileInfoFetcher.GetInstance();
@@ -88,7 +118,7 @@ public class BoardView : View {
         highlightingRange = true;
     }
 
-    public void DisableHighlight() {
+    public void DisableHighlightArea() {
         highlightingRange = false;
     }
 
@@ -137,7 +167,6 @@ public class BoardView : View {
         } else {
             prevHoverCol = -1;
         }
-
     }
 
     private void BoardSetup (IBoardModel boardModel) {
@@ -233,10 +262,16 @@ public class BoardView : View {
 
             // the end coordinates have +1 because the toggle function end marker
             // is exclusive, thus loop needs 1 extra count to end properly
-            HighlightRect( onScreenTileRow - halfHeight,
-                            onScreenTileRow + halfHeight + 1,
-                            onScreenTileCol - halfWidth,
-                            onScreenTileCol + halfWidth + 1 );
+            onScreenRowStart = onScreenTileRow - halfHeight;
+            onScreenRowEnd = onScreenTileRow + halfHeight + 1;
+            onScreenColStart = onScreenTileCol - halfWidth;
+            onScreenColEnd = onScreenTileCol + halfWidth + 1;
+
+
+            // HighlightRect( onScreenTileRow - halfHeight,
+            //                 onScreenTileRow + halfHeight + 1,
+            //                 onScreenTileCol - halfWidth,
+            //                 onScreenTileCol + halfWidth + 1 );
 
             /*
             // Placeholder initializations to bypass compiler's check for
@@ -297,11 +332,6 @@ public class BoardView : View {
                 return;
             } 
 
-            int onScreenRowStart = onScreenTileRow;
-            int onScreenRowEnd = onScreenTileRow;
-            int onScreenColStart = onScreenTileCol;
-            int onScreenColEnd = onScreenTileCol;
-
             switch (quadrant) {
                 case 1:
                     onScreenRowStart = onScreenTileRow - halfHeight + 1;
@@ -329,26 +359,33 @@ public class BoardView : View {
                     break;
             }
 
-            HighlightRect(onScreenRowStart, onScreenRowEnd, onScreenColStart, onScreenColEnd);
+            // HighlightRect(onScreenRowStart, onScreenRowEnd, onScreenColStart, onScreenColEnd);
+        } else {
+            //TODO: Write for the cases where row and columns are not both
+            // odd or even
+            Debug.LogError("BoardView received unimplemented dimension range!");
+            return;
         }
+
+        HighlightRect(onScreenRowStart, onScreenRowEnd, onScreenColStart, onScreenColEnd);
     }
 
     // End marker is exclusive
     private void HighlightRect(
-        int onScreenRowStart
-        , int onScreenRowEnd
-        , int onScreenColStart
-        , int onScreenColEnd)
+          int rowStart
+        , int rowEnd
+        , int colStart
+        , int colEnd)
     {
         int numOfRows = onScreenTiles.Count;
         int numOfColumns = onScreenTiles[0].Count;
         tilesToBeHighlighted = new List<Tile>();
 
-        for (int r = onScreenRowStart; r < onScreenRowEnd; ++r) {
+        for (int r = rowStart; r < rowEnd; ++r) {
             
             if (r < 0 || r >= numOfRows) { continue; }
 
-            for (int c = onScreenColStart; c < onScreenColEnd; ++c) {
+            for (int c = colStart; c < colEnd; ++c) {
                 
                 if (c < 0 || c >= numOfColumns) { continue; }
 
