@@ -21,6 +21,7 @@ public class GameView : View {
     private GameObject startGameButton;
     private GameObject optionButton;
     private GameObject quitButton;
+    private GameObject endRoundButton;
 
     private GameObject resButton1;
     private GameObject resButton2;
@@ -30,6 +31,7 @@ public class GameView : View {
     private ProgressBar timeLeftPB;
 
     public Signal gameStartSignal = new Signal();
+    public Signal endThisRoundSignal = new Signal();
 
     internal void Init() {
         Screen.SetResolution (1024, 768, false);
@@ -48,6 +50,7 @@ public class GameView : View {
         resButton1 = GameObject.Find("ResolutionButton1");
         resButton2 = GameObject.Find("ResolutionButton2");
         backButton = GameObject.Find("BackButton");
+        endRoundButton = GameObject.Find("EndRoundButton");
 
         timeLeftPBPanel = GameObject.Find("TimeLeftPBPanel");
         timeLeftPB = GameObject.Find("TimeLeftPBFG").GetComponent<ProgressBar>();
@@ -64,29 +67,30 @@ public class GameView : View {
         resButton1.SetActive(false);
         resButton2.SetActive(false);
         backButton.SetActive(false);
+        endRoundButton.SetActive(false);
 
         timeLeftPBPanel.SetActive(false);
         timeLeftPB.Value = 100;
 
-        startGameButton.GetComponent<Button>().onClick.AddListener(
-            () => {
+        startGameButton.GetComponent<Button>().onClick.AddListener(() => {
                 startGameButton.SetActive(false);
                 optionButton.SetActive(false);
                 quitButton.SetActive(false);
                 titleText.enabled = false;
                 gameStartSignal.Dispatch();
             });
-        optionButton.GetComponent<Button>().onClick.AddListener(
-            () => {
+        optionButton.GetComponent<Button>().onClick.AddListener(() => {
                 startGameButton.SetActive(false);
                 optionButton.SetActive(false);
                 quitButton.SetActive(false);
                 titleText.enabled = false;
                 SwitchToOptionsMenu();
             });
-        quitButton.GetComponent<Button>().onClick.AddListener(
-            () => {
+        quitButton.GetComponent<Button>().onClick.AddListener(() => {
                 Application.Quit();
+            });
+        endRoundButton.GetComponent<Button>().onClick.AddListener(() => {
+                endThisRoundSignal.Dispatch();
             });
     }
 
@@ -95,6 +99,7 @@ public class GameView : View {
         enemyHealthText.enabled = true;
         mainCam.transform.position = battleResolveCamPos;
         timeLeftPBPanel.SetActive(false);
+        endRoundButton.SetActive(false);
     }
 
     public void SwitchToCancelTiles() {
@@ -102,6 +107,7 @@ public class GameView : View {
         enemyHealthText.enabled = false;
         mainCam.transform.position = cancelTileCamPos;
         timeLeftPBPanel.SetActive(true);
+        endRoundButton.SetActive(true);
     }
 
     private void SwitchToOptionsMenu() {

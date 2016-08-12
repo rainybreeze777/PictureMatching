@@ -46,6 +46,7 @@ public class GameViewMediator : Mediator {
         battleUnresolvedSignal.AddListener(OnBattleUnresolved);
         boardIsEmptySignal.AddListener(SwitchToBattleResolve);       
         gameView.gameStartSignal.AddListener(SwitchToCancelTiles);
+        gameView.endThisRoundSignal.AddListener(SwitchToBattleResolve);
         gameView.Init();
     }
 
