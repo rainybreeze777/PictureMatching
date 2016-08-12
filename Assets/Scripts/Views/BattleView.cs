@@ -188,9 +188,9 @@ public class BattleView : View {
         Debug.LogWarning("playerSeq Count " + playerSeq.Count);
         Debug.LogWarning("enemySeq Count " + enemySeq.Count);
 
-        startPoint = Vector3.zero;
+        startPoint = battleResolveContainer.transform.position;
         endPoint = Vector3.zero;
-        widthBetweenTwoComboTiles = 0f;
+        widthBetweenTwoComboTiles = (camCoordToWorldCoord(widthSegment, 0.0f) - camCoordToWorldCoord(0.0f, 0.0f)).x;
 
         for (int i = 0; i < maxCount; i++) {
 
@@ -209,13 +209,6 @@ public class BattleView : View {
                                 , Quaternion.identity) as GameObject;
 
                 instance.transform.SetParent(battleResolveContainer);
-                
-                if (startPoint == Vector3.zero) {
-                    startPoint = instance.transform.position;
-                }
-                else if (widthBetweenTwoComboTiles == 0f){
-                    widthBetweenTwoComboTiles = instance.transform.position.x - startPoint.x;
-                }
             }
 
             //Generate Enemy Cancel Sequence
