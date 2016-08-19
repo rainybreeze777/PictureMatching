@@ -9,9 +9,6 @@ using strange.extensions.signal.impl;
 
 public class ComboView : View {
 
-    [Inject]
-    public MakeComboSignal makeComboSignal { get; set; }
-
     //0 = Metal
     //1 = Wood
     //2 = Water
@@ -29,8 +26,6 @@ public class ComboView : View {
 
     private Transform comboDisplayer;
 
-    private GameObject comboButton;
-
     private TileInfoFetcher infoFetcher;
     private const string prefabPath = "Prefabs/ComboPrefabs/";
 
@@ -43,9 +38,6 @@ public class ComboView : View {
         }
 
         numOfTilesOnComboSequence = comboSequenceLength;
-        comboButton = GameObject.Find("MakeComboButton");
-        comboButton.GetComponent<Button>().onClick.AddListener( FireMakeComboSignal );
-        comboButton.SetActive(false);
         comboDisplayer = new GameObject ("ComboDisplayer").transform;
     }
 
@@ -83,14 +75,5 @@ public class ComboView : View {
         instance.transform.SetParent(comboDisplayer);
 
         onScreenSequence.Add(instance);
-    }
-
-    public void ComboButtonSetActive(bool active) {
-        comboButton.SetActive(active);
-    }
-
-    private void FireMakeComboSignal() {
-        comboButton.SetActive(false);
-        makeComboSignal.Dispatch();
     }
 }

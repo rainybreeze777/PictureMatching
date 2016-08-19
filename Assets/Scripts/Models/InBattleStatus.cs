@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class InBattleStatus {
+public abstract class InBattleStatus : IInBattleStatus {
 
     private int currentHealth = 100;
     private int maxHealth = 100;
@@ -14,16 +14,19 @@ public class InBattleStatus {
     public int Damage { get { return damage; } }
     public bool IsDead { get { return isDead; } }
 
-    public void DealDmg(int dmg) {
+    public void ReceiveDmg(int dmg) {
         currentHealth -= dmg;
         if (currentHealth <= 0) {
             isDead = true;
         }
+        FireHealthUpdatedSignal();
     }
-
+    
     public void ResetHealth() {
         currentHealth = maxHealth;
         isDead = false;
+        FireHealthUpdatedSignal();
     }
 
+    abstract protected void FireHealthUpdatedSignal();
 }

@@ -8,8 +8,6 @@ public class ComboViewMediator : Mediator {
     [Inject]
     public ComboView view{ get; set;}
     [Inject]
-    public ComboPossibleSignal comboPossibleSignal { get; set; }
-    [Inject]
     public IComboModel comboModel { get; set; }
     [Inject]
     public ResetActiveStateSignal resetActiveStateSignal { get; set; }
@@ -18,16 +16,11 @@ public class ComboViewMediator : Mediator {
         view.Init(comboModel.NumOfTilesOnComboSequence);
 
         comboModel.CancelAddedSignal.AddListener(OnTileCancelled);
-        comboPossibleSignal.AddListener(OnComboPossible);
         resetActiveStateSignal.AddListener(ClearCancelSequence);
     }
 
     public void OnTileCancelled(int tileNumber) {
         view.AddToCancelSequence(tileNumber);
-    }
-
-    public void OnComboPossible(bool possible) {
-        view.ComboButtonSetActive(possible);
     }
 
     public void ClearCancelSequence() {

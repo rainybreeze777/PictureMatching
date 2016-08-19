@@ -27,14 +27,14 @@ public class BattleView : View {
     private List<int> enemySeq;
     private int resolvingIndex = 0;
 
-    private InBattleStatus playerStatus;
-    private InBattleStatus enemyStatus;
+    [Inject(EInBattleStatusType.PLAYER)]
+    public IInBattleStatus playerStatus { get; set; }
+    [Inject(EInBattleStatusType.ENEMY)]
+    public IInBattleStatus enemyStatus { get; set; }
 
     private Transform battleResolveContainer;
     private Camera mainCam = null;
     private GameObject resultTile = null;
-    private Text playerHealthText;
-    private Text enemyHealthText;
 
     private float widthSegment = 1F / 10F ;
     private float heightSegment = 1F / 7F ;
@@ -67,18 +67,11 @@ public class BattleView : View {
         }
 
         battleResolveContainer = new GameObject("BattleResolveContainer").transform;
-        playerStatus = new InBattleStatus();
-        enemyStatus = new InBattleStatus();
-        playerHealthText = GameObject.Find("PlayerHealth").GetComponent<Text>();
-        enemyHealthText = GameObject.Find("EnemyHealth").GetComponent<Text>();
         mainCam = Camera.main;
-        // gameView = GameObject.Find("GameView").GetComponent<GameView>() as GameView;
     }
 
     void Update () {
 
-        playerHealthText.text = playerStatus.CurrentHealth + " / " + playerStatus.MaxHealth;
-        enemyHealthText.text = enemyStatus.CurrentHealth + " / " + enemyStatus.MaxHealth;
         bool gameShouldEnd = false;
 
         if (shouldResolve) {
@@ -105,12 +98,12 @@ public class BattleView : View {
                     case 1:
                         Debug.Log("Player wins round " + (resolvingIndex + 1 ));
                         resultTileToInstantiate = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(playerSeq[resolvingIndex], "comboPrefab")) as GameObject;
-                        enemyStatus.DealDmg(playerStatus.Damage);
+                        enemyStatus.ReceiveDmg(playerStatus.Damage);
                         break;
                     case 2:
                         Debug.Log("Enemy wins round " + (resolvingIndex + 1));
                         resultTileToInstantiate = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(enemySeq[resolvingIndex], "comboPrefab")) as GameObject;
-                        playerStatus.DealDmg(enemyStatus.Damage);
+                        playerStatus.ReceiveDmg(enemyStatus.Damage);
                         break;
                     case -1:
                         Debug.LogError("ResolveAttack got Invalid Parameters!");
@@ -191,6 +184,9 @@ public class BattleView : View {
         startPoint = battleResolveContainer.transform.position;
         endPoint = Vector3.zero;
         widthBetweenTwoComboTiles = (camCoordToWorldCoord(widthSegment, 0.0f) - camCoordToWorldCoord(0.0f, 0.0f)).x;
+
+        playerStatus.ResetHealth();
+        enemyStatus.ResetHealth();
 
         for (int i = 0; i < maxCount; i++) {
 

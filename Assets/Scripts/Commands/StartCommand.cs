@@ -12,10 +12,10 @@ public class StartCommand : Command
     
     public override void Execute()
     {
-        GameObject gameViewObject = new GameObject();
-        gameViewObject.name = "GameView";
-        gameViewObject.AddComponent<GameView>();
-        gameViewObject.transform.parent = contextView.transform;
+        // GameObject gameViewObject = new GameObject();
+        // gameViewObject.name = "GameView";
+        // gameViewObject.AddComponent<GameView>();
+        // gameViewObject.transform.parent = contextView.transform;
     
         GameObject battleViewObject = new GameObject();
         battleViewObject.name = "BattleView";
