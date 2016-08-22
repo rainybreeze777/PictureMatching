@@ -178,6 +178,7 @@ public class GameView : View {
         // quitButton.SetActive(true);
         titleText.text = "Picture Matching";
         gameControlGroup.ActivateUI(START_SCREEN_KEY);
+        startMenuGroup.ActivateUI(START_MENU_KEY);
         // titleText.enabled = true;
         // playerHealthText.enabled = false;
         // enemyHealthText.enabled = false;

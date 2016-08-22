@@ -49,6 +49,7 @@ public class BattleView : View {
     private Vector3 startPoint, endPoint;
     private float widthBetweenTwoComboTiles;
     private float speed = 5.0f;
+    private bool newBattle = true;
 
     // Injected Signals
     [Inject]
@@ -167,6 +168,7 @@ public class BattleView : View {
         battleResolveContainer = new GameObject("BattleResolveContainer").transform;
         playerStatus.ResetHealth();
         enemyStatus.ResetHealth();
+        newBattle = true;
     }
 
     public void InitiateBattleResolution(List<int> playerSequence) {
@@ -185,8 +187,11 @@ public class BattleView : View {
         endPoint = Vector3.zero;
         widthBetweenTwoComboTiles = (camCoordToWorldCoord(widthSegment, 0.0f) - camCoordToWorldCoord(0.0f, 0.0f)).x;
 
-        playerStatus.ResetHealth();
-        enemyStatus.ResetHealth();
+        if (newBattle) {
+            playerStatus.ResetHealth();
+            enemyStatus.ResetHealth();
+            newBattle = false;
+        }
 
         for (int i = 0; i < maxCount; i++) {
 
