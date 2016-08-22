@@ -81,7 +81,9 @@ public class GameViewMediator : Mediator {
     public void OnBattleUnresolved()
     {
         ResetActiveState();
+        #if !UNLIMITED_TIME
         countingDown = true;
+        #endif
         gameView.SwitchToCancelTiles();
     }
 
@@ -100,7 +102,9 @@ public class GameViewMediator : Mediator {
 
     private void SwitchToCancelTiles()
     {
+        #if !UNLIMITED_TIME
         countingDown = true;
+        #endif
         gameView.UpdateProgressBar(100);
         gameView.SwitchToCancelTiles();
     }
