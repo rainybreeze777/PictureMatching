@@ -6,18 +6,18 @@ public class ComboTree {
 
     private static ComboTree instance = null;
 
-    private ComboNode rootNode;
+    private ComboTreeNode rootNode;
 
     private ComboListFetcher comboListFetcher;
 
     private ComboTree () {
-        rootNode = new ComboNode(-1, true);
+
+        rootNode = new ComboTreeNode(-1, true);
         comboListFetcher = ComboListFetcher.GetInstance();
 
         foreach(KeyValuePair<int, List<int>> aCombo in comboListFetcher.GetList()) {
-            AddCombo(aCombo.Value, 
-                        comboListFetcher.GetComboNameById(aCombo.Key), 
-                        comboListFetcher.GetComboSkillIdById(aCombo.Key));
+            
+            AddCombo(aCombo.Value, aCombo.Key);
         }
     }
 
@@ -29,53 +29,35 @@ public class ComboTree {
         return instance;
     }
 
-    public void AddCombo(List<int> comboSequence, string name, int skillId) {
+    public void AddCombo(List<int> comboSequence, int comboId) {
 
         if (comboSequence.Count < 2) {
             throw new System.ArgumentException("combo length must be larger than 1");
         }
 
-        ComboNode currentNode = rootNode;
+        ComboTreeNode currentNode = rootNode;
 
         foreach (int tile in comboSequence) {
-            ComboNode checkNode = currentNode.GetChild(tile);
+            ComboTreeNode checkNode = currentNode.GetChild(tile);
             if (checkNode != null) {
                 currentNode = checkNode;
             } else {
-                ComboNode newNode = new ComboNode(tile);
+                ComboTreeNode newNode = new ComboTreeNode(tile);
                 currentNode.AddChildren(newNode);
                 currentNode = newNode;
             }
         }
 
         //At this point, currentNode should point to the last combo
-        currentNode.FormCombo(name, skillId);
+        currentNode.FormCombo(comboId);
     }
 
-    //Will return the name of the combo if it exists
-    //Empty String if not
-    public string GetCombo(List<int> comboSequence) {
-        ComboNode currentNode = rootNode;
-        foreach (int tile in comboSequence) {
-            ComboNode tempNode = currentNode.GetChild(tile);
-            if (tempNode == null) {
-                return "";
-            }
-            currentNode = tempNode;
-        }
-
-        if (currentNode.IsACombo) {
-            return currentNode.ComboName;
-        } else {
-            return "";
-        }
-    }
-    //Will return the id of the combo's skill if it exists
+    //Will return the id of the combo if it exists
     //-1 if not
-    public int GetComboSkillId(List<int> comboSequence) {
-        ComboNode currentNode = rootNode;
+    public int GetComboId(List<int> comboSequence) {
+        ComboTreeNode currentNode = rootNode;
         foreach (int tile in comboSequence) {
-            ComboNode tempNode = currentNode.GetChild(tile);
+            ComboTreeNode tempNode = currentNode.GetChild(tile);
             if (tempNode == null) {
                 return -1;
             }
@@ -83,69 +65,54 @@ public class ComboTree {
         }
 
         if (currentNode.IsACombo) {
-            return currentNode.SkillId;
+            return currentNode.ComboId;
         } else {
             return -1;
         }
     }
 
-    private class ComboNode {
+    private class ComboTreeNode {
 
-        private List<ComboNode> children = new List<ComboNode>();
+        private List<ComboTreeNode> children = new List<ComboTreeNode>();
 
         private int tileNumber;
         //Boolean to check whether from root to here
         //forms a combo
         private bool isACombo = false;
-        //comboName should be empty if this is not a combo
-        private string comboName = "";
-        //Associated Skill ID
-        private int skillId = -1;
+        //Associated Combo ID, should be -1 if this node is not a combo
+        private int comboId = -1;
         //Use to indicate whether this node is root.
         private bool isRoot;
 
-        public ComboNode(int tileNumber, bool isRoot = false) {
+        public ComboTreeNode(int tileNumber, bool isRoot = false) {
             if (isRoot)
                 tileNumber = -1;
             else
                 this.tileNumber = tileNumber;
         }
 
-        public int TileNumber {
-            get { return tileNumber; }
-        }
+        public int TileNumber { get { return tileNumber; } }
+        public bool IsACombo { get { return isACombo; } }
+        public int ComboId { get { return comboId; } }
 
-        public bool IsACombo {
-            get { return isACombo; }
-        }
-
-        public string ComboName {
-            get { return comboName; }
-        }
-
-        public int SkillId {
-            get { return skillId; }
-        }
-
-        public void FormCombo (string name, int skillId) {
+        public void FormCombo (int comboId) {
             isACombo = true;
-            comboName = name;
-            this.skillId = skillId;
+            this.comboId = comboId;
         }
 
         public void ClearCombo () {
             isACombo = false;
-            comboName = "";
+            comboId = -1;
         }
 
-        public void AddChildren(ComboNode child) {
+        public void AddChildren(ComboTreeNode child) {
             children.Add(child);
         }
 
-        public ComboNode GetChild(int tileNum) {
-            ComboNode theChild = null;
+        public ComboTreeNode GetChild(int tileNum) {
+            ComboTreeNode theChild = null;
 
-            foreach (ComboNode child in children) {
+            foreach (ComboTreeNode child in children) {
                 if (child.TileNumber == tileNum) {
                     theChild = child;
                     break;

@@ -9,7 +9,8 @@
                 "Wood",
                 "Wood",
                 "Wood"
-            ]
+            ],
+            "description" : "cancel 2 by 2 square area"
         },
         {
             "id" : 2,
@@ -20,7 +21,22 @@
                 "Wood",
                 "Water",
                 "Fire"
-            ]
+            ],
+            "description" : "cancel a column"
+        },
+        {
+            "id" : 3,
+            "skillId" : 2,
+            "englishName" : "comboThree",
+            "comboSeq" : [
+                "Earth",
+                "Earth",
+                "Fire",
+            ],
+            "arguments" : [
+                5.0
+            ],
+            "description" : "add 5 seconds to timer"
         }
     ]
 }

@@ -16,8 +16,8 @@ public class SkillInitiator : ISkillInitiator {
 
     private int keyCount = 0;
 
-    public void InvokeSkillFuncFromSkillId(int skillId) {
-        skillMap[skillId].CancelStageExecute(boardModel);
+    public void InvokeSkillFuncFromSkillId(int skillId, ActionParams parameters = null) {
+        skillMap[skillId].CancelStageExecuteWithArgs(boardModel, parameters);
     }
 
     public SkillInitiator() {
@@ -37,6 +37,8 @@ public class SkillInitiator : ISkillInitiator {
         InjectHelper(injectionBinder, new CancelSquare2By2Skill());
         // Skill 1
         InjectHelper(injectionBinder, new CancelColumnSkill());
+        // Skill 2
+        InjectHelper(injectionBinder, new AddToTimeSkill());
     }
 
     private void InjectHelper(ICrossContextInjectionBinder injectionBinder, IComboSkill comboSkill) {

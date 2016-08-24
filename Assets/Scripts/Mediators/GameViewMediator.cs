@@ -33,6 +33,8 @@ public class GameViewMediator : Mediator {
     public PlayerHealthUpdatedSignal playerHealthUpdatedSignal { get; set; }
     [Inject]
     public EnemyHealthUpdatedSignal enemyHealthUpdatedSignal { get; set; }
+    [Inject]
+    public AddToTimeSignal addToTimeSignal { get; set; }
 
     private const float TIME_PER_CANCEL = 30.0f;
     private float timer = TIME_PER_CANCEL;
@@ -41,7 +43,7 @@ public class GameViewMediator : Mediator {
     void Update () {
         if (countingDown) {
             timer -= Time.deltaTime;
-            gameView.UpdateProgressBar((int) (timer / TIME_PER_CANCEL * 100));
+            gameView.UpdateProgressBar((int) (Mathf.Min(timer, 30.0f) / TIME_PER_CANCEL * 100));
         }
 
         if (timer <= 0 && countingDown) {
@@ -61,6 +63,7 @@ public class GameViewMediator : Mediator {
         gameView.endThisRoundSignal.AddListener(SwitchToBattleResolve);
         playerHealthUpdatedSignal.AddListener(OnPlayerHealthUpdate);
         enemyHealthUpdatedSignal.AddListener(OnEnemyHealthUpdate);
+        addToTimeSignal.AddListener(AddToTimer);
         gameView.Init();
     }
 
@@ -80,11 +83,15 @@ public class GameViewMediator : Mediator {
 
     public void OnBattleUnresolved()
     {
-        ResetActiveState();
-        #if !UNLIMITED_TIME
+#if !UNLIMITED_TIME
         countingDown = true;
-        #endif
+#endif
+        ResetActiveState();
         gameView.SwitchToCancelTiles();
+    }
+
+    public void AddToTimer(double seconds) {
+        timer += (float) seconds;
     }
 
     private void ResetActiveState()
@@ -102,9 +109,9 @@ public class GameViewMediator : Mediator {
 
     private void SwitchToCancelTiles()
     {
-        #if !UNLIMITED_TIME
+#if !UNLIMITED_TIME
         countingDown = true;
-        #endif
+#endif
         gameView.UpdateProgressBar(100);
         gameView.SwitchToCancelTiles();
     }

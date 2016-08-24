@@ -3,7 +3,11 @@ using System.Collections.Generic;
 
 public class ActionParams {
 
-	private List<object> paramList = new List<object>();
+	private List<object> paramList;
+
+	public ActionParams() {
+		paramList = new List<object>();
+	}
 
 	public int Count() {
 		return paramList.Count;

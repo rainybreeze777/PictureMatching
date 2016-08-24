@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using SimpleJSON;
 using System.Collections;
 using System.Collections.Generic;
@@ -46,9 +47,27 @@ public class ComboListFetcher {
         }
     }
 
+    public ActionParams GetComboSkillParamsById(int id) {
+        OneCombo aCombo;
+        if (comboMap.TryGetValue(id, out aCombo)) {
+
+            ActionParams ap = new ActionParams();
+            foreach (object arg in aCombo.Arguments) {
+                ap.AddToParamList(arg);
+            }
+            return ap;
+        } else {
+            return null;
+        }
+    }
+
     private ComboListFetcher () {
 
-        comboJsonSheet = JSON.Parse((Resources.Load("ComboList") as TextAsset).text);
+        try {
+            comboJsonSheet = JSON.Parse((Resources.Load("ComboList") as TextAsset).text);
+        } catch (Exception ex) {
+            Debug.LogError(ex.ToString());
+        }
         combosArray = comboJsonSheet["combos"] as JSONArray;
 
         tileInfoFetcher = TileInfoFetcher.GetInstance();
@@ -60,6 +79,7 @@ public class ComboListFetcher {
             }
 
             OneCombo aCombo = JsonUtility.FromJson<OneCombo>(combosArray[i].ToString());
+            aCombo.SerializeArguments(combosArray[i]["arguments"] as JSONArray); // JsonUtility does not support polymorphic array serialization
             comboMap.Add(aCombo.ComboId, aCombo);
             // List that tracks tiles using tile numbers instead of names
             List<int> tileNumberList = new List<int>();

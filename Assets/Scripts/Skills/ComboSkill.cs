@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using strange.extensions.signal.impl;
 using strange.extensions.dispatcher.eventdispatcher.api;
 
-public class ComboSkill : IComboSkill {
+abstract public class ComboSkill : IComboSkill {
 
     [Inject]
     public UserInputDataRequestSignal dataRequestSignal { get; set; } 
@@ -14,17 +14,24 @@ public class ComboSkill : IComboSkill {
 
     protected Enum userInputEnum = null;
     protected ActionParams inputData = null;
+    protected ActionParams skillParams = null;
     protected IBoardModel boardModel = null;
 
-    private bool needInputData = false;
+    private bool needUserInputData = false;
     private bool requestingData = false;
 
     public void CancelStageExecute() {
         CancelStageExecute(null);
     }
     public void CancelStageExecute(IBoardModel boardModel) {
+        CancelStageExecuteWithArgs(boardModel, null);
+    }
+    public void CancelStageExecuteWithArgs(IBoardModel boardModel, ActionParams args) {
         this.boardModel = boardModel;
-        if (needInputData) {
+
+        skillParams = args;
+
+        if (needUserInputData) {
             Assert.IsNotNull(userInputEnum);
             RequestUserInputData(userInputEnum);
             // ExecuteSkill() will be run after receiving data
@@ -35,11 +42,10 @@ public class ComboSkill : IComboSkill {
         }
     }
 
-    protected virtual void ExecuteSkill() {
-    }
+    abstract protected void ExecuteSkill();
 
     protected void NeedUserInput (Enum userInputType) {
-        needInputData = true;
+        needUserInputData = true;
         userInputEnum = userInputType;
     }
 

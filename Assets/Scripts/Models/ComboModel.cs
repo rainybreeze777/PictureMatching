@@ -29,7 +29,7 @@ public class ComboModel : IComboModel {
     }
 
     private int comboStart, comboEnd;
-    private int comboSkillId = -1;
+    private int comboId = -1;
 
     public ComboModel() {
         onScreenNumOfTilesOnComboSequence = 5;
@@ -45,8 +45,8 @@ public class ComboModel : IComboModel {
         for (int i = startIndex; i < cancelSequence.Count - 2; i++ ) {
 
             List<int> subSequence = cancelSequence.GetRange(i, cancelSequence.Count - i);
-            comboSkillId = comboTree.GetComboSkillId(subSequence);
-            if (comboSkillId != -1) {
+            comboId = comboTree.GetComboId(subSequence);
+            if (comboId != -1) {
                 comboPossibleSignal.Dispatch(true);
                 comboStart = i;
                 comboEnd = cancelSequence.Count - i;
@@ -70,7 +70,7 @@ public class ComboModel : IComboModel {
         comboTracker.Add(comboStart);
         comboTracker.Add(comboEnd);
 
-        return comboSkillId;
+        return comboId;
     }
 
     public void ClearCancelSequence() {

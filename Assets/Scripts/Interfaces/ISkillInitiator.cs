@@ -4,6 +4,6 @@ using strange.extensions.injector.impl;
 
 public interface ISkillInitiator {
 
-    void InvokeSkillFuncFromSkillId(int skillId);
+    void InvokeSkillFuncFromSkillId(int skillId, ActionParams parameters = null);
     void InjectInitialize(ICrossContextInjectionBinder injectionBinder);
 }
