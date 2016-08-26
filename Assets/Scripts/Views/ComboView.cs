@@ -17,12 +17,14 @@ public class ComboView : View {
     private List<GameObject> tiles = new List<GameObject>();
 
     private List<GameObject> onScreenSequence = new List<GameObject>();
+    private List<GameObject> onScreenEnemySequence = new List<GameObject>();
     private int onScreenSequenceCount = 0;
 
     private const float distanceBetweenTile = 2.0f;
     private int numOfTilesOnComboSequence;
     private const float xOffset = 6.5f;
     private const float yOffset = 0.77f;
+    private const float enemyYOffSet = 10.0f;
 
     private Transform comboDisplayer;
 
@@ -75,5 +77,20 @@ public class ComboView : View {
         instance.transform.SetParent(comboDisplayer);
 
         onScreenSequence.Add(instance);
+    }
+
+    public void ConstructNewEnemySequence(List<int> enemySeq) {
+        onScreenEnemySequence.Clear();
+        for (int i = 0; i < numOfTilesOnComboSequence; ++i) {
+            GameObject instance = 
+                Instantiate(tiles[enemySeq[i] - 1]
+                            , new Vector3( xOffset + i * distanceBetweenTile, enemyYOffSet, 0F)
+                            , Quaternion.identity) as GameObject;
+
+            instance.transform.localScale = new Vector3(0.5F, 0.5F, 0);
+            instance.transform.SetParent(comboDisplayer);
+
+            onScreenEnemySequence.Add(instance);
+        }
     }
 }

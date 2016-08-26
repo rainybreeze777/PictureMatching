@@ -171,10 +171,10 @@ public class BattleView : View {
         newBattle = true;
     }
 
-    public void InitiateBattleResolution(List<int> playerSequence) {
+    public void InitiateBattleResolution(List<int> playerSequence, List<int> enemySequence) {
 
         playerSeq = playerSequence;
-        enemySeq = EnemyCancellationGenerator.GenerateSequence();
+        enemySeq = enemySequence;
 
         resolvingIndex = 0;
         

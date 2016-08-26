@@ -15,6 +15,8 @@ public class BattleViewMediator : Mediator {
 	public ResetBattleSignal resetBattleSignal { get; set; }
 	[Inject]
 	public IComboModel comboModel { get; set; }
+	[Inject]
+	public IEnemyModel enemyModel { get; set; }
 
 	public override void OnRegister() {
 
@@ -29,6 +31,7 @@ public class BattleViewMediator : Mediator {
 	}
 
 	public void InitiateBattleResolution() {
-		battleView.InitiateBattleResolution(comboModel.GetCancelSeq());
+		enemyModel.GenerateSequence();
+		battleView.InitiateBattleResolution(comboModel.GetCancelSeq(), enemyModel.GetPrevGeneratedSequence());
 	}
 }

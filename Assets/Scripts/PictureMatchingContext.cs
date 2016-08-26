@@ -45,12 +45,14 @@ public class PictureMatchingContext : MVCSContext {
         commandBinder.Bind<StartSignal>().To<StartCommand>().Once();
         commandBinder.Bind<AttemptTileCancelSignal>().To<AttemptTileCancelCommand>();
         commandBinder.Bind<MakeComboSignal>().To<MakeComboCommand>();
+        commandBinder.Bind<StartGameSignal>().To<StartGameCommand>();
         // Dependency Injection Binding
         injectionBinder.Bind<IComboModel>().To<ComboModel>().ToSingleton();
         injectionBinder.Bind<IBoardModel>().To<BoardModel>().ToSingleton();
         injectionBinder.Bind<ISkillInitiator>().To<SkillInitiator>().ToSingleton();
         injectionBinder.Bind<IInBattleStatus>().To<InBattlePlayerStatus>().ToSingleton().ToName(EInBattleStatusType.PLAYER);
         injectionBinder.Bind<IInBattleStatus>().To<InBattleEnemyStatus>().ToSingleton().ToName(EInBattleStatusType.ENEMY);
+        injectionBinder.Bind<IEnemyModel>().To<EnemyModel>().ToSingleton();
         // Instantiating Signals that are triggered manually
         injectionBinder.Bind<BattleWonSignal>().ToSingleton();
         injectionBinder.Bind<BattleLostSignal>().ToSingleton();
@@ -67,6 +69,7 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<PlayerHealthUpdatedSignal>().ToSingleton();
         injectionBinder.Bind<EnemyHealthUpdatedSignal>().ToSingleton();
         injectionBinder.Bind<AddToTimeSignal>().ToSingleton();
+        injectionBinder.Bind<EnemySeqGenSignal>().ToSingleton();
         // Manuall Instantiate SkillInitiator and inject to skill classes
         injectionBinder.GetInstance<ISkillInitiator>().InjectInitialize(injectionBinder);
     }

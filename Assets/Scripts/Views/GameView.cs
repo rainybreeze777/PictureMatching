@@ -46,11 +46,13 @@ public class GameView : View {
     private RadioUIGroup gameControlGroup = new RadioUIGroup();
     private RadioUIGroup startMenuGroup = new RadioUIGroup();
 
-    public Signal gameStartSignal = new Signal();
     public Signal endThisRoundSignal = new Signal();
 
     [Inject]
     public MakeComboSignal makeComboSignal { get; set; }
+    [Inject]
+    public StartGameSignal gameStartSignal { get; set; }
+
 
     internal void Init() {
         Screen.SetResolution (1024, 768, false);

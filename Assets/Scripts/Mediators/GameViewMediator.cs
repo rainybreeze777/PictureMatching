@@ -35,6 +35,8 @@ public class GameViewMediator : Mediator {
     public EnemyHealthUpdatedSignal enemyHealthUpdatedSignal { get; set; }
     [Inject]
     public AddToTimeSignal addToTimeSignal { get; set; }
+    [Inject]
+    public StartGameSignal gameStartSignal { get; set; }
 
     private const float TIME_PER_CANCEL = 30.0f;
     private float timer = TIME_PER_CANCEL;
@@ -59,7 +61,7 @@ public class GameViewMediator : Mediator {
         battleUnresolvedSignal.AddListener(OnBattleUnresolved);
         boardIsEmptySignal.AddListener(SwitchToBattleResolve);
         comboPossibleSignal.AddListener(OnComboPossible);
-        gameView.gameStartSignal.AddListener(SwitchToCancelTiles);
+        gameStartSignal.AddListener(SwitchToCancelTiles);
         gameView.endThisRoundSignal.AddListener(SwitchToBattleResolve);
         playerHealthUpdatedSignal.AddListener(OnPlayerHealthUpdate);
         enemyHealthUpdatedSignal.AddListener(OnEnemyHealthUpdate);

@@ -10,6 +10,10 @@ public class ComboViewMediator : Mediator {
     [Inject]
     public IComboModel comboModel { get; set; }
     [Inject]
+    public EnemySeqGenSignal enemySeqGenSignal { get; set; }
+    [Inject]
+    public IEnemyModel enemyModel { get; set; }
+    [Inject]
     public ResetActiveStateSignal resetActiveStateSignal { get; set; }
 
     public override void OnRegister() {
@@ -17,10 +21,15 @@ public class ComboViewMediator : Mediator {
 
         comboModel.CancelAddedSignal.AddListener(OnTileCancelled);
         resetActiveStateSignal.AddListener(ClearCancelSequence);
+        enemySeqGenSignal.AddListener(OnEnemySeqGeneration);
     }
 
     public void OnTileCancelled(int tileNumber) {
         view.AddToCancelSequence(tileNumber);
+    }
+
+    public void OnEnemySeqGeneration() {
+        view.ConstructNewEnemySequence(enemyModel.GetPrevGeneratedSequence());
     }
 
     public void ClearCancelSequence() {
