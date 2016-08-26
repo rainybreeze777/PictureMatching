@@ -7,4 +7,6 @@ public interface IEnemyModel {
 
 	List<int> GetPrevGeneratedSequence();
 
+	int GetPrevSequenceMask(); // Returns a binary hash code used to indicate which tile should appear unknown
+
 }

@@ -14,7 +14,9 @@ public class ComboView : View {
     //2 = Water
     //3 = Fire
     //4 = Earth
+    //5 = Unknown
     private List<GameObject> tiles = new List<GameObject>();
+    private Sprite maskTileSprite;
 
     private List<GameObject> onScreenSequence = new List<GameObject>();
     private List<GameObject> onScreenEnemySequence = new List<GameObject>();
@@ -24,7 +26,8 @@ public class ComboView : View {
     private int numOfTilesOnComboSequence;
     private const float xOffset = 6.5f;
     private const float yOffset = 0.77f;
-    private const float enemyYOffSet = 10.0f;
+    private const float enemyYOffSet = 9.0f;
+    private const string spritePath = "Sprites/";
 
     private Transform comboDisplayer;
 
@@ -35,9 +38,17 @@ public class ComboView : View {
 
         infoFetcher = TileInfoFetcher.GetInstance();
 
-        for (int i = 1; i <= 5; ++i) {
-           tiles.Add(Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(i, "comboPrefab")) as GameObject);
+        for (int i = 1; i <= infoFetcher.GetTotalNumOfTiles(); ++i) {
+            string tilePathName = infoFetcher.GetInfoFromNumber(i, "comboPrefab");
+            if (tilePathName != null && !tilePathName.Equals("")) {
+                tiles.Add(Resources.Load(prefabPath + tilePathName) as GameObject);
+            }
         }
+
+        int unknownTileId = infoFetcher.GetTileNumberFromName("Unknown");
+        maskTileSprite = Resources.Load<Sprite>(
+                            spritePath 
+                            + infoFetcher.GetInfoFromNumber(unknownTileId, "normalSprite"));
 
         numOfTilesOnComboSequence = comboSequenceLength;
         comboDisplayer = new GameObject ("ComboDisplayer").transform;
@@ -79,9 +90,13 @@ public class ComboView : View {
         onScreenSequence.Add(instance);
     }
 
-    public void ConstructNewEnemySequence(List<int> enemySeq) {
+    public void ConstructNewEnemySequence(List<int> enemySeq, int maskHashCode) {
         onScreenEnemySequence.Clear();
+
         for (int i = 0; i < numOfTilesOnComboSequence; ++i) {
+
+            int mask = (int) Mathf.Pow(2, numOfTilesOnComboSequence - 1 - i);
+
             GameObject instance = 
                 Instantiate(tiles[enemySeq[i] - 1]
                             , new Vector3( xOffset + i * distanceBetweenTile, enemyYOffSet, 0F)
@@ -89,6 +104,10 @@ public class ComboView : View {
 
             instance.transform.localScale = new Vector3(0.5F, 0.5F, 0);
             instance.transform.SetParent(comboDisplayer);
+
+            if ((maskHashCode & mask) == mask) {
+                instance.GetComponent<SpriteRenderer>().sprite = maskTileSprite;
+            }
 
             onScreenEnemySequence.Add(instance);
         }

@@ -39,6 +39,13 @@
             "selectedSprite": "selected_earthTile",
             "prefab": "EarthTile",
             "comboPrefab": "Combo_EarthTile"
+        },
+        {
+            "id": 6,
+            "name": "Unknown",
+            "normalSprite": "high_unknownTile",
+            "selectedSprite": "selected_unknownTile",
+            "comboPrefab": "Combo_UnknownTile"
         }
     ]
 }

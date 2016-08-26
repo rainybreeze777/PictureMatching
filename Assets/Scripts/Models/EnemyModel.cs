@@ -12,6 +12,8 @@ public class EnemyModel : IEnemyModel {
     [Inject]
     public BattleUnresolvedSignal battleUnresolvedSignal { get; set; }
 
+    private int cancelSeqMask = 0; // Binary hash code stored in int
+
     [PostConstruct]
     public void PostConstruct() {
         battleUnresolvedSignal.AddListener(GenerateSequence);
@@ -24,6 +26,8 @@ public class EnemyModel : IEnemyModel {
         int randomSequenceSize = Random.Range(9, 16);
         for (int i = 0; i < randomSequenceSize; i++) {
             seq.Add( Random.Range(1, 6) ); // 0 is reserved for empty
+            cancelSeqMask = cancelSeqMask << 1; // Shift binary 1 spot to the left
+            if (Random.value < 0.5) { cancelSeqMask += 1; } // 50-50 chance of masked or not masked
         }
 
         generatedSequence = new List<int>(seq);
@@ -34,5 +38,7 @@ public class EnemyModel : IEnemyModel {
     public List<int> GetPrevGeneratedSequence() {
         return new List<int>(generatedSequence);
     }
+
+    public int GetPrevSequenceMask() { return cancelSeqMask; }
 
 }

@@ -79,7 +79,10 @@ public class BoardView : View {
         infoFetcher = TileInfoFetcher.GetInstance();
 
         for (int i = 1; i <= infoFetcher.GetTotalNumOfTiles(); ++i) {
-           tiles.Add(Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(i, "prefab")) as GameObject);
+            string tilePathName = infoFetcher.GetInfoFromNumber(i, "prefab");
+            if (tilePathName != null && !tilePathName.Equals("")) {
+                tiles.Add(Resources.Load(prefabPath + tilePathName) as GameObject);
+            }
         }
 
         BoardSetup(boardModel);

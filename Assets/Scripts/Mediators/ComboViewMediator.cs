@@ -29,7 +29,7 @@ public class ComboViewMediator : Mediator {
     }
 
     public void OnEnemySeqGeneration() {
-        view.ConstructNewEnemySequence(enemyModel.GetPrevGeneratedSequence());
+        view.ConstructNewEnemySequence(enemyModel.GetPrevGeneratedSequence(), enemyModel.GetPrevSequenceMask());
     }
 
     public void ClearCancelSequence() {
