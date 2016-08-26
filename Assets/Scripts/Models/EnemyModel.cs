@@ -9,6 +9,13 @@ public class EnemyModel : IEnemyModel {
 
     [Inject]
     public EnemySeqGenSignal seqGenSignal { get; set; }
+    [Inject]
+    public BattleUnresolvedSignal battleUnresolvedSignal { get; set; }
+
+    [PostConstruct]
+    public void PostConstruct() {
+        battleUnresolvedSignal.AddListener(GenerateSequence);
+    }
 
     public void GenerateSequence() {
         List<int> seq = new List<int>();

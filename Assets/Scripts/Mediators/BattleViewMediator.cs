@@ -31,7 +31,6 @@ public class BattleViewMediator : Mediator {
 	}
 
 	public void InitiateBattleResolution() {
-		enemyModel.GenerateSequence();
 		battleView.InitiateBattleResolution(comboModel.GetCancelSeq(), enemyModel.GetPrevGeneratedSequence());
 	}
 }
