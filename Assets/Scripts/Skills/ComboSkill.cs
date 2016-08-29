@@ -55,7 +55,6 @@ abstract public class ComboSkill : IComboSkill {
     [PostConstruct]
     public void SignalBinder() {
         dataResponseSignal.AddListener(AwaitUserInput);
-        Debug.LogWarning("ComboSkill postConstructor done");
     }
 
     private void RequestUserInputData (Enum userInputType) {

@@ -20,12 +20,16 @@ public class ComboView : View {
 
     private List<GameObject> onScreenSequence = new List<GameObject>();
     private List<GameObject> onScreenEnemySequence = new List<GameObject>();
+    private List<int> enemySequence;
+    private int maskHashCode;
+    private int nextEnemyTileIndex = 0;
     private int onScreenSequenceCount = 0;
 
     private const float distanceBetweenTile = 2.0f;
     private const int numOfTilesOnComboSequence = 5;
+    private const int numOfTilesOnEnemySequence = 7;
 
-    private const float xOffset = 6.5f;
+    private const float xOffset = 4.0f;
     private const float yOffset = 0.77f;
     private const float enemyYOffSet = 9.0f;
     private const string spritePath = "Sprites/";
@@ -63,9 +67,11 @@ public class ComboView : View {
 
     public void AddToCancelSequence(int tileNumber)
     {
-        GameObject toInstantiate = tiles[tileNumber - 1];
+        GameObject toInstantiate = null;
+        GameObject instance = null;
 
         if (onScreenSequenceCount >= numOfTilesOnComboSequence) {
+            // Player Combo
             GameObject headTile = onScreenSequence [0];
             onScreenSequence.RemoveAt (0);
             Destroy (headTile);
@@ -75,14 +81,36 @@ public class ComboView : View {
                 //Animation of movement needs some investigation
                 aTile.transform.Translate (Vector3.left * distanceBetweenTile);
             }
+            // Enemy Combo
+            if (onScreenEnemySequence.Count > 0) {
+                headTile = onScreenEnemySequence[0];
+                onScreenEnemySequence.RemoveAt(0);
+                Destroy(headTile);
+
+                foreach(GameObject aTile in onScreenEnemySequence) {
+                    aTile.transform.Translate (Vector3.left * distanceBetweenTile);
+                }
+
+                // Instantiating Enemy Combo Tile
+                if (nextEnemyTileIndex < enemySequence.Count) {
+
+                    MakeNewEnemyTileObject(enemySequence[nextEnemyTileIndex], numOfTilesOnEnemySequence - 1, nextEnemyTileIndex - 1);
+
+                    toInstantiate = tiles[enemySequence[nextEnemyTileIndex] - 1];
+
+                    nextEnemyTileIndex++;
+                }
+            }
+            
         } else {
             onScreenSequenceCount++;
         }
 
-        GameObject instance = 
-            Instantiate(toInstantiate
-                        , new Vector3( xOffset + (onScreenSequenceCount - 1) * distanceBetweenTile, yOffset, 0F)
-                        , Quaternion.identity) as GameObject;
+        toInstantiate = tiles[tileNumber - 1];
+
+        instance = Instantiate(toInstantiate
+                                , new Vector3( xOffset + (onScreenSequenceCount - 1) * distanceBetweenTile, yOffset, 0F)
+                                , Quaternion.identity) as GameObject;
 
         instance.transform.localScale = new Vector3(0.5F, 0.5F, 0);
         instance.transform.SetParent(comboDisplayer);
@@ -91,25 +119,41 @@ public class ComboView : View {
     }
 
     public void ConstructNewEnemySequence(List<int> enemySeq, int maskHashCode) {
+        foreach(GameObject go in onScreenEnemySequence) {
+            Destroy(go);
+        }
         onScreenEnemySequence.Clear();
+        enemySequence = enemySeq;
 
-        for (int i = 0; i < numOfTilesOnComboSequence; ++i) {
+        this.maskHashCode = maskHashCode;
 
-            int mask = (int) Mathf.Pow(2, numOfTilesOnComboSequence - 1 - i);
+        nextEnemyTileIndex = (int) Mathf.Min( enemySeq.Count, numOfTilesOnEnemySequence );
 
-            GameObject instance = 
-                Instantiate(tiles[enemySeq[i] - 1]
-                            , new Vector3( xOffset + i * distanceBetweenTile, enemyYOffSet, 0F)
-                            , Quaternion.identity) as GameObject;
+        for (int i = 0; i < nextEnemyTileIndex; ++i) {
 
-            instance.transform.localScale = new Vector3(0.5f, 0.5f, 0);
-            instance.transform.SetParent(comboDisplayer);
-
-            if ((maskHashCode & mask) == mask) {
-                instance.GetComponent<SpriteRenderer>().sprite = maskTileSprite;
+            if (i >= enemySeq.Count) {
+                break;
             }
 
-            onScreenEnemySequence.Add(instance);
+            MakeNewEnemyTileObject(enemySeq[i], i, i);
         }
+    }
+
+    private void MakeNewEnemyTileObject(int tileNumber, int onScreenTileSeqIndex, int tileSeqIndex) {
+        int mask = (int) Mathf.Pow(2, tileSeqIndex);
+
+        GameObject instance = 
+            Instantiate(tiles[tileNumber - 1]
+                        , new Vector3( xOffset + onScreenTileSeqIndex * distanceBetweenTile, enemyYOffSet, 0F)
+                        , Quaternion.identity) as GameObject;
+
+        instance.transform.localScale = new Vector3(0.5f, 0.5f, 0);
+        instance.transform.SetParent(comboDisplayer);
+
+        if ((maskHashCode & mask) == mask) {
+            instance.GetComponent<SpriteRenderer>().sprite = maskTileSprite;
+        }
+
+        onScreenEnemySequence.Add(instance);
     }
 }

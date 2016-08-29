@@ -26,8 +26,12 @@ public class EnemyModel : IEnemyModel {
         int randomSequenceSize = Random.Range(9, 16);
         for (int i = 0; i < randomSequenceSize; i++) {
             seq.Add( Random.Range(1, 6) ); // 0 is reserved for empty
-            cancelSeqMask = cancelSeqMask << 1; // Shift binary 1 spot to the left
-            if (Random.value < 0.5) { cancelSeqMask += 1; } // 50-50 chance of masked or not masked
+            if (Random.value < 0.5) { cancelSeqMask += (int) Mathf.Pow(2, i); } // 50-50 chance of masked or not masked
+            // Think of the encoding as this way:
+            // Enemy Combo Seq: Fire <- Water <- Fire <- Metal <- Earth
+            // Mask Index:      2^4  <-  2^3  <- 2^2  <- 2^1   <- 2^0
+            // Combo Sequence in model grows from right to left
+            // whereas on screen it will display from left to right
         }
 
         generatedSequence = new List<int>(seq);

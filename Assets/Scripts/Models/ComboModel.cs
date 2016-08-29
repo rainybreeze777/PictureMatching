@@ -52,12 +52,6 @@ public class ComboModel : IComboModel {
         return cancelSequence;
     }
 
-    [PostConstruct]
-    public void PostConstruct()
-    {
-        Debug.LogWarning("ComboModel injection ready");
-    }
-
     public int MakeCombo() {
         comboTracker.Add(comboStart);
         comboTracker.Add(comboEnd);

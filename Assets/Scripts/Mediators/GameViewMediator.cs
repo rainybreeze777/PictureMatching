@@ -38,14 +38,14 @@ public class GameViewMediator : Mediator {
     [Inject]
     public StartGameSignal gameStartSignal { get; set; }
 
-    private const float TIME_PER_CANCEL = 30.0f;
+    private const float TIME_PER_CANCEL = 60.0f;
     private float timer = TIME_PER_CANCEL;
     private bool countingDown = false;
 
     void Update () {
         if (countingDown) {
             timer -= Time.deltaTime;
-            gameView.UpdateProgressBar((int) (Mathf.Min(timer, 30.0f) / TIME_PER_CANCEL * 100));
+            gameView.UpdateProgressBar((int) (Mathf.Min(timer, TIME_PER_CANCEL) / TIME_PER_CANCEL * 100));
         }
 
         if (timer <= 0 && countingDown) {

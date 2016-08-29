@@ -55,7 +55,7 @@ public class GameView : View {
 
 
     internal void Init() {
-        Screen.SetResolution (1024, 768, false);
+        Screen.SetResolution (1366, 768, false);
 
         // playerHealthText = GameObject.Find("PlayerHealth").GetComponent<Text>();
         // enemyHealthText = GameObject.Find("EnemyHealth").GetComponent<Text>();
