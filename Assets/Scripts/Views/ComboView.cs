@@ -23,7 +23,8 @@ public class ComboView : View {
     private int onScreenSequenceCount = 0;
 
     private const float distanceBetweenTile = 2.0f;
-    private int numOfTilesOnComboSequence;
+    private const int numOfTilesOnComboSequence = 5;
+
     private const float xOffset = 6.5f;
     private const float yOffset = 0.77f;
     private const float enemyYOffSet = 9.0f;
@@ -34,7 +35,7 @@ public class ComboView : View {
     private TileInfoFetcher infoFetcher;
     private const string prefabPath = "Prefabs/ComboPrefabs/";
 
-    internal void Init(int comboSequenceLength) {
+    internal void Init() {
 
         infoFetcher = TileInfoFetcher.GetInstance();
 
@@ -50,7 +51,6 @@ public class ComboView : View {
                             spritePath 
                             + infoFetcher.GetInfoFromNumber(unknownTileId, "normalSprite"));
 
-        numOfTilesOnComboSequence = comboSequenceLength;
         comboDisplayer = new GameObject ("ComboDisplayer").transform;
     }
 
@@ -102,7 +102,7 @@ public class ComboView : View {
                             , new Vector3( xOffset + i * distanceBetweenTile, enemyYOffSet, 0F)
                             , Quaternion.identity) as GameObject;
 
-            instance.transform.localScale = new Vector3(0.5F, 0.5F, 0);
+            instance.transform.localScale = new Vector3(0.5f, 0.5f, 0);
             instance.transform.SetParent(comboDisplayer);
 
             if ((maskHashCode & mask) == mask) {

@@ -21,18 +21,10 @@ public class ComboModel : IComboModel {
 
     private ComboTree comboTree;
 
-    private int onScreenNumOfTilesOnComboSequence;
-    public int NumOfTilesOnComboSequence 
-    {
-        get { return onScreenNumOfTilesOnComboSequence; }
-        set { onScreenNumOfTilesOnComboSequence = value; }
-    }
-
     private int comboStart, comboEnd;
     private int comboId = -1;
 
     public ComboModel() {
-        onScreenNumOfTilesOnComboSequence = 5;
         comboTree = ComboTree.GetInstance();       
     }
 
@@ -40,7 +32,7 @@ public class ComboModel : IComboModel {
         cancelSequence.Add(tileNumber);
         cancelAddedSignal.Dispatch(tileNumber);
 
-        int startIndex = System.Math.Max(0, cancelSequence.Count - onScreenNumOfTilesOnComboSequence);
+        int startIndex = System.Math.Max(0, cancelSequence.Count - comboTree.LongestComboLength);
         //Combo length is at least 2
         for (int i = startIndex; i < cancelSequence.Count - 2; i++ ) {
 

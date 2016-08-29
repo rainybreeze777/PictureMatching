@@ -10,6 +10,9 @@ public class ComboTree {
 
     private ComboListFetcher comboListFetcher;
 
+    private int deepestDepthCount = 0;
+    public int LongestComboLength { get { return deepestDepthCount; } }
+
     private ComboTree () {
 
         rootNode = new ComboTreeNode(-1, true);
@@ -37,6 +40,8 @@ public class ComboTree {
 
         ComboTreeNode currentNode = rootNode;
 
+        int depthCount = 0;
+
         foreach (int tile in comboSequence) {
             ComboTreeNode checkNode = currentNode.GetChild(tile);
             if (checkNode != null) {
@@ -46,10 +51,15 @@ public class ComboTree {
                 currentNode.AddChildren(newNode);
                 currentNode = newNode;
             }
+            depthCount++;
         }
 
         //At this point, currentNode should point to the last combo
         currentNode.FormCombo(comboId);
+
+        if (deepestDepthCount < depthCount) {
+            deepestDepthCount = depthCount;
+        }
     }
 
     //Will return the id of the combo if it exists

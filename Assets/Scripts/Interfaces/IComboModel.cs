@@ -8,8 +8,6 @@ public interface IComboModel {
 
     List<int> GetCancelSeq();
 
-    int NumOfTilesOnComboSequence { get; set; }
-
     int MakeCombo();
 
     void ClearCancelSequence();

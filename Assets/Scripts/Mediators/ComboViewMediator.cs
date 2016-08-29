@@ -17,7 +17,7 @@ public class ComboViewMediator : Mediator {
     public ResetActiveStateSignal resetActiveStateSignal { get; set; }
 
     public override void OnRegister() {
-        view.Init(comboModel.NumOfTilesOnComboSequence);
+        view.Init();
 
         comboModel.CancelAddedSignal.AddListener(OnTileCancelled);
         resetActiveStateSignal.AddListener(ClearCancelSequence);
