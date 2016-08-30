@@ -12,7 +12,7 @@ public class EnemyModel : IEnemyModel {
     [Inject]
     public BattleUnresolvedSignal battleUnresolvedSignal { get; set; }
 
-    private int cancelSeqMask = 0; // Binary hash code stored in int
+    private uint cancelSeqMask = 0; // Binary hash code stored in int
 
     [PostConstruct]
     public void PostConstruct() {
@@ -26,7 +26,7 @@ public class EnemyModel : IEnemyModel {
         int randomSequenceSize = Random.Range(9, 16);
         for (int i = 0; i < randomSequenceSize; i++) {
             seq.Add( Random.Range(1, 6) ); // 0 is reserved for empty
-            if (Random.value < 0.5) { cancelSeqMask += (int) Mathf.Pow(2, i); } // 50-50 chance of masked or not masked
+            if (Random.value < 0.5) { cancelSeqMask += (uint) Mathf.Pow(2, i); } // 50-50 chance of masked or not masked
             // Think of the encoding as this way:
             // Enemy Combo Seq: Fire <- Water <- Fire <- Metal <- Earth
             // Mask Index:      2^4  <-  2^3  <- 2^2  <- 2^1   <- 2^0
@@ -43,6 +43,6 @@ public class EnemyModel : IEnemyModel {
         return new List<int>(generatedSequence);
     }
 
-    public int GetPrevSequenceMask() { return cancelSeqMask; }
+    public uint GetPrevSequenceMask() { return cancelSeqMask; }
 
 }

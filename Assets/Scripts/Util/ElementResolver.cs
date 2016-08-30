@@ -17,7 +17,7 @@ public class ElementResolver {
         foreach (Tiles tile in System.Enum.GetValues(typeof(Tiles))) {
             int theId = infoFetcher.GetTileNumberFromName(tile.ToString());
             numToTileMap[theId] = tile;
-            tilesToNumMap[tile] = theId;
+            tileToNumMap[tile] = theId;
         }
 
     }
@@ -90,7 +90,7 @@ public class ElementResolver {
         return result;
     }
 
-    public Tuple<int, int> GetElemTrumpOver(int elemTileNumber) {
+    public static Tuple<int, int> GetElemsBeatenBy(int elemTileNumber) {
         Tiles? givenTile = null;
 
         try {
@@ -104,15 +104,15 @@ public class ElementResolver {
 
         switch (givenTile) {
             case Tiles.Metal:
-                return Tuple.Create(tilesToNumMap[Tiles.Wood], tilesToNumMap[Tiles.Earth]);
+                return Tuple.Create(tileToNumMap[Tiles.Wood], tileToNumMap[Tiles.Earth]);
             case Tiles.Wood:
-                return Tuple.Create(tilesToNumMap[Tiles.Earth], tilesToNumMap[Tiles.Water]);
+                return Tuple.Create(tileToNumMap[Tiles.Earth], tileToNumMap[Tiles.Water]);
             case Tiles.Water:
-                return Tuple.Create(tilesToNumMap[Tiles.Fire], tilesToNumMap[Tiles.Metal]);
+                return Tuple.Create(tileToNumMap[Tiles.Fire], tileToNumMap[Tiles.Metal]);
             case Tiles.Fire:
-                return Tuple.Create(tilesToNumMap[Tiles.Metal], tilesToNumMap[Tiles.Wood]);
+                return Tuple.Create(tileToNumMap[Tiles.Metal], tileToNumMap[Tiles.Wood]);
             case Tiles.Earth:
-                return Tuple.Create(tilesToNumMap[Tiles.Water], tilesToNumMap[Tiles.Fire]);
+                return Tuple.Create(tileToNumMap[Tiles.Water], tileToNumMap[Tiles.Fire]);
             default:
                 // Should never reach this code
                 Debug.LogError("ElementResolver Error: Unimplemented TrumpOver Resolution!");
@@ -120,7 +120,7 @@ public class ElementResolver {
         }
     }
 
-    public Tuple<int, int> GetElemBeatenBy(int elemTileNumber) {
+    public static Tuple<int, int> GetElemsTrumpOver(int elemTileNumber) {
         Tiles? givenTile = null;
 
         try {
@@ -134,15 +134,15 @@ public class ElementResolver {
 
         switch (givenTile) {
             case Tiles.Metal:
-                return Tuple.Create(tilesToNumMap[Tiles.Fire], tilesToNumMap[Tiles.Water]);
+                return Tuple.Create(tileToNumMap[Tiles.Fire], tileToNumMap[Tiles.Water]);
             case Tiles.Wood:
-                return Tuple.Create(tilesToNumMap[Tiles.Metal], tilesToNumMap[Tiles.Fire]);
+                return Tuple.Create(tileToNumMap[Tiles.Metal], tileToNumMap[Tiles.Fire]);
             case Tiles.Water:
-                return Tuple.Create(tilesToNumMap[Tiles.Earth], tilesToNumMap[Tiles.Wood]);
+                return Tuple.Create(tileToNumMap[Tiles.Earth], tileToNumMap[Tiles.Wood]);
             case Tiles.Fire:
-                return Tuple.Create(tilesToNumMap[Tiles.Water], tilesToNumMap[Tiles.Earth]);
+                return Tuple.Create(tileToNumMap[Tiles.Water], tileToNumMap[Tiles.Earth]);
             case Tiles.Earth:
-                return Tuple.Create(tilesToNumMap[Tiles.Wood], tilesToNumMap[Tiles.Metal]);
+                return Tuple.Create(tileToNumMap[Tiles.Wood], tileToNumMap[Tiles.Metal]);
             default:
                 // Should never reach this code
                 Debug.LogError("ElementResolver Error: Unimplemented BeatenBy Resolution!");
