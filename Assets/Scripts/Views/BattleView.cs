@@ -20,9 +20,6 @@ public class BattleView : View {
 
     private TileInfoFetcher infoFetcher;
 
-    private enum Tiles { Metal, Wood, Water, Fire, Earth };
-    private Dictionary<int, Tiles> numToTileMap = new Dictionary<int, Tiles>();
-
     private List<int> playerSeq;
     private List<int> enemySeq;
     private int resolvingIndex = 0;
@@ -62,11 +59,6 @@ public class BattleView : View {
     internal void Init() {
         infoFetcher = TileInfoFetcher.GetInstance();
 
-        foreach (Tiles tile in System.Enum.GetValues(typeof(Tiles))) {
-            int theId = infoFetcher.GetTileNumberFromName(tile.ToString());
-            numToTileMap[theId] = tile;
-        }
-
         battleResolveContainer = new GameObject("BattleResolveContainer").transform;
         mainCam = Camera.main;
     }
@@ -89,7 +81,7 @@ public class BattleView : View {
             GameObject resultTileToInstantiate = null;
 
             if (playerMove != -1 || enemyMove != -1) {
-                int compareResult = ResolveAttack(playerMove, enemyMove);
+                int compareResult = ElementResolver.ResolveAttack(playerMove, enemyMove);
                 switch (compareResult) {
 
                     case 0:
@@ -231,74 +223,6 @@ public class BattleView : View {
         }
 
         shouldResolve = true;
-    }
-
-    //Returns 0 if tie, 1 if tile1 wins, 2 if tile2 wins
-    //-1 if parameters are invalid
-    //Parameters: tileNumbers as specified in SpritesInfo.json
-    //-1 if tile is empty
-    private int ResolveAttack(int tile1, int tile2) {
-
-        if (tile1 == -1 && tile2 == -1)
-            return 0; //Both are empty Case
-
-        int result = 0;
-        Tiles? firstTile = null;
-        Tiles? secondTile = null;
-        try {
-            if (tile1 != -1)
-                firstTile = numToTileMap[tile1];
-            if (tile2 != -1)
-                secondTile = numToTileMap[tile2];
-        } catch (KeyNotFoundException) {
-            return -1;
-        }
-
-        //Check if there are empty tiles
-        //One valid tile wins if the other tile is empty
-        if (firstTile == null && secondTile != null) 
-            return 2;
-        if (firstTile != null && secondTile == null)
-            return 1;
-
-        if (firstTile == secondTile) {
-            return result;
-        }
-
-        switch (firstTile) {
-            case Tiles.Metal:
-                if (secondTile == Tiles.Wood || secondTile == Tiles.Earth)
-                    result = 1;
-                else
-                    result = 2;
-                break;
-            case Tiles.Wood:
-                if (secondTile == Tiles.Earth || secondTile == Tiles.Water)
-                    result = 1;
-                else
-                    result = 2;
-                break;
-            case Tiles.Water:
-                if (secondTile == Tiles.Fire || secondTile == Tiles.Metal)
-                    result = 1;
-                else
-                    result = 2;
-                break;
-            case Tiles.Fire:
-                if (secondTile == Tiles.Metal || secondTile == Tiles.Wood)
-                    result = 1;
-                else
-                    result = 2;
-                break;
-            case Tiles.Earth:
-                if (secondTile == Tiles.Water || secondTile == Tiles.Fire)
-                    result = 1;
-                else
-                    result = 2;
-                break;
-        }
-
-        return result;
     }
 
     private Vector3 camCoordToWorldCoord(float x, float y) {
