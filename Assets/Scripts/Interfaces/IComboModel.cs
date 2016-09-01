@@ -13,4 +13,8 @@ public interface IComboModel {
     void ClearCancelSequence();
 
     Signal<int> CancelAddedSignal { get; }
+
+    bool IsEndOfCombo(int seqIndex);
+
+    void BreakCombo(int seqIndex);
 }

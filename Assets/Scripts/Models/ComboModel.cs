@@ -41,7 +41,7 @@ public class ComboModel : IComboModel {
             if (comboId != -1) {
                 comboPossibleSignal.Dispatch(true);
                 comboStart = i;
-                comboEnd = cancelSequence.Count - i;
+                comboEnd = cancelSequence.Count - 1;
                 break;
             }
             comboPossibleSignal.Dispatch(false);
@@ -61,5 +61,26 @@ public class ComboModel : IComboModel {
 
     public void ClearCancelSequence() {
         cancelSequence.Clear();
+        comboTracker.Clear();
+    }
+
+    public bool IsEndOfCombo(int seqIndex) {
+        // BinarySearch returns the index of the found element
+        // If the element is not present, it returns a negative number
+        int pos = comboTracker.BinarySearch(seqIndex);
+        // If it is in the list, and the index is odd, it is
+        // the end of a combo
+        return (pos >= 0 && pos % 2 == 1);
+    }
+
+    public void BreakCombo(int seqIndex) {
+
+        for (int i = 0; i < comboTracker.Count; ++i) {
+            if (i % 2 == 1 
+                && seqIndex >= comboTracker[i - 1] 
+                && seqIndex <= comboTracker[i]) { 
+                comboTracker.RemoveRange(i - 1, 2);
+            }
+        }
     }
 }

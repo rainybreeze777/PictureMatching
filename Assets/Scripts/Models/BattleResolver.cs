@@ -52,16 +52,13 @@ public class BattleResolver : IBattleResolver {
             int compareResult = ElementResolver.ResolveAttack(playerMove, enemyMove);
             switch (compareResult) {
                 case 0:
-                    Debug.Log("Ties exchange " + (resolvingIndex + 1));
                     oneExchangeDoneSignal.Dispatch(EOneExchangeWinner.TIE, playerMove);
                     break;
                 case 1:
-                    Debug.Log("Player wins exchange " + (resolvingIndex + 1 ));
                     enemyStatus.ReceiveDmg(playerStatus.Damage);
                     oneExchangeDoneSignal.Dispatch(EOneExchangeWinner.PLAYER, playerMove);
                     break;
                 case 2:
-                    Debug.Log("Enemy wins exchange " + (resolvingIndex + 1));
                     playerStatus.ReceiveDmg(enemyStatus.Damage);
                     oneExchangeDoneSignal.Dispatch(EOneExchangeWinner.ENEMY, enemyMove);
                     break;
@@ -72,6 +69,23 @@ public class BattleResolver : IBattleResolver {
                     Debug.LogError("Unrecognized result!");
                     break;
             }
+        }
+
+        bool enemyIsCombo = enemyModel.IsEndOfCombo(resolvingIndex);
+        bool playerIsCombo = comboModel.IsEndOfCombo(resolvingIndex);
+
+        if (playerIsCombo && enemyIsCombo) {
+            Debug.Log("Both Combo Damage!");
+            enemyStatus.ReceiveDmg(playerStatus.ComboDamage);
+            playerStatus.ReceiveDmg(enemyStatus.ComboDamage);
+        } else if (playerIsCombo) {
+            Debug.Log("Player Combo Damage! Enemy Combo broken!");
+            enemyStatus.ReceiveDmg(playerStatus.ComboDamage);
+            enemyModel.BreakCombo(resolvingIndex);
+        } else if (enemyIsCombo) {
+            Debug.Log("Enemy Combo Damage! Player Combo broken!");
+            playerStatus.ReceiveDmg(enemyStatus.ComboDamage);
+            comboModel.BreakCombo(resolvingIndex);
         }
 
         resolvingIndex++;

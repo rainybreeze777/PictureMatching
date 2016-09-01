@@ -43,6 +43,20 @@ public class EnemyModel : IEnemyModel {
         return generatedSequence;
     }
 
-    public uint GetPrevSequenceMask() { return cancelSeqMask; }
+    public uint GetPrevSequenceMask() { 
+#if NO_MASK
+        return 0;
+#else
+        return cancelSeqMask;
+#endif
+    }
+
+    public bool IsEndOfCombo(int seqIndex) {
+        return false; //TODO: Stub
+    }
+
+    public void BreakCombo(int seqIndex) {
+        //TODO: Stub
+    }
 
 }

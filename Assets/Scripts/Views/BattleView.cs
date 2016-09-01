@@ -22,7 +22,6 @@ public class BattleView : View {
 
     private List<int> playerSeq;
     private List<int> enemySeq;
-    private int resolvingIndex = 0;
 
     private Transform battleResolveContainer;
     private Camera mainCam = null;

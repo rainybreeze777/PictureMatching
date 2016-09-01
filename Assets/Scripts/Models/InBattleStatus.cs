@@ -6,6 +6,7 @@ public abstract class InBattleStatus : IInBattleStatus {
     public int CurrentHealth { get { return currentHealth; } }
     public int MaxHealth { get { return maxHealth; } }
     public int Damage { get { return damage; } }
+    public int ComboDamage { get { return comboDamage; } }
     public bool IsDead { get { return isDead; } }
 
     [Inject]
@@ -13,7 +14,7 @@ public abstract class InBattleStatus : IInBattleStatus {
 
     private int currentHealth = 100;
     private int maxHealth = 100;
-    private int damage = 10;
+    private int damage = 5;
     private int comboDamage = 20;
 
     private bool isDead = false;

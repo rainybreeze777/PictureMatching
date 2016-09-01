@@ -9,4 +9,8 @@ public interface IEnemyModel {
 
 	uint GetPrevSequenceMask(); // Returns a binary hash code used to indicate which tile should appear unknown
 
+	bool IsEndOfCombo(int seqIndex);
+
+	void BreakCombo(int seqIndex);
+
 }
