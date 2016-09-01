@@ -73,14 +73,14 @@ public class GameViewMediator : Mediator {
     {
         ResetActiveState();
         gameView.SwitchToEdScreen("You Win!");
-        resetBattleSignal.Dispatch();
+        // resetBattleSignal.Dispatch();
     }
 
     public void OnBattleLost()
     {
         ResetActiveState();
         gameView.SwitchToEdScreen("You Lost!");
-        resetBattleSignal.Dispatch();
+        // resetBattleSignal.Dispatch();
     }
 
     public void OnBattleUnresolved()

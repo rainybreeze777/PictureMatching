@@ -3,16 +3,25 @@ using System.Collections;
 
 public abstract class InBattleStatus : IInBattleStatus {
 
-    private int currentHealth = 100;
-    private int maxHealth = 100;
-    private int damage = 10;
-
-    private bool isDead = false;
-
     public int CurrentHealth { get { return currentHealth; } }
     public int MaxHealth { get { return maxHealth; } }
     public int Damage { get { return damage; } }
     public bool IsDead { get { return isDead; } }
+
+    [Inject]
+    public ResetBattleSignal resetBattleSignal { get; set; }
+
+    private int currentHealth = 100;
+    private int maxHealth = 100;
+    private int damage = 10;
+    private int comboDamage = 20;
+
+    private bool isDead = false;
+
+    [PostConstruct]
+    public void BindSignals() {
+        resetBattleSignal.AddListener(ResetHealth);
+    }
 
     public void ReceiveDmg(int dmg) {
         currentHealth -= dmg;

@@ -40,7 +40,7 @@ public class EnemyModel : IEnemyModel {
     }
 
     public List<int> GetPrevGeneratedSequence() {
-        return new List<int>(generatedSequence);
+        return generatedSequence;
     }
 
     public uint GetPrevSequenceMask() { return cancelSeqMask; }

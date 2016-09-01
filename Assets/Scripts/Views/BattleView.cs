@@ -24,11 +24,6 @@ public class BattleView : View {
     private List<int> enemySeq;
     private int resolvingIndex = 0;
 
-    [Inject(EInBattleStatusType.PLAYER)]
-    public IInBattleStatus playerStatus { get; set; }
-    [Inject(EInBattleStatusType.ENEMY)]
-    public IInBattleStatus enemyStatus { get; set; }
-
     private Transform battleResolveContainer;
     private Camera mainCam = null;
     private GameObject resultTile = null;
@@ -46,15 +41,8 @@ public class BattleView : View {
     private Vector3 startPoint, endPoint;
     private float widthBetweenTwoComboTiles;
     private float speed = 5.0f;
-    private bool newBattle = true;
 
-    // Injected Signals
-    [Inject]
-    public BattleWonSignal battleWonSignal{ get; set;}
-    [Inject]
-    public BattleLostSignal battleLostSignal{ get; set;}
-    [Inject]
-    public BattleUnresolvedSignal battleUnresolvedSignal{ get; set;}
+    public Signal moveIsDone = new Signal();
 
     internal void Init() {
         infoFetcher = TileInfoFetcher.GetInstance();
@@ -65,74 +53,13 @@ public class BattleView : View {
 
     void Update () {
 
-        bool gameShouldEnd = false;
-
         if (shouldResolve) {
-            //Do resolution here
-
-            if (resultTile != null) {
-                Destroy(resultTile);
-                resultTile = null;
-            }
-
-            int playerMove = (resolvingIndex < playerSeq.Count) ? playerSeq[resolvingIndex] : -1;
-            int enemyMove = (resolvingIndex < enemySeq.Count) ? enemySeq[resolvingIndex] : -1;
-
-            GameObject resultTileToInstantiate = null;
-
-            if (playerMove != -1 || enemyMove != -1) {
-                int compareResult = ElementResolver.ResolveAttack(playerMove, enemyMove);
-                switch (compareResult) {
-
-                    case 0:
-                        Debug.Log("Ties round " + (resolvingIndex + 1));
-                        resultTileToInstantiate = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(playerSeq[resolvingIndex], "comboPrefab")) as GameObject;
-                        break;
-                    case 1:
-                        Debug.Log("Player wins round " + (resolvingIndex + 1 ));
-                        resultTileToInstantiate = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(playerSeq[resolvingIndex], "comboPrefab")) as GameObject;
-                        enemyStatus.ReceiveDmg(playerStatus.Damage);
-                        break;
-                    case 2:
-                        Debug.Log("Enemy wins round " + (resolvingIndex + 1));
-                        resultTileToInstantiate = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(enemySeq[resolvingIndex], "comboPrefab")) as GameObject;
-                        playerStatus.ReceiveDmg(enemyStatus.Damage);
-                        break;
-                    case -1:
-                        Debug.LogError("ResolveAttack got Invalid Parameters!");
-                        break;
-                    default:
-                        Debug.LogError("Unrecognized result!");
-                        break;
-                }
-
-                resultTile = 
-                    Instantiate(resultTileToInstantiate
-                                , camCoordToWorldCoord(5.02f * widthSegment, 3.5f * heightSegment)
-                                , Quaternion.identity) as GameObject;
-                resultTile.transform.localScale = new Vector3(0.75F, 0.75F, 0);
-
-                resolvingIndex++;
-                if (playerStatus.IsDead || enemyStatus.IsDead)
-                    gameShouldEnd = true;
-                else
-                    StartCoroutine(WaitBeforeMoving(0.5f));
-            } else {
-                gameShouldEnd = true;
-            }
-
-            if (gameShouldEnd) {
-                if (playerStatus.IsDead && !enemyStatus.IsDead)
-                    battleLostSignal.Dispatch();
-                else if (!playerStatus.IsDead && enemyStatus.IsDead)
-                    battleWonSignal.Dispatch();
-                else if (!playerStatus.IsDead && !enemyStatus.IsDead)
-                    battleUnresolvedSignal.Dispatch();
-            }
+            StartCoroutine(WaitBeforeMoving(0.5f));
 
             shouldResolve = false;
         }
         if (initiateMove) {
+            Debug.LogWarning("Move Initiated!");
             startPoint = battleResolveContainer.transform.position;
             endPoint = new Vector3(startPoint.x - widthBetweenTwoComboTiles, startPoint.y, startPoint.z);
             startTime = Time.time;
@@ -144,7 +71,7 @@ public class BattleView : View {
             battleResolveContainer.transform.position = Vector3.Lerp(startPoint, endPoint, percentComplete);
             if (percentComplete > 1) {
                 shouldMove = false;
-                shouldResolve = true;
+                moveIsDone.Dispatch();
             }
         }
     }
@@ -158,17 +85,12 @@ public class BattleView : View {
         if (battleResolveContainer != null)
             Destroy(battleResolveContainer.gameObject);
         battleResolveContainer = new GameObject("BattleResolveContainer").transform;
-        playerStatus.ResetHealth();
-        enemyStatus.ResetHealth();
-        newBattle = true;
     }
 
     public void InitiateBattleResolution(List<int> playerSequence, List<int> enemySequence) {
 
         playerSeq = playerSequence;
         enemySeq = enemySequence;
-
-        resolvingIndex = 0;
         
         int maxCount = System.Math.Max(playerSeq.Count, enemySeq.Count);
 
@@ -178,12 +100,6 @@ public class BattleView : View {
         startPoint = battleResolveContainer.transform.position;
         endPoint = Vector3.zero;
         widthBetweenTwoComboTiles = (camCoordToWorldCoord(widthSegment, 0.0f) - camCoordToWorldCoord(0.0f, 0.0f)).x;
-
-        if (newBattle) {
-            playerStatus.ResetHealth();
-            enemyStatus.ResetHealth();
-            newBattle = false;
-        }
 
         for (int i = 0; i < maxCount; i++) {
 
@@ -221,6 +137,22 @@ public class BattleView : View {
                 instance.transform.SetParent(battleResolveContainer);
             }
         }
+    }
+
+    public void UpdateResultTile(int tileNumber) {
+
+        if (resultTile != null) {
+            Destroy(resultTile);
+            resultTile = null;
+        }
+
+        GameObject resultTileToInstantiate = Resources.Load(prefabPath + infoFetcher.GetInfoFromNumber(tileNumber, "comboPrefab")) as GameObject;
+
+        resultTile = 
+            Instantiate(resultTileToInstantiate
+                        , camCoordToWorldCoord(5.02f * widthSegment, 3.5f * heightSegment)
+                        , Quaternion.identity) as GameObject;
+        resultTile.transform.localScale = new Vector3(0.75F, 0.75F, 0);
 
         shouldResolve = true;
     }

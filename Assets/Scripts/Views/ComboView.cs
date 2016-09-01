@@ -165,12 +165,12 @@ public class ComboView : View {
             
             suggestCancelElem1 = 
                 Instantiate(tiles[suggestedCancels.Item1 - 1]
-                            , new Vector3( 16.0f, 4.0f, 0F)
+                            , new Vector3( 18.0f, 1.0f, 0F)
                             , Quaternion.identity) as GameObject;
 
             suggestCancelElem2 = 
                 Instantiate(tiles[suggestedCancels.Item2 - 1]
-                            , new Vector3( 16.0f, 6.0f, 0F)
+                            , new Vector3( 18.0f, 3.0f, 0F)
                             , Quaternion.identity) as GameObject;
 
             suggestCancelElem1.transform.localScale = new Vector3(0.5F, 0.5F, 0);

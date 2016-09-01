@@ -10,9 +10,12 @@ public class StartGameCommand : Command
     
     [Inject]
     public IEnemyModel enemyModel { get; set; }
+    [Inject]
+    public ResetBattleSignal resetBattleSignal { get; set; }
     
     public override void Execute()
     {
     	enemyModel.GenerateSequence();
+    	resetBattleSignal.Dispatch();
     }
 }
