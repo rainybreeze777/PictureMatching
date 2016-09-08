@@ -32,13 +32,14 @@ public class Tile : View {
     }
 
     public Tile() {
-        infoFetcher = TileInfoFetcher.GetInstance();
     }
 
     public void Initialize(int row, int column, int tileNumber) {
         this.row = row;
         this.column = column;
         this.tileNumber = tileNumber;
+
+        infoFetcher = TileInfoFetcher.GetInstance();
 
         spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
         normalSprite = Resources.Load<Sprite>(spritePath + infoFetcher.GetInfoFromNumber(tileNumber, "normalSprite"));

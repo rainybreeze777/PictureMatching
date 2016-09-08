@@ -21,7 +21,7 @@ public class EnemyModel : IEnemyModel {
 
     public void GenerateSequence() {
         List<int> seq = new List<int>();
-        Random.seed = (int)System.DateTime.Now.Ticks;
+        Random.InitState((int)System.DateTime.Now.Ticks);
         //Suppose Enemy right now can have from 9 to 15 cancellations
         int randomSequenceSize = Random.Range(9, 16);
         for (int i = 0; i < randomSequenceSize; i++) {

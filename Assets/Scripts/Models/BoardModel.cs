@@ -45,7 +45,7 @@ public class BoardModel : IBoardModel {
         int randomSuit;
         
         while (remainingPairs > 0) {
-            Random.seed = (int)System.DateTime.Now.Ticks;
+            Random.InitState((int)System.DateTime.Now.Ticks);
             randomSuit = (int) Random.Range(1, 6); //0 is reserved for empty tile
 
             Eppy.Tuple<int, int> tileOne;
@@ -156,7 +156,7 @@ public class BoardModel : IBoardModel {
             public int getThisRowNumber() { return theRowNum; }
             
             public int getRandAvailColumn() { 
-                Random.seed = (int)System.DateTime.Now.Ticks;
+                Random.InitState((int)System.DateTime.Now.Ticks);
                 
                 int randIndex = Random.Range(0, theColumns.Count);
                 
