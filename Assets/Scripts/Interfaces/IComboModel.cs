@@ -8,13 +8,9 @@ public interface IComboModel {
 
     List<int> GetCancelSeq();
 
-    int MakeCombo();
-
     void ClearCancelSequence();
 
     Signal<int> CancelAddedSignal { get; }
 
-    bool IsEndOfCombo(int seqIndex);
-
-    void BreakCombo(int seqIndex);
+    void DeductEquippedComboElems(int comboId);
 }

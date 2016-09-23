@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Assertions;
 using System.Collections.Generic;
 using strange.extensions.signal.impl;
 
@@ -18,68 +19,86 @@ public class ComboModel : IComboModel {
     //For example, combo may start from index 2 and end at index 6
     //Then comboTracker will be [2, 6]
     private List<int> comboTracker = new List<int>();
-
-    private ComboTree comboTree;
+    private Dictionary<int, OneCombo> equippedComboList;
+    private Dictionary<int, bool> skillPrepStatus;
 
     private int comboStart, comboEnd;
     private int comboId = -1;
 
+    // Total of 5 Elements:
+    // 0: Metal
+    // 1: Wood
+    // 2: Water
+    // 3: Fire
+    // 4: Earth
+    private int[] elemGathered = new int[5];
+
     public ComboModel() {
-        comboTree = ComboTree.GetInstance();       
+        equippedComboList = ComboListFetcher.GetInstance().GetMap();
+        skillPrepStatus = new Dictionary<int, bool>();
+        foreach(int key in equippedComboList.Keys) {
+            skillPrepStatus.Add(key, false);
+        }
     }
 
     public void AddToCancelSequence(int tileNumber) {
         cancelSequence.Add(tileNumber);
         cancelAddedSignal.Dispatch(tileNumber);
 
-        int startIndex = System.Math.Max(0, cancelSequence.Count - comboTree.LongestComboLength);
-        //Combo length is at least 2
-        for (int i = startIndex; i < cancelSequence.Count - 2; i++ ) {
+        ++elemGathered[tileNumber - 1];
 
-            List<int> subSequence = cancelSequence.GetRange(i, cancelSequence.Count - i);
-            comboId = comboTree.GetComboId(subSequence);
-            if (comboId != -1) {
-                comboPossibleSignal.Dispatch(true);
-                comboStart = i;
-                comboEnd = cancelSequence.Count - 1;
-                break;
-            }
-            comboPossibleSignal.Dispatch(false);
-        }
+        RefreshSkillPrepStatus();
     }
 
     public List<int> GetCancelSeq() {
         return cancelSequence;
     }
 
-    public int MakeCombo() {
-        comboTracker.Add(comboStart);
-        comboTracker.Add(comboEnd);
-
-        return comboId;
-    }
-
     public void ClearCancelSequence() {
         cancelSequence.Clear();
-        comboTracker.Clear();
     }
 
-    public bool IsEndOfCombo(int seqIndex) {
-        // BinarySearch returns the index of the found element
-        // If the element is not present, it returns a negative number
-        int pos = comboTracker.BinarySearch(seqIndex);
-        // If it is in the list, and the index is odd, it is
-        // the end of a combo
-        return (pos >= 0 && pos % 2 == 1);
+    public void DeductEquippedComboElems(int comboId) {
+        Assert.IsTrue(equippedComboList.ContainsKey(comboId));
+        OneCombo comboToBeDeducted = equippedComboList[comboId];
+
+        Assert.IsTrue(elemGathered[0] >= comboToBeDeducted.Metal);
+        elemGathered[0] -= comboToBeDeducted.Metal;
+
+        Assert.IsTrue(elemGathered[1] >= comboToBeDeducted.Wood);
+        elemGathered[1] -= comboToBeDeducted.Wood;
+
+        Assert.IsTrue(elemGathered[2] >= comboToBeDeducted.Water);
+        elemGathered[2] -= comboToBeDeducted.Water;
+
+        Assert.IsTrue(elemGathered[3] >= comboToBeDeducted.Fire);
+        elemGathered[3] -= comboToBeDeducted.Fire;
+
+        Assert.IsTrue(elemGathered[4] >= comboToBeDeducted.Earth);
+        elemGathered[4] -= comboToBeDeducted.Earth;
+
+        RefreshSkillPrepStatus();
     }
 
-    public void BreakCombo(int seqIndex) {
+    private void RefreshSkillPrepStatus() {
+        foreach (KeyValuePair<int, OneCombo> kvp in equippedComboList) {
 
-        for (int i = 0; i < comboTracker.Count; ++i) {
-            if (i % 2 == 1 
-                && seqIndex >= comboTracker[i - 1] 
-                && seqIndex <= comboTracker[i]) { 
-                comboTracker.RemoveRange(i - 1, 2);
+            List<int> comboReq = kvp.Value.ElemRequirement();
+            Assert.AreEqual(elemGathered.Length, comboReq.Count, "Total number of types of elements are not suppose to be different!");
+
+            bool prevStatus = skillPrepStatus[kvp.Key];
+            bool isEnough = true;
+            for (int i = 0; i < elemGathered.Length; ++i) {
+                if (elemGathered[i] < comboReq[i]) {
+                    isEnough = false;
+                    break;
+                }
+            }
+
+            if (isEnough != prevStatus) {
+                skillPrepStatus[kvp.Key] = isEnough;
+                // Notify others that the availability of this combo has changed
+                comboPossibleSignal.Dispatch(kvp.Key, isEnough);
             }
         }
     }

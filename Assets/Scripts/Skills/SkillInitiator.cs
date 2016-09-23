@@ -11,20 +11,40 @@ public class SkillInitiator : ISkillInitiator {
 
     [Inject]
     public IBoardModel boardModel { get; set; }
+    [Inject]
+    public StartGameSignal gameStartSignal { get; set; }
+    [Inject]
+    public InitiateBattleResolutionSignal initiateBattleResolutionSignal { get; set; }
+    [Inject]
+    public BattleUnresolvedSignal battleUnresolvedSignal{ get; set;}
 
     private Dictionary<int, IComboSkill> skillMap = new Dictionary<int, IComboSkill>();
 
     private int keyCount = 0;
 
+    private enum GameStage {
+        CANCEL_STAGE, RESOLUTION_STAGE
+    }
+    private GameStage currentStage = GameStage.CANCEL_STAGE;
+
     public void InvokeSkillFuncFromSkillId(int skillId, ActionParams parameters = null) {
-        skillMap[skillId].CancelStageExecuteWithArgs(boardModel, parameters);
+        if (currentStage == GameStage.CANCEL_STAGE) {
+            skillMap[skillId].CancelStageExecuteWithArgs(boardModel, parameters);
+        }
     }
 
     public SkillInitiator() {
-        
+    }
+
+    [PostConstruct]
+    public void PostConstruct() {
+        gameStartSignal.AddListener(SwitchToCancelStage);
+        battleUnresolvedSignal.AddListener(SwitchToCancelStage);
+        initiateBattleResolutionSignal.AddListener(SwitchToResolutionStage);
     }
 
     public void InjectInitialize(ICrossContextInjectionBinder injectionBinder) {
+
         // TODO: For now hard-code skillIds with each individual functions
 
         // *****ORDER MATTERS HERE, THE ORDER OF INJECTION DETERMINES *****
@@ -45,5 +65,8 @@ public class SkillInitiator : ISkillInitiator {
         injectionBinder.injector.Inject(comboSkill);
         skillMap.Add(keyCount++, comboSkill);
     }
+
+    public void SwitchToCancelStage() { currentStage = GameStage.CANCEL_STAGE; }
+    public void SwitchToResolutionStage() { currentStage = GameStage.RESOLUTION_STAGE; }
 
 }

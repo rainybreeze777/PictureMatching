@@ -30,3 +30,9 @@ obj/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# ================= #
+# Sublime Generated #
+# ================= #
+*.sublime-project
+*.sublime-workspace

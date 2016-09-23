@@ -12,8 +12,6 @@ public class ComboListFetcher {
     private static ComboListFetcher instance = null;
 
     private Dictionary<int, OneCombo> comboMap = new Dictionary<int, OneCombo>();
-    // In-cache quick access
-    private Dictionary<int, List<int>> comboList = new Dictionary<int, List<int>>();
 
     private TileInfoFetcher tileInfoFetcher;
 
@@ -25,8 +23,14 @@ public class ComboListFetcher {
         return instance;
     }
 
-    public Dictionary<int, List<int>> GetList() {
-        return comboList;
+    public Dictionary<int, OneCombo> GetMap() {
+
+        Dictionary<int, OneCombo> mapCopy = new Dictionary<int, OneCombo>();
+        foreach(KeyValuePair<int, OneCombo> combo in comboMap) {
+            mapCopy.Add(combo.Key, combo.Value);
+        }
+
+        return mapCopy;
     }
 
     public string GetComboNameById(int id) {
@@ -52,9 +56,12 @@ public class ComboListFetcher {
         if (comboMap.TryGetValue(id, out aCombo)) {
 
             ActionParams ap = new ActionParams();
-            foreach (object arg in aCombo.Arguments) {
-                ap.AddToParamList(arg);
+            if (aCombo.Arguments != null) {
+                foreach (object arg in aCombo.Arguments) {
+                    ap.AddToParamList(arg);
+                }
             }
+            
             return ap;
         } else {
             return null;
@@ -81,12 +88,6 @@ public class ComboListFetcher {
             OneCombo aCombo = JsonUtility.FromJson<OneCombo>(combosArray[i].ToString());
             aCombo.SerializeArguments(combosArray[i]["arguments"] as JSONArray); // JsonUtility does not support polymorphic array serialization
             comboMap.Add(aCombo.ComboId, aCombo);
-            // List that tracks tiles using tile numbers instead of names
-            List<int> tileNumberList = new List<int>();
-            foreach(string tileName in aCombo.ComboSeq) {
-                tileNumberList.Add(tileInfoFetcher.GetTileNumberFromName(tileName));
-            }
-            comboList.Add(aCombo.ComboId, tileNumberList);
         }
     }
 

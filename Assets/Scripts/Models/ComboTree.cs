@@ -17,11 +17,12 @@ public class ComboTree {
 
         rootNode = new ComboTreeNode(-1, true);
         comboListFetcher = ComboListFetcher.GetInstance();
-
+/*
         foreach(KeyValuePair<int, List<int>> aCombo in comboListFetcher.GetList()) {
             
             AddCombo(aCombo.Value, aCombo.Key);
         }
+New system doesn't need this */
     }
 
     public static ComboTree GetInstance() {

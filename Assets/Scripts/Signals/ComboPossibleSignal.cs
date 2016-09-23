@@ -1,6 +1,11 @@
 ﻿using System;
 using strange.extensions.signal.impl;
 
-public class ComboPossibleSignal : Signal<bool>
+/*
+	Parameters:
+	int: the comboId
+	bool: is now possible or not
+*/
+public class ComboPossibleSignal : Signal<int, bool>
 {
 }

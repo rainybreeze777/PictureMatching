@@ -24,8 +24,6 @@ public class GameViewMediator : Mediator {
     [Inject]
     public BoardIsEmptySignal boardIsEmptySignal { get; set; }
     [Inject]
-    public ComboPossibleSignal comboPossibleSignal { get; set; }
-    [Inject]
     public ResetActiveStateSignal resetActiveStateSignal { get; set; }
     [Inject]
     public InitiateBattleResolutionSignal initiateBattleResolutionSignal { get; set; }
@@ -60,7 +58,6 @@ public class GameViewMediator : Mediator {
         battleLostSignal.AddListener(OnBattleLost);
         battleUnresolvedSignal.AddListener(OnBattleUnresolved);
         boardIsEmptySignal.AddListener(SwitchToBattleResolve);
-        comboPossibleSignal.AddListener(OnComboPossible);
         gameStartSignal.AddListener(SwitchToCancelTiles);
         gameView.endThisRoundSignal.AddListener(SwitchToBattleResolve);
         playerHealthUpdatedSignal.AddListener(OnPlayerHealthUpdate);
@@ -126,9 +123,5 @@ public class GameViewMediator : Mediator {
     private void OnEnemyHealthUpdate()
     {
         gameView.UpdateEnemyHealthText(enemyStatus.CurrentHealth + " / " + enemyStatus.MaxHealth);
-    }
-
-    private void OnComboPossible(bool possible) {
-        gameView.ComboButtonSetActive(possible);
     }
 }

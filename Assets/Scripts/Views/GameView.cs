@@ -23,7 +23,7 @@ public class GameView : View {
     [SerializeField] private GameObject optionButton;
     [SerializeField] private GameObject quitButton;
     [SerializeField] private GameObject endRoundButton;
-    [SerializeField] private GameObject comboButton;
+    // [SerializeField] private GameObject comboButton;
 
     [SerializeField] private GameObject resButton1;
     [SerializeField] private GameObject resButton2;
@@ -48,8 +48,8 @@ public class GameView : View {
 
     public Signal endThisRoundSignal = new Signal();
 
-    [Inject]
-    public MakeComboSignal makeComboSignal { get; set; }
+    // [Inject]
+    // public MakeComboSignal makeComboSignal { get; set; }
     [Inject]
     public StartGameSignal gameStartSignal { get; set; }
 
@@ -57,65 +57,26 @@ public class GameView : View {
     internal void Init() {
         Screen.SetResolution (1366, 768, false);
 
-        // playerHealthText = GameObject.Find("PlayerHealth").GetComponent<Text>();
-        // enemyHealthText = GameObject.Find("EnemyHealth").GetComponent<Text>();
-        // titleText = GameObject.Find("TitleText").GetComponent<Text>();
-        // resolutionText = GameObject.Find("Resolution").GetComponent<Text>();
-
-        // startScreenPanel = GameObject.Find("StartScreenPanel");
         gameControlGroup.AddToGroup(START_SCREEN_KEY, startScreenPanel);
-        // cancellationStageUIPanel = GameObject.Find("CancellationStageUIPanel");
         gameControlGroup.AddToGroup(CANCEL_STAGE_KEY, cancellationStageUIPanel);
-        // battleResolutionUIPanel = GameObject.Find("BattleResolutionUIPanel");
         gameControlGroup.AddToGroup(BATTLE_RESOLVE_KEY, battleResolutionUIPanel);
-        // startMenuUIPanel = GameObject.Find("StartMenuUIPanel");
         startMenuGroup.AddToGroup(START_MENU_KEY, startMenuUIPanel);
-        // resolutionUIPanel = GameObject.Find("ResolutionUIPanel");
         startMenuGroup.AddToGroup(RESOLUTION_KEY, resolutionUIPanel);
-
-        // startGameButton = GameObject.Find("StartGameButton");
-        // optionButton = GameObject.Find("OptionButton");
-        // quitButton = GameObject.Find("QuitButton");
-        // resButton1 = GameObject.Find("ResolutionButton1");
-        // resButton2 = GameObject.Find("ResolutionButton2");
-        // backButton = GameObject.Find("BackButton");
-        // endRoundButton = GameObject.Find("EndRoundButton");
-
-        // timeLeftPBPanel = GameObject.Find("TimeLeftPBPanel");
-        // timeLeftPB = GameObject.Find("TimeLeftPBFG").GetComponent<ProgressBar>();
 
         mainCam = Camera.main;
         mainCam.transform.position = opEdCamPos;
 
         titleText.text = "Picture Matching";
         startGameButton.GetComponent<Button>().GetComponentInChildren<Text>().text = "Start Game";
-        // playerHealthText.enabled = false;
-        // enemyHealthText.enabled = false;
-        // resolutionText.enabled = false;
-        
-        // resButton1.SetActive(false);
-        // resButton2.SetActive(false);
-        // backButton.SetActive(false);
-        // endRoundButton.SetActive(false);
-
-        // timeLeftPBPanel.SetActive(false);
         timeLeftPB.Value = 100;
 
         gameControlGroup.ActivateUI(START_SCREEN_KEY);
         startMenuGroup.ActivateUI(START_MENU_KEY);
 
         startGameButton.GetComponent<Button>().onClick.AddListener(() => {
-                // startGameButton.SetActive(false);
-                // optionButton.SetActive(false);
-                // quitButton.SetActive(false);
-                // titleText.enabled = false;
                 gameStartSignal.Dispatch();
             });
         optionButton.GetComponent<Button>().onClick.AddListener(() => {
-                // startGameButton.SetActive(false);
-                // optionButton.SetActive(false);
-                // quitButton.SetActive(false);
-                // titleText.enabled = false;
                 SwitchToOptionsMenu();
             });
         quitButton.GetComponent<Button>().onClick.AddListener(() => {
@@ -136,72 +97,39 @@ public class GameView : View {
             () => {
                 SwitchToMainMenu();
             });
+        /*
         comboButton.SetActive(false);
         comboButton.GetComponent<Button>().onClick.AddListener( 
             () => {
                 comboButton.SetActive(false);
                 makeComboSignal.Dispatch();
             });
+            */
     }
 
     public void SwitchToBattleResolve() {
         gameControlGroup.ActivateUI(BATTLE_RESOLVE_KEY);
-        // startScreenPanel.SetActive(false);
-        // playerHealthText.enabled = true;
-        // enemyHealthText.enabled = true;
         mainCam.transform.position = battleResolveCamPos;
-        // timeLeftPBPanel.SetActive(false);
-        // endRoundButton.SetActive(false);
     }
 
     public void SwitchToCancelTiles() {
         gameControlGroup.ActivateUI(CANCEL_STAGE_KEY);
-        // playerHealthText.enabled = false;
-        // enemyHealthText.enabled = false;
         mainCam.transform.position = cancelTileCamPos;
-        // timeLeftPBPanel.SetActive(true);
-        // endRoundButton.SetActive(true);
     }
 
     private void SwitchToOptionsMenu() {
-        // resolutionText.enabled = true;
-        // resButton1.SetActive(true);
-        // resButton2.SetActive(true);
-        // backButton.SetActive(true);
         startMenuGroup.ActivateUI(RESOLUTION_KEY);
     }
 
     private void SwitchToMainMenu() {
-        // resButton1.SetActive(false);
-        // resButton2.SetActive(false);
-        // backButton.SetActive(false);
-        // startGameButton.SetActive(true);
-        // optionButton.SetActive(true);
-        // quitButton.SetActive(true);
         titleText.text = "Picture Matching";
         gameControlGroup.ActivateUI(START_SCREEN_KEY);
         startMenuGroup.ActivateUI(START_MENU_KEY);
-        // titleText.enabled = true;
-        // playerHealthText.enabled = false;
-        // enemyHealthText.enabled = false;
-        // resolutionText.enabled = false;
         mainCam.transform.position = opEdCamPos;
     }
 
     public void SwitchToEdScreen(string setText) {
-        // resButton1.SetActive(false);
-        // resButton2.SetActive(false);
-        // backButton.SetActive(false);
-        // startGameButton.SetActive(true);
-        // optionButton.SetActive(true);
-        // quitButton.SetActive(true);
-        // countingDown = false;
         titleText.text = setText;
-        // titleText.enabled = true;
-        // playerHealthText.enabled = false;
-        // enemyHealthText.enabled = false;
-        // resolutionText.enabled = false;
-        // mediator.ResetBattle();
         startGameButton.GetComponent<Button>().GetComponentInChildren<Text>().text = "Restart";
         gameControlGroup.ActivateUI(START_SCREEN_KEY);
         mainCam.transform.position = opEdCamPos;
@@ -219,9 +147,9 @@ public class GameView : View {
         enemyHealthText.text = text;
     }
 
-    public void ComboButtonSetActive(bool active) {
-        comboButton.SetActive(active);
-    }
+    // public void ComboButtonSetActive(bool active) {
+    //     comboButton.SetActive(active);
+    // }
 
     private class RadioUIGroup {
         private Dictionary<string, GameObject> uiGroup = new Dictionary<string, GameObject>();

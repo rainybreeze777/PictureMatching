@@ -4,35 +4,24 @@
             "id" : 1,
             "skillId" : 0,
             "englishName" : "comboOne",
-            "comboSeq" : [
-                "Wood",
-                "Wood",
-                "Wood",
-                "Wood"
-            ],
+            "wood" : 4,
             "description" : "cancel 2 by 2 square area"
         },
         {
             "id" : 2,
             "skillId" : 1,
             "englishName" : "comboTwo",
-            "comboSeq" : [
-                "Wood",
-                "Wood",
-                "Water",
-                "Fire"
-            ],
+            "wood" : 2,
+            "water" : 1,
+            "fire" : 1,
             "description" : "cancel a column"
         },
         {
             "id" : 3,
             "skillId" : 2,
             "englishName" : "comboThree",
-            "comboSeq" : [
-                "Earth",
-                "Earth",
-                "Fire",
-            ],
+            "earth" : 2,
+            "fire" : 1,
             "arguments" : [
                 5.0
             ],
