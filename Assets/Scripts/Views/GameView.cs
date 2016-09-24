@@ -19,21 +19,26 @@ public class GameView : View {
     [SerializeField] private Text enemyHealthText;
     [SerializeField] private Text titleText;
     [SerializeField] private Text resolutionText;
-    [SerializeField] private GameObject startGameButton;
-    [SerializeField] private GameObject optionButton;
-    [SerializeField] private GameObject quitButton;
-    [SerializeField] private GameObject endRoundButton;
-    // [SerializeField] private GameObject comboButton;
+    [SerializeField] private Button startGameButton;
+    [SerializeField] private Button optionButton;
+    [SerializeField] private Button quitButton;
+    [SerializeField] private Button endRoundButton;
+    [SerializeField] private Text metalGathered;
+    [SerializeField] private Text woodGathered;
+    [SerializeField] private Text waterGathered;
+    [SerializeField] private Text fireGathered;
+    [SerializeField] private Text earthGathered;
 
-    [SerializeField] private GameObject resButton1;
-    [SerializeField] private GameObject resButton2;
-    [SerializeField] private GameObject backButton;
+    [SerializeField] private Button resButton1;
+    [SerializeField] private Button resButton2;
+    [SerializeField] private Button backButton;
 
-    [SerializeField] private GameObject timeLeftPBPanel;
     [SerializeField] private ProgressBar timeLeftPB;
 
     private const string START_SCREEN_KEY = "START_SCREEN";
     [SerializeField] private GameObject startScreenPanel;
+    private const string GAME_KEY = "GAME";
+    [SerializeField] private GameObject gamePanel;
     private const string CANCEL_STAGE_KEY = "CANCEL_STAGE";
     [SerializeField] private GameObject cancellationStageUIPanel;
     private const string BATTLE_RESOLVE_KEY = "BATTLE_RESOLVE";
@@ -43,13 +48,12 @@ public class GameView : View {
     private const string RESOLUTION_KEY = "RESOLUTION";
     [SerializeField] private GameObject resolutionUIPanel;
 
-    private RadioUIGroup gameControlGroup = new RadioUIGroup();
+    private RadioUIGroup flowControlGroup = new RadioUIGroup();
+    private RadioUIGroup gameGroup = new RadioUIGroup();
     private RadioUIGroup startMenuGroup = new RadioUIGroup();
 
     public Signal endThisRoundSignal = new Signal();
 
-    // [Inject]
-    // public MakeComboSignal makeComboSignal { get; set; }
     [Inject]
     public StartGameSignal gameStartSignal { get; set; }
 
@@ -57,9 +61,10 @@ public class GameView : View {
     internal void Init() {
         Screen.SetResolution (1366, 768, false);
 
-        gameControlGroup.AddToGroup(START_SCREEN_KEY, startScreenPanel);
-        gameControlGroup.AddToGroup(CANCEL_STAGE_KEY, cancellationStageUIPanel);
-        gameControlGroup.AddToGroup(BATTLE_RESOLVE_KEY, battleResolutionUIPanel);
+        flowControlGroup.AddToGroup(START_SCREEN_KEY, startScreenPanel);
+        flowControlGroup.AddToGroup(GAME_KEY, gamePanel);
+        gameGroup.AddToGroup(CANCEL_STAGE_KEY, cancellationStageUIPanel);
+        gameGroup.AddToGroup(BATTLE_RESOLVE_KEY, battleResolutionUIPanel);
         startMenuGroup.AddToGroup(START_MENU_KEY, startMenuUIPanel);
         startMenuGroup.AddToGroup(RESOLUTION_KEY, resolutionUIPanel);
 
@@ -70,7 +75,7 @@ public class GameView : View {
         startGameButton.GetComponent<Button>().GetComponentInChildren<Text>().text = "Start Game";
         timeLeftPB.Value = 100;
 
-        gameControlGroup.ActivateUI(START_SCREEN_KEY);
+        flowControlGroup.ActivateUI(START_SCREEN_KEY);
         startMenuGroup.ActivateUI(START_MENU_KEY);
 
         startGameButton.GetComponent<Button>().onClick.AddListener(() => {
@@ -97,23 +102,16 @@ public class GameView : View {
             () => {
                 SwitchToMainMenu();
             });
-        /*
-        comboButton.SetActive(false);
-        comboButton.GetComponent<Button>().onClick.AddListener( 
-            () => {
-                comboButton.SetActive(false);
-                makeComboSignal.Dispatch();
-            });
-            */
     }
 
     public void SwitchToBattleResolve() {
-        gameControlGroup.ActivateUI(BATTLE_RESOLVE_KEY);
+        gameGroup.ActivateUI(BATTLE_RESOLVE_KEY);
         mainCam.transform.position = battleResolveCamPos;
     }
 
     public void SwitchToCancelTiles() {
-        gameControlGroup.ActivateUI(CANCEL_STAGE_KEY);
+        flowControlGroup.ActivateUI(GAME_KEY);
+        gameGroup.ActivateUI(CANCEL_STAGE_KEY);
         mainCam.transform.position = cancelTileCamPos;
     }
 
@@ -123,7 +121,7 @@ public class GameView : View {
 
     private void SwitchToMainMenu() {
         titleText.text = "Picture Matching";
-        gameControlGroup.ActivateUI(START_SCREEN_KEY);
+        flowControlGroup.ActivateUI(START_SCREEN_KEY);
         startMenuGroup.ActivateUI(START_MENU_KEY);
         mainCam.transform.position = opEdCamPos;
     }
@@ -131,7 +129,7 @@ public class GameView : View {
     public void SwitchToEdScreen(string setText) {
         titleText.text = setText;
         startGameButton.GetComponent<Button>().GetComponentInChildren<Text>().text = "Restart";
-        gameControlGroup.ActivateUI(START_SCREEN_KEY);
+        flowControlGroup.ActivateUI(START_SCREEN_KEY);
         mainCam.transform.position = opEdCamPos;
     }
 
@@ -147,9 +145,25 @@ public class GameView : View {
         enemyHealthText.text = text;
     }
 
-    // public void ComboButtonSetActive(bool active) {
-    //     comboButton.SetActive(active);
-    // }
+    public void SetElementGathered(EElements elem, int count) {
+        switch(elem) {
+            case EElements.METAL:
+                metalGathered.text = count.ToString();
+                break;
+            case EElements.WOOD:
+                woodGathered.text = count.ToString();
+                break;
+            case EElements.WATER:
+                waterGathered.text = count.ToString();
+                break;
+            case EElements.FIRE:
+                fireGathered.text = count.ToString();
+                break;
+            case EElements.EARTH:
+                earthGathered.text = count.ToString();
+                break;
+        }
+    }
 
     private class RadioUIGroup {
         private Dictionary<string, GameObject> uiGroup = new Dictionary<string, GameObject>();

@@ -34,6 +34,25 @@ public class TileInfoFetcher {
         return -1;
     }
 
+    public EElements GetElemEnumFromTileNumber(int tileNumber) {
+        // TODO: Wire the tile numbers up with actual enums
+        // hard-coding for now
+        switch (tileNumber) {
+            case 1:
+                return EElements.METAL;
+            case 2:
+                return EElements.WOOD;
+            case 3:
+                return EElements.WATER;
+            case 4:
+                return EElements.FIRE;
+            case 5:
+                return EElements.EARTH;
+            default:
+                return EElements.INVALID;
+        }
+    }
+
     public string GetInfoFromNumber(int tileNumber, string valueName) {
 
         for (int i = 0; i < tilesArray.Count; i++) {
@@ -48,5 +67,10 @@ public class TileInfoFetcher {
 
     public int GetTotalNumOfTiles() {
         return tilesArray.Count;
+    }
+
+    public int GetTotalNumOfElems() {
+        // Hardcode to 5 for now
+        return 5;
     }
 }

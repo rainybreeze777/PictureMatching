@@ -8,6 +8,8 @@ public class ComboModel : IComboModel {
 
     [Inject]
     public ComboPossibleSignal comboPossibleSignal { get; set; }
+    [Inject]
+    public ElemGatherUpdatedSignal elemGatherUpdatedSignal { get; set; }
     public Signal<int> cancelAddedSignal = new Signal<int>();
     public Signal<int> CancelAddedSignal 
     {
@@ -18,12 +20,10 @@ public class ComboModel : IComboModel {
     //List used to track the range of formed combos
     //For example, combo may start from index 2 and end at index 6
     //Then comboTracker will be [2, 6]
-    private List<int> comboTracker = new List<int>();
     private Dictionary<int, OneCombo> equippedComboList;
     private Dictionary<int, bool> skillPrepStatus;
 
-    private int comboStart, comboEnd;
-    private int comboId = -1;
+    private TileInfoFetcher tileInfoFetcher;
 
     // Total of 5 Elements:
     // 0: Metal
@@ -39,6 +39,7 @@ public class ComboModel : IComboModel {
         foreach(int key in equippedComboList.Keys) {
             skillPrepStatus.Add(key, false);
         }
+        tileInfoFetcher = TileInfoFetcher.GetInstance();
     }
 
     public void AddToCancelSequence(int tileNumber) {
@@ -46,6 +47,7 @@ public class ComboModel : IComboModel {
         cancelAddedSignal.Dispatch(tileNumber);
 
         ++elemGathered[tileNumber - 1];
+        elemGatherUpdatedSignal.Dispatch(tileInfoFetcher.GetElemEnumFromTileNumber(tileNumber), elemGathered[tileNumber - 1]);
 
         RefreshSkillPrepStatus();
     }
@@ -76,6 +78,10 @@ public class ComboModel : IComboModel {
 
         Assert.IsTrue(elemGathered[4] >= comboToBeDeducted.Earth);
         elemGathered[4] -= comboToBeDeducted.Earth;
+
+        for (int i = 0; i < tileInfoFetcher.GetTotalNumOfElems(); ++i) {
+            elemGatherUpdatedSignal.Dispatch(tileInfoFetcher.GetElemEnumFromTileNumber(i + 1), elemGathered[i]);
+        }
 
         RefreshSkillPrepStatus();
     }

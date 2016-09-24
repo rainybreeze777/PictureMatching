@@ -13,8 +13,6 @@ public class ComboListFetcher {
 
     private Dictionary<int, OneCombo> comboMap = new Dictionary<int, OneCombo>();
 
-    private TileInfoFetcher tileInfoFetcher;
-
     public static ComboListFetcher GetInstance() {
         if (instance == null) {
             instance = new ComboListFetcher();
@@ -76,8 +74,6 @@ public class ComboListFetcher {
             Debug.LogError(ex.ToString());
         }
         combosArray = comboJsonSheet["combos"] as JSONArray;
-
-        tileInfoFetcher = TileInfoFetcher.GetInstance();
 
         for(int i = 0; i < combosArray.Count; ++i) {
 

@@ -35,6 +35,8 @@ public class GameViewMediator : Mediator {
     public AddToTimeSignal addToTimeSignal { get; set; }
     [Inject]
     public StartGameSignal gameStartSignal { get; set; }
+    [Inject]
+    public ElemGatherUpdatedSignal elemGatherUpdatedSignal { get; set; }
 
     private const float TIME_PER_CANCEL = 60.0f;
     private float timer = TIME_PER_CANCEL;
@@ -63,6 +65,8 @@ public class GameViewMediator : Mediator {
         playerHealthUpdatedSignal.AddListener(OnPlayerHealthUpdate);
         enemyHealthUpdatedSignal.AddListener(OnEnemyHealthUpdate);
         addToTimeSignal.AddListener(AddToTimer);
+        elemGatherUpdatedSignal.AddListener(OnElementGatherUpdated);
+
         gameView.Init();
     }
 
@@ -123,5 +127,9 @@ public class GameViewMediator : Mediator {
     private void OnEnemyHealthUpdate()
     {
         gameView.UpdateEnemyHealthText(enemyStatus.CurrentHealth + " / " + enemyStatus.MaxHealth);
+    }
+
+    private void OnElementGatherUpdated(EElements elem, int updateTo) {
+        gameView.SetElementGathered(elem, updateTo);
     }
 }
