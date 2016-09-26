@@ -21,6 +21,7 @@
  */
 
 using System;
+using UnityEngine;
 using strange.extensions.injector.api;
 
 namespace strange.extensions.injector.impl
@@ -125,9 +126,10 @@ namespace strange.extensions.injector.impl
 					retv = Activator.CreateInstance(value, args);
 				}
 			}
-			catch
+			catch (Exception ex)
 			{
-				//No-op
+                //No-op
+                Debug.LogError(ex.ToString());
 			}
 			return retv;
 		}

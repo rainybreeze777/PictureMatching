@@ -1,11 +1,12 @@
 ﻿using System;
 using SimpleJSON;
 using UnityEngine;
+using UnityEngine.Assertions;
 using System.Collections;
 using System.Collections.Generic;
 
 [Serializable]
-public class OneCombo {
+public class OneCombo : ScriptableObject {
 
     [SerializeField]
     private string englishName;
@@ -19,48 +20,32 @@ public class OneCombo {
     private int skillId;
     public int SkillId { get { return skillId; } }
 
-    [SerializeField]
-    private int metal;
-    public int Metal { get { return metal; } }
+    [SerializeField] private int metal;
+    [SerializeField] private int wood;
+    [SerializeField] private int water;
+    [SerializeField] private int fire;
+    [SerializeField] private int earth;
 
-    [SerializeField]
-    private int wood;
-    public int Wood { get { return wood; } }
-
-    [SerializeField]
-    private int water;
-    public int Water { get { return water; } }
-
-    [SerializeField]
-    private int fire;
-    public int Fire { get { return fire; } }
-
-    [SerializeField]
-    private int earth;
-    public int Earth { get { return earth; } }
+    public int Metal() { return GetReqFromEElements(EElements.METAL); }
+    public int Wood() { return GetReqFromEElements(EElements.WOOD); } 
+    public int Water() { return GetReqFromEElements(EElements.WATER); }
+    public int Fire() { return GetReqFromEElements(EElements.FIRE); }
+    public int Earth() { return GetReqFromEElements(EElements.EARTH); }
+    public int GetReqFromEElements(EElements elem) {
+        Assert.IsTrue(initialized, "OneCombo's elem requirements are not initialized! Make sure InitRequirements() is called after calling FromJsonOverwrite()!");
+        return elemReq[elem];
+    }
 
     private List<object> arguments;
     public List<object> Arguments { get { return arguments; } }
 
-    public List<int> ElemRequirement() {
-        List<int> req = new List<int>();
+    private Dictionary<EElements, int> elemReq;
 
-        req.Add(metal);
-        req.Add(wood);
-        req.Add(water);
-        req.Add(fire);
-        req.Add(earth);
-
-        return req;
-    }
+    private bool initialized = false;
 
     public void SerializeArguments(JSONArray jsonArray) {
         if (jsonArray == null)
             return; 
-
-        if (arguments == null) {
-            arguments = new List<object>();
-        }
 
         for (int i = 0; i < jsonArray.Count; ++i) {
             switch(jsonArray[i].Tag) {
@@ -84,15 +69,22 @@ public class OneCombo {
         }
     }
 
-    public OneCombo(OneCombo other) {
-        this.englishName = other.englishName;
-        this.id = other.id;
-        this.skillId = other.skillId;
-        this.metal = other.metal;
-        this.wood = other.wood;
-        this.water = other.water;
-        this.fire = other.fire;
-        this.earth = other.earth;
-        this.arguments = new List<object>(other.arguments);
+    public Dictionary<EElements, int> ElemRequirement() {
+        return new Dictionary<EElements, int>(elemReq);
+    }
+
+    public void OnEnable() {
+        arguments = new List<object>();
+        elemReq = new Dictionary<EElements, int>();
+    }
+
+    public void InitRequirements() {
+        elemReq.Add(EElements.METAL, metal);
+        elemReq.Add(EElements.WOOD, wood);
+        elemReq.Add(EElements.WATER, water);
+        elemReq.Add(EElements.FIRE, fire);
+        elemReq.Add(EElements.EARTH, earth);
+
+        initialized = true;
     }
 }

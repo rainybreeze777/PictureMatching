@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using SimpleJSON;
 
 public class TileInfoFetcher {
@@ -8,10 +10,21 @@ public class TileInfoFetcher {
     private static TileInfoFetcher fetcher = null;
     private JSONArray tilesArray = null;
 
+    private List<EElements> validElements = new List<EElements>();
+
     private TileInfoFetcher () {
         TextAsset jsonText = Resources.Load("SpritesInfo") as TextAsset;
         spriteJsonSheet = JSON.Parse(jsonText.text);
         tilesArray = spriteJsonSheet["tiles"] as JSONArray;
+
+        for (int i = 0; i < tilesArray.Count; ++i) {
+            string elemName = tilesArray[i]["name"].ToString().Replace("\"", "");
+            try {
+                validElements.Add((EElements) Enum.Parse(typeof(EElements), elemName, true));
+            } catch (ArgumentException) {
+                // Do nothing
+            }
+        }
     }
 
     public static TileInfoFetcher GetInstance() {
@@ -35,22 +48,19 @@ public class TileInfoFetcher {
     }
 
     public EElements GetElemEnumFromTileNumber(int tileNumber) {
-        // TODO: Wire the tile numbers up with actual enums
-        // hard-coding for now
-        switch (tileNumber) {
-            case 1:
-                return EElements.METAL;
-            case 2:
-                return EElements.WOOD;
-            case 3:
-                return EElements.WATER;
-            case 4:
-                return EElements.FIRE;
-            case 5:
-                return EElements.EARTH;
-            default:
-                return EElements.INVALID;
+
+        string elemName = GetInfoFromNumber(tileNumber, "name");
+        EElements eelem = EElements.INVALID;
+        try {
+            eelem = (EElements) Enum.Parse(typeof(EElements), elemName, true);
+        } catch (ArgumentException) {
+            // Something went wrong with the conversion
+            // Double check elemName returned is spelled correctly
+            // and is part of EElements enum
+            Debug.LogWarning("Unable to convert from tile number to elements enum. Name from given number is " + elemName);
         }
+
+        return eelem;
     }
 
     public string GetInfoFromNumber(int tileNumber, string valueName) {
@@ -70,7 +80,10 @@ public class TileInfoFetcher {
     }
 
     public int GetTotalNumOfElems() {
-        // Hardcode to 5 for now
-        return 5;
+        return validElements.Count;
+    }
+
+    public List<EElements> GetElementsList() {
+        return new List<EElements>(validElements);
     }
 }

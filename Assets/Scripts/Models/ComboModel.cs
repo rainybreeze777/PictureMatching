@@ -25,13 +25,8 @@ public class ComboModel : IComboModel {
 
     private TileInfoFetcher tileInfoFetcher;
 
-    // Total of 5 Elements:
-    // 0: Metal
-    // 1: Wood
-    // 2: Water
-    // 3: Fire
-    // 4: Earth
-    private int[] elemGathered = new int[5];
+    // Dict to store gathered elements amount
+    private Dictionary<EElements, int> elemGathered = new Dictionary<EElements, int>();
 
     public ComboModel() {
         equippedComboList = ComboListFetcher.GetInstance().GetMap();
@@ -40,14 +35,20 @@ public class ComboModel : IComboModel {
             skillPrepStatus.Add(key, false);
         }
         tileInfoFetcher = TileInfoFetcher.GetInstance();
+        List<EElements> validElems = tileInfoFetcher.GetElementsList();
+        foreach(EElements elem in validElems) {
+            elemGathered.Add(elem, 0);
+        }
     }
 
     public void AddToCancelSequence(int tileNumber) {
         cancelSequence.Add(tileNumber);
         cancelAddedSignal.Dispatch(tileNumber);
 
-        ++elemGathered[tileNumber - 1];
-        elemGatherUpdatedSignal.Dispatch(tileInfoFetcher.GetElemEnumFromTileNumber(tileNumber), elemGathered[tileNumber - 1]);
+        EElements elem = tileInfoFetcher.GetElemEnumFromTileNumber(tileNumber);
+        elemGathered[elem] += 1;
+
+        elemGatherUpdatedSignal.Dispatch(elem, elemGathered[elem]);
 
         RefreshSkillPrepStatus();
     }
@@ -64,23 +65,15 @@ public class ComboModel : IComboModel {
         Assert.IsTrue(equippedComboList.ContainsKey(comboId));
         OneCombo comboToBeDeducted = equippedComboList[comboId];
 
-        Assert.IsTrue(elemGathered[0] >= comboToBeDeducted.Metal);
-        elemGathered[0] -= comboToBeDeducted.Metal;
+        List<EElements> elems = new List<EElements>();
+        foreach(EElements e in elemGathered.Keys) {
+            elems.Add(e);
+        }
 
-        Assert.IsTrue(elemGathered[1] >= comboToBeDeducted.Wood);
-        elemGathered[1] -= comboToBeDeducted.Wood;
-
-        Assert.IsTrue(elemGathered[2] >= comboToBeDeducted.Water);
-        elemGathered[2] -= comboToBeDeducted.Water;
-
-        Assert.IsTrue(elemGathered[3] >= comboToBeDeducted.Fire);
-        elemGathered[3] -= comboToBeDeducted.Fire;
-
-        Assert.IsTrue(elemGathered[4] >= comboToBeDeducted.Earth);
-        elemGathered[4] -= comboToBeDeducted.Earth;
-
-        for (int i = 0; i < tileInfoFetcher.GetTotalNumOfElems(); ++i) {
-            elemGatherUpdatedSignal.Dispatch(tileInfoFetcher.GetElemEnumFromTileNumber(i + 1), elemGathered[i]);
+        foreach (EElements e in elems) {
+            Assert.IsTrue(elemGathered[e] >= comboToBeDeducted.GetReqFromEElements(e));
+            elemGathered[e] -= comboToBeDeducted.GetReqFromEElements(e);
+            elemGatherUpdatedSignal.Dispatch(e, elemGathered[e]);
         }
 
         RefreshSkillPrepStatus();
@@ -89,13 +82,13 @@ public class ComboModel : IComboModel {
     private void RefreshSkillPrepStatus() {
         foreach (KeyValuePair<int, OneCombo> kvp in equippedComboList) {
 
-            List<int> comboReq = kvp.Value.ElemRequirement();
-            Assert.AreEqual(elemGathered.Length, comboReq.Count, "Total number of types of elements are not suppose to be different!");
+            Dictionary<EElements, int> comboReq = kvp.Value.ElemRequirement();
+            Assert.AreEqual(elemGathered.Count, comboReq.Count, "Total number of types of elements are not suppose to be different!");
 
             bool prevStatus = skillPrepStatus[kvp.Key];
             bool isEnough = true;
-            for (int i = 0; i < elemGathered.Length; ++i) {
-                if (elemGathered[i] < comboReq[i]) {
+            foreach(KeyValuePair<EElements, int> kvp2 in elemGathered) {
+                if (elemGathered[kvp2.Key] < comboReq[kvp2.Key]) {
                     isEnough = false;
                     break;
                 }
