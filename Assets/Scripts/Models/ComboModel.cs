@@ -9,6 +9,8 @@ public class ComboModel : IComboModel {
     [Inject]
     public ComboPossibleSignal comboPossibleSignal { get; set; }
     [Inject]
+    public SkillExecFinishedSignal skillExecFinishedSignal { get; set; }
+    [Inject]
     public ElemGatherUpdatedSignal elemGatherUpdatedSignal { get; set; }
     public Signal<int> cancelAddedSignal = new Signal<int>();
     public Signal<int> CancelAddedSignal 
@@ -22,6 +24,8 @@ public class ComboModel : IComboModel {
     //Then comboTracker will be [2, 6]
     private Dictionary<int, OneCombo> equippedComboList;
     private Dictionary<int, bool> skillPrepStatus;
+
+    private int pendingComboId = -1;
 
     private TileInfoFetcher tileInfoFetcher;
 
@@ -39,6 +43,11 @@ public class ComboModel : IComboModel {
         foreach(EElements elem in validElems) {
             elemGathered.Add(elem, 0);
         }
+    }
+
+    [PostConstruct]
+    public void PostConstruct() {
+        skillExecFinishedSignal.AddListener(DeductPendingComboElems);
     }
 
     public void AddToCancelSequence(int tileNumber) {
@@ -61,9 +70,9 @@ public class ComboModel : IComboModel {
         cancelSequence.Clear();
     }
 
-    public void DeductEquippedComboElems(int comboId) {
-        Assert.IsTrue(equippedComboList.ContainsKey(comboId));
-        OneCombo comboToBeDeducted = equippedComboList[comboId];
+    public void DeductPendingComboElems() {
+        Assert.IsTrue(equippedComboList.ContainsKey(pendingComboId));
+        OneCombo comboToBeDeducted = equippedComboList[pendingComboId];
 
         List<EElements> elems = new List<EElements>();
         foreach(EElements e in elemGathered.Keys) {
@@ -77,6 +86,11 @@ public class ComboModel : IComboModel {
         }
 
         RefreshSkillPrepStatus();
+        pendingComboId = -1;
+    }
+
+    public void UpdatePendingComboId(int comboId) {
+        pendingComboId = comboId;
     }
 
     private void RefreshSkillPrepStatus() {

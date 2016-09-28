@@ -38,6 +38,7 @@ public class BoardViewMediator : Mediator {
 
     public void TileSelected(Tile aTile) {
         if (requestingUserInput) {
+            boardView.ClearHighlightedStatus();
             ReplyToRequest(aTile);
         } else {
             if (tile1 == null) {
@@ -85,6 +86,7 @@ public class BoardViewMediator : Mediator {
 
         boardView.tileSelectedSignal.AddListener(TileSelected);
         boardView.tileDeselectedSignal.AddListener(TileDeselected);
+        boardView. inputCancelledSignal.AddListener(OnInputCancelled);
 
         tileDestroyedSignal.AddListener(boardView.DestroyTile);
         tileRangeDestroyedSignal.AddListener(DestroyTileRange);
@@ -136,5 +138,11 @@ public class BoardViewMediator : Mediator {
                 boardView.DestroyTile(r, c);
             }
         }
+    }
+
+    private void OnInputCancelled() {
+        requestingUserInput = false;
+        pendingRequestType = null;
+        dataResponseSignal.Dispatch(ESkillStatus.INPUT_CANCELLED, null);
     }
 }

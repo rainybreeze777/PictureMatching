@@ -76,6 +76,7 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<EnemySeqGenSignal>().ToSingleton();
         injectionBinder.Bind<OneExchangeDoneSignal>().ToSingleton();
         injectionBinder.Bind<ElemGatherUpdatedSignal>().ToSingleton();
+        injectionBinder.Bind<SkillExecFinishedSignal>().ToSingleton();
         // Manually Instantiate SkillInitiator and inject to skill classes
         injectionBinder.GetInstance<ISkillInitiator>().InjectInitialize(injectionBinder);
     }

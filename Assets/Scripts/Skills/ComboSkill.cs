@@ -11,6 +11,8 @@ abstract public class ComboSkill : IComboSkill {
     public UserInputDataRequestSignal dataRequestSignal { get; set; } 
     [Inject]
     public UserInputDataResponseSignal dataResponseSignal { get; set; }
+    [Inject]
+    public SkillExecFinishedSignal skillExecFinishedSignal { get; set; }
 
     protected Enum userInputEnum = null;
     protected ActionParams inputData = null;
@@ -38,6 +40,7 @@ abstract public class ComboSkill : IComboSkill {
             // in function AwaitUserInput()
         } else {
             ExecuteSkill();
+            skillExecFinishedSignal.Dispatch();
             boardModel = null;
         }
     }
@@ -70,6 +73,11 @@ abstract public class ComboSkill : IComboSkill {
             requestingData = false;
             inputData = paramsList;
             ExecuteSkill();
+            skillExecFinishedSignal.Dispatch();
+            boardModel = null;
+            inputData = null;
+        } else if (requestingData && userInputType.Equals(ESkillStatus.INPUT_CANCELLED)) {
+            requestingData = false;
             boardModel = null;
             inputData = null;
         }

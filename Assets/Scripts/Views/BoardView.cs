@@ -12,6 +12,7 @@ public class BoardView : View {
 
     public Signal<Tile> tileSelectedSignal = new Signal<Tile>();
     public Signal<Tile> tileDeselectedSignal = new Signal<Tile>();
+    public Signal inputCancelledSignal = new Signal();
 
     private GameObject boardHolder;
     private const float xOffset = 5.5f;
@@ -37,10 +38,8 @@ public class BoardView : View {
 
     // Variables associated with interaction controls
     private int prevHoverCol = -1;
-    // private int prevHoverRow = -1;
     private int prevHoverTileQuadrant = -1;
     private Tile prevHoverTile = null;
-    private int currentMouseOverTileQuadrant;
     private int rangeDimensionRow;
     private int rangeDimensionCol;
 
@@ -133,22 +132,37 @@ public class BoardView : View {
         highlightingColumn = false;
     }
 
+    public void ClearHighlightedStatus() {
+        highlightedTiles = null;
+        tilesToBeHighlighted = null;
+        prevHoverCol = -1;
+        prevHoverTile = null;
+        prevHoverTileQuadrant = -1;
+    }
+
     void Update() {
+
+        // On right mouse click, disable skills
+        if (Input.GetMouseButtonDown(1)) {
+            if (highlightingColumn) {
+                DisableHighlightingColumn();
+                DehighlightPrevSelection();
+                inputCancelledSignal.Dispatch();
+            } else if (highlightingRange) {
+                DisableHighlightArea();
+                DehighlightPrevSelection();
+                inputCancelledSignal.Dispatch();
+            }
+        }
 
         if (highlightingColumn) {
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
             if (hit.collider != null) {
                 Tile hitTile = hit.transform.GetComponent<Tile>();
-                if (hitTile != null && prevHoverCol != hitTile.Column) {
-                    if (prevHoverCol != -1) {
-                        DehighlightColumn(prevHoverCol);
-                    }
-                    HighlightColumn(hitTile.Column);
-                    prevHoverCol = hitTile.Column;
-                }
-            } else if (prevHoverCol != -1){
-                DehighlightColumn(prevHoverCol);
+                HighlightColumn(hitTile.Column);
+            } else {
+                DehighlightPrevSelection();
                 prevHoverCol = -1;
             }
         } else if (highlightingRange) {
@@ -160,10 +174,8 @@ public class BoardView : View {
                 HighlightRange(hitTile, hitQuadrant);
                 prevHoverTile = hitTile;
                 prevHoverTileQuadrant = hitQuadrant;
-            } else  {
+            } else {
                 DehighlightPrevSelection();
-                // prevHoverCol = -1;
-                // prevHoverRow = -1;
                 prevHoverTile = null;
                 prevHoverTileQuadrant = -1;
             }
@@ -223,22 +235,28 @@ public class BoardView : View {
         }
     }
 
-
     private void HighlightColumn(int col) {
-        for (int i = 0; i < onScreenTiles.Count; ++i) {
-            // -1 for the extra starting column in BoardModel
-            if (onScreenTiles[i][col-1] != null) {
-                onScreenTiles[i][col-1].GetComponent<Tile>().Highlight();
-            }
-        }
-    }
 
-    private void DehighlightColumn(int col) {
-        for (int i = 0; i < onScreenTiles.Count; ++i) {
-            // -1 for the extra starting column in BoardModel
-            if (onScreenTiles[i][col-1] != null) {
-                onScreenTiles[i][col-1].GetComponent<Tile>().Dehighlight();
+        if (prevHoverCol != col) {
+            if (highlightedTiles != null) {
+                foreach (Tile t in highlightedTiles) {
+                    t.Dehighlight();
+                }
+                highlightedTiles.Clear();
+            } else {
+                highlightedTiles = new List<Tile>();
             }
+
+            for (int i = 0; i < onScreenTiles.Count; ++i) {
+                // -1 for the extra starting column in BoardModel
+                if (onScreenTiles[i][col-1] != null) {
+                    Tile t = onScreenTiles[i][col-1].GetComponent<Tile>();
+                    highlightedTiles.Add(t);
+                    t.Highlight();
+                }
+            }
+
+            prevHoverCol = col;
         }
     }
 
@@ -270,62 +288,6 @@ public class BoardView : View {
             onScreenColStart = onScreenTileCol - halfWidth;
             onScreenColEnd = onScreenTileCol + halfWidth + 1;
 
-
-            // HighlightRect( onScreenTileRow - halfHeight,
-            //                 onScreenTileRow + halfHeight + 1,
-            //                 onScreenTileCol - halfWidth,
-            //                 onScreenTileCol + halfWidth + 1 );
-
-            /*
-            // Placeholder initializations to bypass compiler's check for
-            // usage of uninitialized variables
-            int rowLoopStart = -1;
-            int rowLoopEnd = -1;
-            int colLoopStart = -1;
-            int colLoopEnd = -1;
-            bool shouldDehighlightRow = false;
-            bool shouldDehighlightCol = false;
-
-            // Dehighlight columns when moving
-            if ( prevHoverCol != -1 && prevHoverCol < selected.Column ) {
-                shouldDehighlightCol = true;
-                // When moving to the larger col count
-                // first convert the tile into onScreenTile coordinates, i.e. -1
-                // then - halfwidth to account for the extra col at the left
-                colLoopStart = prevHoverCol - halfWidth - 1;
-                colLoopEnd = selected.Column - halfWidth - 1;
-            } else if ( prevHoverCol != -1 && prevHoverCol > selected.Column) {
-                shouldDehighlightCol = true;
-                // When moving to the smaller col count
-                // first convert the tile into onScreenTile coordinates, i.e. -1
-                // then + halfwidth to account for the extra col at the right
-                // finally +1 to get the index of the column to be deleted
-                // because the deletion loop is in the reverse order
-                // so the indexing needs 1 offset
-                colLoopStart = selected.Column + halfWidth;
-                colLoopEnd = prevHoverCol + halfWidth;
-            }
-            if (shouldDehighlightCol) {
-                HighlightRect(false, 0, numOfRows, colLoopStart, colLoopEnd);
-            }
-
-            // Dehighlight rows when moving
-            if ( prevHoverRow != -1 && prevHoverRow < selected.Row ) {
-                shouldDehighlightRow = true;
-                // Similar reasoning with col
-                rowLoopStart = prevHoverRow - halfHeight - 1;
-                rowLoopEnd = selected.Row - halfHeight - 1;
-            } else if (prevHoverRow != -1 && prevHoverRow > selected.Row ) {
-                shouldDehighlightRow = true;
-                // similar reasoning with col
-                rowLoopStart = selected.Row + halfHeight;
-                rowLoopEnd = prevHoverRow + halfHeight;
-            }
-            if (shouldDehighlightRow) {
-                HighlightRect(false, rowLoopStart, rowLoopEnd, 0, numOfColumns);
-            }
-
-            */
         } else if ((rangeDimensionRow % 2 == 0) && (rangeDimensionCol % 2 == 0)) {
             // Slightly harder case where the imaginary selection square
             // has to depend on which quadrant the cursor currently resides
@@ -415,21 +377,6 @@ public class BoardView : View {
 
     private void DehighlightPrevSelection() {
 
-        /*
-        int onScreenTileRow = prevHoverRow - 1;
-        int onScreenTileCol = prevHoverCol - 1;
-
-        int halfHeight = rangeDimensionRow / 2;
-        int halfWidth = rangeDimensionCol / 2;
-
-        if ((rangeDimensionRow % 2 == 1) && (rangeDimensionCol % 2 == 1)) {
-            HighlightRect(false, 
-                onScreenTileRow - halfHeight,
-                onScreenTileRow + halfHeight + 1,
-                onScreenTileCol - halfWidth,
-                onScreenTileCol + halfWidth + 1 );
-        }
-        */
         if (highlightedTiles != null) {
             foreach(Tile t in highlightedTiles) {
                 t.Dehighlight();
