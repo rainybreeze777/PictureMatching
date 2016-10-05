@@ -34,6 +34,8 @@ public class GameView : View {
     [SerializeField] private Button backButton;
 
     [SerializeField] private ProgressBar timeLeftPB;
+    [SerializeField] private SpriteRenderer startMenuBackground;
+    [SerializeField] private SpriteRenderer cancellationBackground;
 
     private const string START_SCREEN_KEY = "START_SCREEN";
     [SerializeField] private GameObject startScreenPanel;
@@ -71,8 +73,7 @@ public class GameView : View {
         mainCam = Camera.main;
         mainCam.transform.position = opEdCamPos;
 
-        titleText.text = "Picture Matching";
-        startGameButton.GetComponent<Button>().GetComponentInChildren<Text>().text = "Start Game";
+        titleText.text = "";
         timeLeftPB.Value = 100;
 
         flowControlGroup.ActivateUI(START_SCREEN_KEY);
@@ -120,7 +121,7 @@ public class GameView : View {
     }
 
     private void SwitchToMainMenu() {
-        titleText.text = "Picture Matching";
+        titleText.text = "";
         flowControlGroup.ActivateUI(START_SCREEN_KEY);
         startMenuGroup.ActivateUI(START_MENU_KEY);
         mainCam.transform.position = opEdCamPos;
@@ -128,7 +129,6 @@ public class GameView : View {
 
     public void SwitchToEdScreen(string setText) {
         titleText.text = setText;
-        startGameButton.GetComponent<Button>().GetComponentInChildren<Text>().text = "Restart";
         flowControlGroup.ActivateUI(START_SCREEN_KEY);
         mainCam.transform.position = opEdCamPos;
     }
