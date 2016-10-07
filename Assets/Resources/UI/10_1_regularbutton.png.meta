@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: f61b8f069d58e0d448fff612159b4706
-timeCreated: 1475647101
+guid: 08d47da9141204145adb47a746b01bcc
+timeCreated: 1475807457
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: 10_1_loadbg3_0
+    21300000: 10_1_regularbutton_0
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -54,13 +54,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 10_1_loadbg3_0
+      name: 10_1_regularbutton_0
       rect:
         serializedVersion: 2
-        x: 136
-        y: 210
-        width: 1335
-        height: 25
+        x: 3
+        y: 16
+        width: 349
+        height: 136
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
