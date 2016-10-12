@@ -45,7 +45,30 @@ abstract public class ComboSkill : IComboSkill {
         }
     }
 
+    public void BattleStageExecute() {
+        ExecuteBattleSkill();
+        skillExecFinishedSignal.Dispatch();
+    }
+
+    public bool NeedsUserInputData() {
+        return needUserInputData;
+    }
+
+    public void AbortExecution() {
+        if (requestingData) {
+            requestingData = false;
+            boardModel = null;
+            inputData = null;
+        }
+    }
+
+    [PostConstruct]
+    public void SignalBinder() {
+        dataResponseSignal.AddListener(AwaitUserInput);
+    }
+
     abstract protected void ExecuteSkill();
+    abstract protected void ExecuteBattleSkill();
 
     protected void NeedUserInput (Enum userInputType) {
         needUserInputData = true;
@@ -53,11 +76,6 @@ abstract public class ComboSkill : IComboSkill {
     }
 
     protected ComboSkill() {
-    }
-
-    [PostConstruct]
-    public void SignalBinder() {
-        dataResponseSignal.AddListener(AwaitUserInput);
     }
 
     private void RequestUserInputData (Enum userInputType) {
@@ -77,9 +95,7 @@ abstract public class ComboSkill : IComboSkill {
             boardModel = null;
             inputData = null;
         } else if (requestingData && userInputType.Equals(ESkillStatus.INPUT_CANCELLED)) {
-            requestingData = false;
-            boardModel = null;
-            inputData = null;
+            AbortExecution();
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Assertions;
+using System.Collections;
 using System.Collections.Generic;
 using strange.extensions.injector.api;
 using strange.extensions.injector.impl;
@@ -17,8 +19,13 @@ public class SkillInitiator : ISkillInitiator {
     public InitiateBattleResolutionSignal initiateBattleResolutionSignal { get; set; }
     [Inject]
     public BattleUnresolvedSignal battleUnresolvedSignal{ get; set;}
+    [Inject]
+    public ComboExecFinishedSignal comboExecFinishedSignal { get; set; }
+    [Inject]
+    public SkillExecFinishedSignal skillExecFinishedSignal { get; set; }
 
     private Dictionary<int, IComboSkill> skillMap = new Dictionary<int, IComboSkill>();
+    private SkillGroup executing = null;
 
     private int keyCount = 0;
 
@@ -27,9 +34,37 @@ public class SkillInitiator : ISkillInitiator {
     }
     private GameStage currentStage = GameStage.CANCEL_STAGE;
 
-    public void InvokeSkillFuncFromSkillId(int skillId, ActionParams parameters = null) {
+    public void InvokeSkillFuncFromSkillId(int comboId, int[] skillIds, List<ActionParams> parameters = null) {
+
+        SkillGroup sg = new SkillGroup(comboId, skillIds, parameters);
+
+        bool oneNeedsUserData = false;
+        for (int i = 0; i < skillIds.Length; ++i) {
+            bool thisOneNeedsUserData = skillMap[skillIds[i]].NeedsUserInputData();
+            if (thisOneNeedsUserData && oneNeedsUserData) {
+                throw new ArgumentException("SkillInitiator Error: Found a combo that has more than 1 skills requiring user input data simultaneously!");
+            }
+            if (thisOneNeedsUserData) {
+                oneNeedsUserData = true;
+                sg.needsData = true;
+            }
+        }
+        
+        if (executing != null && executing.needsData) {
+            foreach (int skillId in executing.skillIds) {
+                skillMap[skillId].AbortExecution();
+            }
+            executing = null;
+        } else if (executing != null && !executing.needsData){
+            return; // Ignore the new skill request
+        }
+
+        executing = sg;
+
         if (currentStage == GameStage.CANCEL_STAGE) {
-            skillMap[skillId].CancelStageExecuteWithArgs(boardModel, parameters);
+            skillMap[executing.skillIds.Peek()].CancelStageExecuteWithArgs(boardModel, executing.skillParameters[0]);
+        } else if (currentStage == GameStage.RESOLUTION_STAGE) {
+            skillMap[executing.skillIds.Peek()].BattleStageExecute();
         }
     }
 
@@ -41,6 +76,7 @@ public class SkillInitiator : ISkillInitiator {
         gameStartSignal.AddListener(SwitchToCancelStage);
         battleUnresolvedSignal.AddListener(SwitchToCancelStage);
         initiateBattleResolutionSignal.AddListener(SwitchToResolutionStage);
+        skillExecFinishedSignal.AddListener(ExecuteNextSkill);
     }
 
     public void InjectInitialize(ICrossContextInjectionBinder injectionBinder) {
@@ -61,12 +97,39 @@ public class SkillInitiator : ISkillInitiator {
         InjectHelper(injectionBinder, new AddToTimeSkill());
     }
 
+    public void SwitchToCancelStage() { currentStage = GameStage.CANCEL_STAGE; }
+    public void SwitchToResolutionStage() { currentStage = GameStage.RESOLUTION_STAGE; }
+
     private void InjectHelper(ICrossContextInjectionBinder injectionBinder, IComboSkill comboSkill) {
         injectionBinder.injector.Inject(comboSkill);
         skillMap.Add(keyCount++, comboSkill);
     }
 
-    public void SwitchToCancelStage() { currentStage = GameStage.CANCEL_STAGE; }
-    public void SwitchToResolutionStage() { currentStage = GameStage.RESOLUTION_STAGE; }
+    private class SkillGroup {
+        public int comboId;
+        public Queue<int> skillIds;
+        public List<ActionParams> skillParameters;
+        public bool needsData;
 
+        public SkillGroup(int comboId, int[] skillIds, List<ActionParams> parameters) {
+            this.comboId = comboId;
+            this.skillIds = new Queue<int>(skillIds);
+            skillParameters = parameters;
+            needsData = false;
+        }
+    }
+
+    private void ExecuteNextSkill() {
+        executing.skillIds.Dequeue();
+        if (executing.skillIds.Count > 0) {
+            if (currentStage == GameStage.CANCEL_STAGE) {
+                skillMap[executing.skillIds.Peek()].CancelStageExecuteWithArgs(boardModel, executing.skillParameters[0]);
+            } else if (currentStage == GameStage.RESOLUTION_STAGE) {
+                skillMap[executing.skillIds.Peek()].BattleStageExecute();
+            }
+        } else {
+            comboExecFinishedSignal.Dispatch(executing.comboId);
+            executing = null;
+        }
+    }
 }

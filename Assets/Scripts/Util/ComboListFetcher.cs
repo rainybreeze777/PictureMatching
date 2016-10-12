@@ -40,12 +40,12 @@ public class ComboListFetcher {
         }
     }
 
-    public int GetComboSkillIdById(int id) {
+    public int[] GetComboSkillIdsById(int id) {
         OneCombo aCombo;
         if (comboMap.TryGetValue(id, out aCombo)) {
-            return aCombo.SkillId;
+            return aCombo.SkillIds;
         } else {
-            return -1;
+            return null;
         }
     }
 

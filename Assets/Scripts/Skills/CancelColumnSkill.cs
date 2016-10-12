@@ -34,4 +34,8 @@ public class CancelColumnSkill : ComboSkill {
         boardModel.removeColumn((int) inputData.GetArg(0));
     }
 
+    protected override void ExecuteBattleSkill() {
+        return; // Nothing here
+    }
+
 }

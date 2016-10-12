@@ -6,5 +6,7 @@ public interface IComboSkill {
     void CancelStageExecute();
     void CancelStageExecute(IBoardModel boardModel);
     void CancelStageExecuteWithArgs(IBoardModel boardModel, ActionParams args);
-
+    void BattleStageExecute();
+    bool NeedsUserInputData();
+    void AbortExecution();
 }

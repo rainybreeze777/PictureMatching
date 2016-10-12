@@ -55,4 +55,8 @@ public class CancelSquare2By2Skill : ComboSkill {
             (int) inputData.GetArg(3));
     }
 
+    protected override void ExecuteBattleSkill() {
+        return; // Nothing here
+    }
+
 }

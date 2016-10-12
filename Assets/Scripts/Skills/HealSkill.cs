@@ -3,13 +3,13 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using System.Collections.Generic;
 
-public class AddToTimeSkill : ComboSkill {
-
-    [Inject]
-    public AddToTimeSignal addToTimeSignal { get; set; }
+public class HealSkill : ComboSkill {
 
     protected override void ExecuteSkill() {
+    	return;
+    }
 
+    protected override void ExecuteBattleSkill() {
         // First verify that returned ActionParams object
         // contains the parameters this skill needs
         if (skillParams == null)
@@ -22,11 +22,5 @@ public class AddToTimeSkill : ComboSkill {
         else if (skillParams.Count() != 1) {
             Debug.LogWarning("AddToTimeSkill received more than 1 argument; Make sure this is the desired data");
         }
-
-        addToTimeSignal.Dispatch((double) skillParams.GetArg(0));
-    }
-
-    protected override void ExecuteBattleSkill() {
-        return; // Nothing here
     }
 }

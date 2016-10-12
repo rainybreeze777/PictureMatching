@@ -12,7 +12,5 @@ public interface IComboModel {
 
     Signal<int> CancelAddedSignal { get; }
 
-    void DeductPendingComboElems();
-
-    void UpdatePendingComboId(int comboId);
+    void DeductComboElems(int comboId);
 }

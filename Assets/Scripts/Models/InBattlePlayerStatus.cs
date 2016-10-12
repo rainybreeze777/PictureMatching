@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class InBattlePlayerStatus : InBattleStatus {
 
@@ -10,4 +10,7 @@ public class InBattlePlayerStatus : InBattleStatus {
 		receivedDmgSignal.Dispatch();
 	}
 
+    public override Dictionary<int, OneCombo> GetEquippedCombos() {
+        return ComboListFetcher.GetInstance().GetMap();
+    }
 }

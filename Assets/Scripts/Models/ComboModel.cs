@@ -9,7 +9,7 @@ public class ComboModel : IComboModel {
     [Inject]
     public ComboPossibleSignal comboPossibleSignal { get; set; }
     [Inject]
-    public SkillExecFinishedSignal skillExecFinishedSignal { get; set; }
+    public ComboExecFinishedSignal comboExecFinishedSignal { get; set; }
     [Inject]
     public ElemGatherUpdatedSignal elemGatherUpdatedSignal { get; set; }
     public Signal<int> cancelAddedSignal = new Signal<int>();
@@ -18,6 +18,9 @@ public class ComboModel : IComboModel {
         get { return cancelAddedSignal; }
     }
 
+    [Inject(EInBattleStatusType.PLAYER)]
+    public IInBattleStatus playerStatus { get; set; }
+
     private List<int> cancelSequence = new List<int>();
     //List used to track the range of formed combos
     //For example, combo may start from index 2 and end at index 6
@@ -25,19 +28,14 @@ public class ComboModel : IComboModel {
     private Dictionary<int, OneCombo> equippedComboList;
     private Dictionary<int, bool> skillPrepStatus;
 
-    private int pendingComboId = -1;
-
     private TileInfoFetcher tileInfoFetcher;
 
     // Dict to store gathered elements amount
     private Dictionary<EElements, int> elemGathered = new Dictionary<EElements, int>();
 
     public ComboModel() {
-        equippedComboList = ComboListFetcher.GetInstance().GetMap();
         skillPrepStatus = new Dictionary<int, bool>();
-        foreach(int key in equippedComboList.Keys) {
-            skillPrepStatus.Add(key, false);
-        }
+
         tileInfoFetcher = TileInfoFetcher.GetInstance();
         List<EElements> validElems = tileInfoFetcher.GetElementsList();
         foreach(EElements elem in validElems) {
@@ -47,7 +45,13 @@ public class ComboModel : IComboModel {
 
     [PostConstruct]
     public void PostConstruct() {
-        skillExecFinishedSignal.AddListener(DeductPendingComboElems);
+
+        equippedComboList = playerStatus.GetEquippedCombos();
+        foreach(int key in equippedComboList.Keys) {
+            skillPrepStatus.Add(key, false);
+        }
+
+        comboExecFinishedSignal.AddListener(DeductComboElems);
     }
 
     public void AddToCancelSequence(int tileNumber) {
@@ -70,9 +74,9 @@ public class ComboModel : IComboModel {
         cancelSequence.Clear();
     }
 
-    public void DeductPendingComboElems() {
-        Assert.IsTrue(equippedComboList.ContainsKey(pendingComboId));
-        OneCombo comboToBeDeducted = equippedComboList[pendingComboId];
+    public void DeductComboElems(int comboId) {
+        Assert.IsTrue(equippedComboList.ContainsKey(comboId));
+        OneCombo comboToBeDeducted = equippedComboList[comboId];
 
         List<EElements> elems = new List<EElements>();
         foreach(EElements e in elemGathered.Keys) {
@@ -86,11 +90,6 @@ public class ComboModel : IComboModel {
         }
 
         RefreshSkillPrepStatus();
-        pendingComboId = -1;
-    }
-
-    public void UpdatePendingComboId(int comboId) {
-        pendingComboId = comboId;
     }
 
     private void RefreshSkillPrepStatus() {

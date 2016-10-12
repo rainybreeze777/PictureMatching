@@ -17,8 +17,14 @@ public class OneCombo : ScriptableObject {
     public int ComboId { get { return id; } }
 
     [SerializeField]
-    private int skillId;
-    public int SkillId { get { return skillId; } }
+    private int[] skillIds;
+    public int[] SkillIds { 
+        get { 
+            int[] newSkillIds = new int[skillIds.Length];
+            skillIds.CopyTo(newSkillIds, 0);
+            return newSkillIds; 
+        } 
+    }
 
     [SerializeField] private int metal;
     [SerializeField] private int wood;

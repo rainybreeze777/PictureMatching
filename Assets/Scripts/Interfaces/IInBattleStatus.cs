@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 
 public interface IInBattleStatus {
 
@@ -11,5 +11,6 @@ public interface IInBattleStatus {
 
 	void ReceiveDmg(int dmg);
 	void ResetHealth();
+	Dictionary<int, OneCombo> GetEquippedCombos();
 
 }

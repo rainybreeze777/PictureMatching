@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public abstract class InBattleStatus : IInBattleStatus {
 
@@ -37,6 +37,8 @@ public abstract class InBattleStatus : IInBattleStatus {
         isDead = false;
         FireHealthUpdatedSignal();
     }
+
+    abstract public Dictionary<int, OneCombo> GetEquippedCombos();
 
     abstract protected void FireHealthUpdatedSignal();
 }

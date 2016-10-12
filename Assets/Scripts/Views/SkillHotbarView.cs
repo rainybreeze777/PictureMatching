@@ -13,22 +13,22 @@ public class SkillHotbarView : View {
     [SerializeField] private Button skill3Button;
 
     [Inject]
-    public UseSkillSignal useSkillSignal { get; set; }
+    public UseComboSignal useComboSignal { get; set; }
 
     internal void Init() {
         // TODO: For now hard-code comboId with each button
 
         skill1Button.interactable = false;
         skill1Button.onClick.AddListener(() => {
-                useSkillSignal.Dispatch(1);
+                useComboSignal.Dispatch(1);
             });
         skill2Button.interactable = false;
         skill2Button.onClick.AddListener(() => {
-                useSkillSignal.Dispatch(2);
+                useComboSignal.Dispatch(2);
             });
         skill3Button.interactable = false;
         skill3Button.onClick.AddListener(() => {
-                useSkillSignal.Dispatch(3);
+                useComboSignal.Dispatch(3);
             });
     }
 

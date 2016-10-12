@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class InBattleEnemyStatus : InBattleStatus {
 
@@ -9,5 +9,9 @@ public class InBattleEnemyStatus : InBattleStatus {
 	protected override void FireHealthUpdatedSignal() {
 		receivedDmgSignal.Dispatch();
 	}
+
+    public override Dictionary<int, OneCombo> GetEquippedCombos() {
+        return null;
+    }
 
 }

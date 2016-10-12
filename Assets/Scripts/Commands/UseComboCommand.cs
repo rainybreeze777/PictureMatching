@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 using strange.extensions.context.api;
 using strange.extensions.command.impl;
 
-public class UseSkillCommand : Command
+public class UseComboCommand : Command
 {
     [Inject]
     public IComboModel comboModel{ get; set; }
@@ -15,7 +16,7 @@ public class UseSkillCommand : Command
 
     private ComboListFetcher fetcher;
 
-    public UseSkillCommand() {
+    public UseComboCommand() {
         fetcher = ComboListFetcher.GetInstance();
     }
 
@@ -28,9 +29,16 @@ public class UseSkillCommand : Command
     {
         // To trigger a combo, the combo must exist with a valid id
         Assert.AreNotEqual(-1, comboId);
-        int skillId = fetcher.GetComboSkillIdById(comboId);
-        comboModel.UpdatePendingComboId(comboId);
-        Assert.AreNotEqual(-1, skillId);
-        skillInitiator.InvokeSkillFuncFromSkillId(skillId, fetcher.GetComboSkillParamsById(comboId));
+        int[] skillIds = fetcher.GetComboSkillIdsById(comboId);
+        Assert.AreNotEqual(null, skillIds);
+        Assert.IsTrue(skillIds.Length > 0);
+        // TODO: temporary fetching method
+        ActionParams ap = fetcher.GetComboSkillParamsById(comboId);
+        List<ActionParams> p = null;
+        if (ap != null) {
+            p = new List<ActionParams>();
+            p.Add(ap);
+        }
+        skillInitiator.InvokeSkillFuncFromSkillId(comboId, skillIds, p);
     }
 }
