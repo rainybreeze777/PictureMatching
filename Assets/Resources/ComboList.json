@@ -32,6 +32,19 @@
                 5.0
             ],
             "description" : "add 5 seconds to timer"
+        },
+        {
+            "id" : 4,
+            "skillIds" : [
+                3
+            ],
+            "englishName" : "Heal",
+            "water" : 2,
+            "earth" : 2,
+            "arguments" : [
+                20
+            ],
+            "description" : "heal for 20 health"
         }
     ]
 }

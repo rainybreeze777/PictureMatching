@@ -38,6 +38,14 @@ public abstract class InBattleStatus : IInBattleStatus {
         FireHealthUpdatedSignal();
     }
 
+    public void AddToHealth(int addAmount) {
+        currentHealth += addAmount;
+        if (currentHealth >= maxHealth) {
+            currentHealth = maxHealth;
+        }
+        FireHealthUpdatedSignal();
+    }
+
     abstract public Dictionary<int, OneCombo> GetEquippedCombos();
 
     abstract protected void FireHealthUpdatedSignal();

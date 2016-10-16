@@ -18,12 +18,13 @@ abstract public class ComboSkill : IComboSkill {
     protected ActionParams inputData = null;
     protected ActionParams skillParams = null;
     protected IBoardModel boardModel = null;
+    protected IInBattleStatus battleStatus = null;
 
     private bool needUserInputData = false;
     private bool requestingData = false;
 
     public void CancelStageExecute() {
-        CancelStageExecute(null);
+        CancelStageExecuteWithArgs(null, null);
     }
     public void CancelStageExecute(IBoardModel boardModel) {
         CancelStageExecuteWithArgs(boardModel, null);
@@ -46,6 +47,16 @@ abstract public class ComboSkill : IComboSkill {
     }
 
     public void BattleStageExecute() {
+        BattleStageExecuteWithArgs(null, null);
+    }
+
+    public void BattleStageExecute(IInBattleStatus inBattleStatus) {
+        BattleStageExecuteWithArgs(inBattleStatus, null);
+    }
+
+    public void BattleStageExecuteWithArgs(IInBattleStatus inBattleStatus, ActionParams args) {
+        battleStatus = inBattleStatus;
+        skillParams = args;
         ExecuteBattleSkill();
         skillExecFinishedSignal.Dispatch();
     }

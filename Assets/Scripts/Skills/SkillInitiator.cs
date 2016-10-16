@@ -13,6 +13,10 @@ public class SkillInitiator : ISkillInitiator {
 
     [Inject]
     public IBoardModel boardModel { get; set; }
+    [Inject(EInBattleStatusType.PLAYER)]
+    public IInBattleStatus playerStatus { get; set; }
+    [Inject(EInBattleStatusType.ENEMY)]
+    public IInBattleStatus enemyStatus { get; set; }
     [Inject]
     public StartGameSignal gameStartSignal { get; set; }
     [Inject]
@@ -64,7 +68,7 @@ public class SkillInitiator : ISkillInitiator {
         if (currentStage == GameStage.CANCEL_STAGE) {
             skillMap[executing.skillIds.Peek()].CancelStageExecuteWithArgs(boardModel, executing.skillParameters[0]);
         } else if (currentStage == GameStage.RESOLUTION_STAGE) {
-            skillMap[executing.skillIds.Peek()].BattleStageExecute();
+            skillMap[executing.skillIds.Peek()].BattleStageExecuteWithArgs(playerStatus, executing.skillParameters[0]);
         }
     }
 
@@ -95,6 +99,10 @@ public class SkillInitiator : ISkillInitiator {
         InjectHelper(injectionBinder, new CancelColumnSkill());
         // Skill 2
         InjectHelper(injectionBinder, new AddToTimeSkill());
+        // Skill 3
+        InjectHelper(injectionBinder, new HealSkill());
+        // Skill 4
+        // InjectHelper(injectionBinder, new AddToTimeSkill());
     }
 
     public void SwitchToCancelStage() { currentStage = GameStage.CANCEL_STAGE; }

@@ -10,6 +10,7 @@ public interface IInBattleStatus {
 	bool IsDead { get; }
 
 	void ReceiveDmg(int dmg);
+	void AddToHealth(int addAmount);
 	void ResetHealth();
 	Dictionary<int, OneCombo> GetEquippedCombos();
 
