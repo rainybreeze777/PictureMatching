@@ -12,7 +12,7 @@ public class SkillHotbarView : View {
     [SerializeField] private Button skill2Button;
     [SerializeField] private Button skill3Button;
     [SerializeField] private Button skill4Button;
-
+    [SerializeField] private Button skill5Button;
 
     [Inject]
     public UseComboSignal useComboSignal { get; set; }
@@ -36,6 +36,10 @@ public class SkillHotbarView : View {
         skill4Button.onClick.AddListener(() => {
                 useComboSignal.Dispatch(4);
             });
+        skill5Button.interactable = false;
+        skill5Button.onClick.AddListener(() => {
+                useComboSignal.Dispatch(5);
+            });
     }
 
     public void SetComboPrepStatus(int comboId, bool isAvailable) {
@@ -51,6 +55,9 @@ public class SkillHotbarView : View {
                 break;
             case 4:
                 skill4Button.interactable = isAvailable;
+                break;
+            case 5:
+                skill5Button.interactable = isAvailable;
                 break;
         }
     }

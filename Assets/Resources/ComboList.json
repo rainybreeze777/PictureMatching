@@ -45,6 +45,18 @@
                 20
             ],
             "description" : "heal for 20 health"
+        },
+        {
+            "id" : 5,
+            "skillIds" : [
+                4
+            ],
+            "englishName" : "Half Damage",
+            "metal" : 3,
+            "arguments" : [
+                0.5
+            ],
+            "description" : "reduce damage by half for 3 turns"
         }
     ]
 }

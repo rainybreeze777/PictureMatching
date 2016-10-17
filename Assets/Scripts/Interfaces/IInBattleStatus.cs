@@ -12,6 +12,8 @@ public interface IInBattleStatus {
 	void ReceiveDmg(int dmg);
 	void AddToHealth(int addAmount);
 	void ResetHealth();
+
+	void UpdateReceiveDamageModifier(double modifier);
 	Dictionary<int, OneCombo> GetEquippedCombos();
 
 }

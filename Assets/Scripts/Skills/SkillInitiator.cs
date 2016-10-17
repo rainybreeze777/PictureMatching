@@ -102,7 +102,7 @@ public class SkillInitiator : ISkillInitiator {
         // Skill 3
         InjectHelper(injectionBinder, new HealSkill());
         // Skill 4
-        // InjectHelper(injectionBinder, new AddToTimeSkill());
+        InjectHelper(injectionBinder, new ReduceDamageSkill());
     }
 
     public void SwitchToCancelStage() { currentStage = GameStage.CANCEL_STAGE; }
