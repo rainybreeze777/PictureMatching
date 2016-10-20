@@ -42,6 +42,7 @@ public class PictureMatchingContext : MVCSContext {
         mediationBinder.Bind<ComboView>().To<ComboViewMediator>();
         mediationBinder.Bind<BoardView>().To<BoardViewMediator>();
         mediationBinder.Bind<SkillHotbarView>().To<SkillHotbarViewMediator>();
+        mediationBinder.Bind<EquipmentView>().To<EquipmentViewMediator>();
         // Binding Signals with Commands
         commandBinder.Bind<StartSignal>().To<StartCommand>().Once();
         commandBinder.Bind<AttemptTileCancelSignal>().To<AttemptTileCancelCommand>();

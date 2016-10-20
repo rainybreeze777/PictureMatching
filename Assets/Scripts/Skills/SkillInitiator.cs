@@ -18,8 +18,6 @@ public class SkillInitiator : ISkillInitiator {
     [Inject(EInBattleStatusType.ENEMY)]
     public IInBattleStatus enemyStatus { get; set; }
     [Inject]
-    public StartGameSignal gameStartSignal { get; set; }
-    [Inject]
     public InitiateBattleResolutionSignal initiateBattleResolutionSignal { get; set; }
     [Inject]
     public BattleUnresolvedSignal battleUnresolvedSignal{ get; set;}
@@ -77,7 +75,6 @@ public class SkillInitiator : ISkillInitiator {
 
     [PostConstruct]
     public void PostConstruct() {
-        gameStartSignal.AddListener(SwitchToCancelStage);
         battleUnresolvedSignal.AddListener(SwitchToCancelStage);
         initiateBattleResolutionSignal.AddListener(SwitchToResolutionStage);
         skillExecFinishedSignal.AddListener(ExecuteNextSkill);

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections;
@@ -34,8 +34,6 @@ public class GameView : View {
     [SerializeField] private Button backButton;
 
     [SerializeField] private ProgressBar timeLeftPB;
-    [SerializeField] private SpriteRenderer startMenuBackground;
-    [SerializeField] private SpriteRenderer cancellationBackground;
 
     private const string START_SCREEN_KEY = "START_SCREEN";
     [SerializeField] private GameObject startScreenPanel;
@@ -49,6 +47,8 @@ public class GameView : View {
     [SerializeField] private GameObject startMenuUIPanel;
     private const string RESOLUTION_KEY = "RESOLUTION";
     [SerializeField] private GameObject resolutionUIPanel;
+    private const string EQUIP_KEY = "EQUIP";
+    [SerializeField] private GameObject equipPanel;
 
     private RadioUIGroup flowControlGroup = new RadioUIGroup();
     private RadioUIGroup gameGroup = new RadioUIGroup();
@@ -65,6 +65,7 @@ public class GameView : View {
 
         flowControlGroup.AddToGroup(START_SCREEN_KEY, startScreenPanel);
         flowControlGroup.AddToGroup(GAME_KEY, gamePanel);
+        flowControlGroup.AddToGroup(EQUIP_KEY, equipPanel);
         gameGroup.AddToGroup(CANCEL_STAGE_KEY, cancellationStageUIPanel);
         gameGroup.AddToGroup(BATTLE_RESOLVE_KEY, battleResolutionUIPanel);
         startMenuGroup.AddToGroup(START_MENU_KEY, startMenuUIPanel);
@@ -80,7 +81,7 @@ public class GameView : View {
         startMenuGroup.ActivateUI(START_MENU_KEY);
 
         startGameButton.GetComponent<Button>().onClick.AddListener(() => {
-                gameStartSignal.Dispatch();
+                SwitchToEquipScreen();
             });
         optionButton.GetComponent<Button>().onClick.AddListener(() => {
                 SwitchToOptionsMenu();
@@ -125,6 +126,10 @@ public class GameView : View {
         flowControlGroup.ActivateUI(START_SCREEN_KEY);
         startMenuGroup.ActivateUI(START_MENU_KEY);
         mainCam.transform.position = opEdCamPos;
+    }
+
+    private void SwitchToEquipScreen() {
+        flowControlGroup.ActivateUI(EQUIP_KEY);
     }
 
     public void SwitchToEdScreen(string setText) {

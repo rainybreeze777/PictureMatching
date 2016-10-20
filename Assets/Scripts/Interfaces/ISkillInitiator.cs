@@ -7,4 +7,6 @@ public interface ISkillInitiator {
 
     void InvokeSkillFuncFromSkillId(int comboId, int[] skillIds, List<ActionParams> parametersList = null);
     void InjectInitialize(ICrossContextInjectionBinder injectionBinder);
+    void SwitchToCancelStage();
+    void SwitchToResolutionStage();
 }

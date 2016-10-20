@@ -12,10 +12,13 @@ public class StartGameCommand : Command
     public IEnemyModel enemyModel { get; set; }
     [Inject]
     public ResetBattleSignal resetBattleSignal { get; set; }
-    
+    [Inject]
+    public ISkillInitiator skillInitiator { get; set; }
+
     public override void Execute()
     {
     	enemyModel.GenerateSequence();
+    	skillInitiator.SwitchToCancelStage();
     	resetBattleSignal.Dispatch();
     }
 }
