@@ -2112,7 +2112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   confirmEquipButton: {fileID: 1594059711}
-  WeaponEquipPanel: {fileID: 807388508}
+  weaponEquipPanel: {fileID: 0}
 --- !u!1 &807388508
 GameObject:
   m_ObjectHideFlags: 0

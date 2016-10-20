@@ -211,7 +211,7 @@ public class BoardView : View {
                                     , Quaternion.identity)
                         as GameObject;
 
-                    instance.transform.localScale = new Vector3(0.5F, 0.5F, 0);
+                    // instance.transform.localScale = new Vector3(0.5F, 0.5F, 0);
                     instance.transform.SetParent(boardHolder.transform);
                     
                     if (shouldAddRow) {
