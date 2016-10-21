@@ -6,16 +6,16 @@ public class ProgressBar : MonoBehaviour {
 
     Image foregroundImage;
     
-    public int Value {
+    public float Value {
         get {
             if (foregroundImage != null)
-                return (int) (foregroundImage.fillAmount * 100);   
+                return (foregroundImage.fillAmount * 100);   
             else
                 return 0;   
         }
         set {
             if (foregroundImage != null)
-                foregroundImage.fillAmount = value / 100f;    
+                foregroundImage.fillAmount = (float) value / 100.0f;    
         } 
     }
 

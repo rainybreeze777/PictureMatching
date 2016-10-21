@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: a8b5f2e266ce31a40896dc189d592ac8
-timeCreated: 1475484513
+timeCreated: 1476948949
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -57,8 +57,8 @@ TextureImporter:
       name: 10_1_setsquareatgreyarea_0
       rect:
         serializedVersion: 2
-        x: 136
-        y: 108
+        x: 0
+        y: 0
         width: 1602
         height: 1200
       alignment: 0

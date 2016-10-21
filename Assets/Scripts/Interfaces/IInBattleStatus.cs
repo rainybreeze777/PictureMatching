@@ -14,6 +14,7 @@ public interface IInBattleStatus {
 	void ResetHealth();
 
 	void UpdateReceiveDamageModifier(double modifier);
+	void UpdateEquipWeapon(List<Weapon> equippedWeaponList);
 	Dictionary<int, OneCombo> GetEquippedCombos();
 
 }

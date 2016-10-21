@@ -31,6 +31,10 @@ public class ComboListFetcher {
         return mapCopy;
     }
 
+    public OneCombo GetComboById(int id) {
+        return comboMap[id];
+    }
+
     public string GetComboNameById(int id) {
         OneCombo aCombo;
         if (comboMap.TryGetValue(id, out aCombo)) {

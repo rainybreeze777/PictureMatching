@@ -46,10 +46,10 @@ public class PictureMatchingContext : MVCSContext {
         // Binding Signals with Commands
         commandBinder.Bind<StartSignal>().To<StartCommand>().Once();
         commandBinder.Bind<AttemptTileCancelSignal>().To<AttemptTileCancelCommand>();
-        // commandBinder.Bind<MakeComboSignal>().To<MakeComboCommand>();
         commandBinder.Bind<StartGameSignal>().To<StartGameCommand>();
         commandBinder.Bind<ResolveOneExchangeSignal>().To<ResolveOneExchangeCommand>();
         commandBinder.Bind<UseComboSignal>().To<UseComboCommand>();
+        commandBinder.Bind<EquipWeaponUpdatedSignal>().To<EquipWeaponUpdatedCommand>();
         // Dependency Injection Binding
         injectionBinder.Bind<IComboModel>().To<ComboModel>().ToSingleton();
         injectionBinder.Bind<IBoardModel>().To<BoardModel>().ToSingleton();

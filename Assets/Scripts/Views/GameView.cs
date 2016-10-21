@@ -138,7 +138,7 @@ public class GameView : View {
         mainCam.transform.position = opEdCamPos;
     }
 
-    public void UpdateProgressBar(int percent) {
+    public void UpdateProgressBar(float percent) {
         timeLeftPB.Value = percent;
     }
 

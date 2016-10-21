@@ -45,7 +45,7 @@ public class GameViewMediator : Mediator {
     void Update () {
         if (countingDown) {
             timer -= Time.deltaTime;
-            gameView.UpdateProgressBar((int) (Mathf.Min(timer, TIME_PER_CANCEL) / TIME_PER_CANCEL * 100));
+            gameView.UpdateProgressBar(Mathf.Min(timer, TIME_PER_CANCEL) / TIME_PER_CANCEL * 100);
         }
 
         if (timer <= 0 && countingDown) {
@@ -115,7 +115,7 @@ public class GameViewMediator : Mediator {
 #if !UNLIMITED_TIME
         countingDown = true;
 #endif
-        gameView.UpdateProgressBar(100);
+        gameView.UpdateProgressBar(100.0f);
         gameView.SwitchToCancelTiles();
     }
 

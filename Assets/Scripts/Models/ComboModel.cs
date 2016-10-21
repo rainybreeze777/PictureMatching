@@ -45,12 +45,7 @@ public class ComboModel : IComboModel {
 
     [PostConstruct]
     public void PostConstruct() {
-
         equippedComboList = playerStatus.GetEquippedCombos();
-        foreach(int key in equippedComboList.Keys) {
-            skillPrepStatus.Add(key, false);
-        }
-
         comboExecFinishedSignal.AddListener(DeductComboElems);
     }
 
@@ -90,6 +85,13 @@ public class ComboModel : IComboModel {
         }
 
         RefreshSkillPrepStatus();
+    }
+
+    public void RefreshEquippedCombo() {
+        skillPrepStatus.Clear();
+        foreach(int key in equippedComboList.Keys) {
+            skillPrepStatus.Add(key, false);
+        }
     }
 
     private void RefreshSkillPrepStatus() {

@@ -24,10 +24,13 @@ public abstract class InBattleStatus : IInBattleStatus {
     private bool isDead = false;
     private double takeDmgModifier = 1.0;
 
+    private Dictionary<int, OneCombo> equippedComboMap = new Dictionary<int, OneCombo>();
+
     [PostConstruct]
-    public void BindSignals() {
+    public void PostConstruct() {
         resetBattleSignal.AddListener(ResetHealth);
         oneExchangeDoneSignal.AddListener(OnOneExchangeDone);
+        BindSignals();
     }
 
     public void ReceiveDmg(int dmg) {
@@ -57,6 +60,10 @@ public abstract class InBattleStatus : IInBattleStatus {
         skillEffectCountdown = 3; // TODO: Hardcode to 3 for now;
     }
 
+    public Dictionary<int, OneCombo> GetEquippedCombos() {
+        return equippedComboMap;
+    }
+
     public void OnOneExchangeDone(Enum winner, int winningTile) {
         if (skillEffectCountdown > 0) {
             skillEffectCountdown--;
@@ -66,7 +73,18 @@ public abstract class InBattleStatus : IInBattleStatus {
         }
     }
 
-    abstract public Dictionary<int, OneCombo> GetEquippedCombos();
+    public void UpdateEquipWeapon(List<Weapon> equippedWeaponList) {
+        equippedComboMap.Clear();
+        ComboListFetcher fetcher = ComboListFetcher.GetInstance();
+        foreach(Weapon w in equippedWeaponList) {
+            List<int> comboIdList = w.GetComboIdList();
+            foreach(int id in comboIdList) {
+                equippedComboMap[id] = fetcher.GetComboById(id);
+            }
+        }
+    }
 
     abstract protected void FireHealthUpdatedSignal();
+
+    abstract protected void BindSignals();
 }

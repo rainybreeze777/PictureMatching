@@ -11,6 +11,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbc23d7e5ad3cea46bea5fb981a24c53, type: 3}
   m_Name: Weapon4
   m_EditorClassIdentifier: 
-  possessComboIdList: 03000000
-  weaponName: 4
+  possessComboIdList: 04000000
+  weaponName: Weapon4
   weaponDescription: "2\u6C342\u571F \u6CBB\u759720"

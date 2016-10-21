@@ -9,6 +9,8 @@ public class EquipmentViewMediator : Mediator {
     public EquipmentView equipmentView { get; set; }
     [Inject]
     public StartGameSignal startGameSignal { get; set; }
+    [Inject]
+    public EquipWeaponUpdatedSignal equipWeaponUpdatedSignal { get; set; }
 
     public override void OnRegister() {
 
@@ -18,6 +20,7 @@ public class EquipmentViewMediator : Mediator {
     }
 
     private void OnConfirmEquip() {
+        equipWeaponUpdatedSignal.Dispatch(equipmentView.GetEquippedWeapons());
         startGameSignal.Dispatch();
     }
 
