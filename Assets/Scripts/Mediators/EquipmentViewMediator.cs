@@ -10,7 +10,7 @@ public class EquipmentViewMediator : Mediator {
     [Inject]
     public StartGameSignal startGameSignal { get; set; }
     [Inject]
-    public EquipWeaponUpdatedSignal equipWeaponUpdatedSignal { get; set; }
+    public PlayerEquipWeaponUpdatedSignal equipWeaponUpdatedSignal { get; set; }
 
     public override void OnRegister() {
 

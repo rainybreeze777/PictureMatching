@@ -49,7 +49,6 @@ public class PictureMatchingContext : MVCSContext {
         commandBinder.Bind<StartGameSignal>().To<StartGameCommand>();
         commandBinder.Bind<ResolveOneExchangeSignal>().To<ResolveOneExchangeCommand>();
         commandBinder.Bind<UseComboSignal>().To<UseComboCommand>();
-        commandBinder.Bind<EquipWeaponUpdatedSignal>().To<EquipWeaponUpdatedCommand>();
         // Dependency Injection Binding
         injectionBinder.Bind<IComboModel>().To<ComboModel>().ToSingleton();
         injectionBinder.Bind<IBoardModel>().To<BoardModel>().ToSingleton();
@@ -79,6 +78,8 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<ElemGatherUpdatedSignal>().ToSingleton();
         injectionBinder.Bind<SkillExecFinishedSignal>().ToSingleton();
         injectionBinder.Bind<ComboExecFinishedSignal>().ToSingleton();
+        injectionBinder.Bind<PlayerEquipComboUpdatedSignal>().ToSingleton();
+        injectionBinder.Bind<PlayerEquipWeaponUpdatedSignal>().ToSingleton();
         // Manually Instantiate SkillInitiator and inject to skill classes
         injectionBinder.GetInstance<ISkillInitiator>().InjectInitialize(injectionBinder);
     }

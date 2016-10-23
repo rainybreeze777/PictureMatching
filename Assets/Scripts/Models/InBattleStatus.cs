@@ -82,9 +82,10 @@ public abstract class InBattleStatus : IInBattleStatus {
                 equippedComboMap[id] = fetcher.GetComboById(id);
             }
         }
+        FireEquipComboUpdatedSignal();
     }
 
     abstract protected void FireHealthUpdatedSignal();
-
+    abstract protected void FireEquipComboUpdatedSignal();
     abstract protected void BindSignals();
 }

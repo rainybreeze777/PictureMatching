@@ -10,6 +10,10 @@ public class InBattleEnemyStatus : InBattleStatus {
         receivedDmgSignal.Dispatch();
     }
 
+    protected override void FireEquipComboUpdatedSignal() {
+    	// Empty for now
+    }
+
     protected override void BindSignals() {
     	// Empty for now
     }

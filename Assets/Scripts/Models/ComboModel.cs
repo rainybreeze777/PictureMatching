@@ -12,14 +12,16 @@ public class ComboModel : IComboModel {
     public ComboExecFinishedSignal comboExecFinishedSignal { get; set; }
     [Inject]
     public ElemGatherUpdatedSignal elemGatherUpdatedSignal { get; set; }
+    [Inject(EInBattleStatusType.PLAYER)]
+    public IInBattleStatus playerStatus { get; set; }
+    [Inject]
+    public PlayerEquipComboUpdatedSignal playerEquipComboUpdatedSignal { get; set; }
     public Signal<int> cancelAddedSignal = new Signal<int>();
     public Signal<int> CancelAddedSignal 
     {
         get { return cancelAddedSignal; }
     }
 
-    [Inject(EInBattleStatusType.PLAYER)]
-    public IInBattleStatus playerStatus { get; set; }
 
     private List<int> cancelSequence = new List<int>();
     //List used to track the range of formed combos
@@ -47,6 +49,7 @@ public class ComboModel : IComboModel {
     public void PostConstruct() {
         equippedComboList = playerStatus.GetEquippedCombos();
         comboExecFinishedSignal.AddListener(DeductComboElems);
+        playerEquipComboUpdatedSignal.AddListener(RefreshEquippedCombo);
     }
 
     public void AddToCancelSequence(int tileNumber) {

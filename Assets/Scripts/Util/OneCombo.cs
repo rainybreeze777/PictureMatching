@@ -13,6 +13,10 @@ public class OneCombo : ScriptableObject {
     public string Name { get { return englishName; } }
 
     [SerializeField]
+    private string chineseName;
+    public string ChineseName { get {  return chineseName; } }
+
+    [SerializeField]
     private int id;
     public int ComboId { get { return id; } }
 

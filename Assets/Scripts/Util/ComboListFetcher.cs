@@ -44,6 +44,15 @@ public class ComboListFetcher {
         }
     }
 
+    public string GetComboChineseNameById(int id) {
+        OneCombo aCombo;
+        if (comboMap.TryGetValue(id, out aCombo)) {
+            return aCombo.ChineseName;
+        } else {
+            return "";
+        }
+    }
+
     public int[] GetComboSkillIdsById(int id) {
         OneCombo aCombo;
         if (comboMap.TryGetValue(id, out aCombo)) {

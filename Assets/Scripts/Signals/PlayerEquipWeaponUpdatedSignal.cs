@@ -4,6 +4,6 @@ using strange.extensions.signal.impl;
 
 // Parameter: 
 // List<Weapon>: list of weapons equipped
-public class EquipWeaponUpdatedSignal : Signal<List<Weapon>>
+public class PlayerEquipWeaponUpdatedSignal : Signal<List<Weapon>>
 {
 }

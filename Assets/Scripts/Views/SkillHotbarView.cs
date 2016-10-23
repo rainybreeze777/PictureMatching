@@ -8,57 +8,39 @@ using strange.extensions.signal.impl;
 
 public class SkillHotbarView : View {
 
-    [SerializeField] private Button skill1Button;
-    [SerializeField] private Button skill2Button;
-    [SerializeField] private Button skill3Button;
-    [SerializeField] private Button skill4Button;
-    [SerializeField] private Button skill5Button;
+    [SerializeField] private GameObject skillHotbarPanel;
+    [SerializeField] private Button toInstantiateButton;
 
     [Inject]
     public UseComboSignal useComboSignal { get; set; }
 
-    internal void Init() {
-        // TODO: For now hard-code comboId with each button
+    private Dictionary<int, Button> comboButtons;
+    private Dictionary<Button, int> comboButtonsReverse;
+    private ComboListFetcher fetcher;
 
-        skill1Button.interactable = false;
-        skill1Button.onClick.AddListener(() => {
-                useComboSignal.Dispatch(1);
-            });
-        skill2Button.interactable = false;
-        skill2Button.onClick.AddListener(() => {
-                useComboSignal.Dispatch(2);
-            });
-        skill3Button.interactable = false;
-        skill3Button.onClick.AddListener(() => {
-                useComboSignal.Dispatch(3);
-            });
-        skill4Button.interactable = false;
-        skill4Button.onClick.AddListener(() => {
-                useComboSignal.Dispatch(4);
-            });
-        skill5Button.interactable = false;
-        skill5Button.onClick.AddListener(() => {
-                useComboSignal.Dispatch(5);
-            });
+    internal void Init() {
+
+        fetcher = ComboListFetcher.GetInstance();
+        comboButtons = new Dictionary<int, Button>();
+        comboButtonsReverse = new Dictionary<Button, int>();
+    }
+
+    public void UpdateSkillHotbar(List<int> comboIds) {
+        comboButtons.Clear();
+        foreach (int id in comboIds) {
+            Button newButton = Instantiate(toInstantiateButton, skillHotbarPanel.transform) as Button;
+            newButton.name = "Combo" + id + "Button";
+            newButton.GetComponentInChildren<Text>().text = fetcher.GetComboChineseNameById(id);
+            newButton.interactable = false;
+            newButton.onClick.AddListener(() => {
+                    useComboSignal.Dispatch(comboButtonsReverse[newButton]);
+                });
+            comboButtons.Add(id, newButton);
+            comboButtonsReverse.Add(newButton, id);
+        }
     }
 
     public void SetComboPrepStatus(int comboId, bool isAvailable) {
-        switch (comboId) {
-            case 1:
-                skill1Button.interactable = isAvailable;
-                break;
-            case 2:
-                skill2Button.interactable = isAvailable;
-                break;
-            case 3:
-                skill3Button.interactable = isAvailable;
-                break;
-            case 4:
-                skill4Button.interactable = isAvailable;
-                break;
-            case 5:
-                skill5Button.interactable = isAvailable;
-                break;
-        }
+        comboButtons[comboId].interactable = isAvailable;
     }
 }
