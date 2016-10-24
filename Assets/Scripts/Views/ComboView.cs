@@ -19,21 +19,16 @@ public class ComboView : View {
     private List<GameObject> tiles = new List<GameObject>();
     private Sprite maskTileSprite;
 
-    private List<GameObject> onScreenSequence = new List<GameObject>();
-    private List<GameObject> onScreenEnemySequence = new List<GameObject>();
     private List<int> enemySequence;
+    private GameObject enemyCancelTile = null;
     private uint maskHashCode;
-    private int nextEnemyTileIndex = 0;
-    private int onScreenSequenceCount = 0;
     private int cancelCount = 0;
 
     private const float distanceBetweenTile = 2.0f;
-    private const int numOfTilesOnComboSequence = 5;
-    private const int numOfTilesOnEnemySequence = 7;
 
-    private const float xOffset = 4.0f;
+    private const float xOffset = 3.0f;
     private const float yOffset = 0.77f;
-    private const float enemyYOffSet = 9.0f;
+    private const float enemyYOffSet = 8.0f;
     private const string spritePath = "Sprites/";
 
     private Transform comboDisplayer;
@@ -62,90 +57,30 @@ public class ComboView : View {
         comboDisplayer = new GameObject ("ComboDisplayer").transform;
     }
 
-    public void ClearOnScreenSequence() {
-        foreach(GameObject obj in onScreenSequence)
-            Destroy(obj);
-        onScreenSequence.Clear();
-        onScreenSequenceCount = 0;
+    public void Reset() {
         cancelCount = 0;
     }
 
     public void AddToCancelSequence(int tileNumber)
     {
-        GameObject toInstantiate = null;
-        GameObject instance = null;
-
-        if (onScreenSequenceCount >= numOfTilesOnComboSequence) {
-            // Player Combo
-            GameObject headTile = onScreenSequence [0];
-            onScreenSequence.RemoveAt (0);
-            Destroy (headTile);
-
-            foreach (GameObject aTile in onScreenSequence) {
-                //For now there is no animations
-                //Animation of movement needs some investigation
-                aTile.transform.Translate (Vector3.left * distanceBetweenTile);
-            }
-            // Enemy Combo
-            if (onScreenEnemySequence.Count > 0) {
-                headTile = onScreenEnemySequence[0];
-                onScreenEnemySequence.RemoveAt(0);
-                Destroy(headTile);
-
-                foreach(GameObject aTile in onScreenEnemySequence) {
-                    aTile.transform.Translate (Vector3.left * distanceBetweenTile);
-                }
-
-                // Instantiating Enemy Combo Tile
-                if (nextEnemyTileIndex < enemySequence.Count) {
-
-                    MakeNewEnemyTileObject(enemySequence[nextEnemyTileIndex], numOfTilesOnEnemySequence - 1, nextEnemyTileIndex);
-
-                    toInstantiate = tiles[enemySequence[nextEnemyTileIndex] - 1];
-
-                    nextEnemyTileIndex++;
-                }
-            }
-            
-        } else {
-            onScreenSequenceCount++;
-        }
-
-        toInstantiate = tiles[tileNumber - 1];
-
-        instance = Instantiate(toInstantiate
-                                , new Vector3( xOffset + (onScreenSequenceCount - 1) * distanceBetweenTile, yOffset, 0F)
-                                , Quaternion.identity) as GameObject;
-
-        instance.transform.localScale = new Vector3(0.5F, 0.5F, 0);
-        instance.transform.SetParent(comboDisplayer);
-
-        onScreenSequence.Add(instance);
-
         cancelCount++;
+        if (cancelCount < enemySequence.Count) {
+            UpdateEnemyCancelTileObject(enemySequence[cancelCount], cancelCount);
+        } else {
+            Destroy(enemyCancelTile);
+            enemyCancelTile = null;
+        }
         UpdateCancelSuggestion(cancelCount);
     }
 
     public void ConstructNewEnemySequence(List<int> enemySeq, uint maskHashCode) {
-        foreach(GameObject go in onScreenEnemySequence) {
-            Destroy(go);
+        if (enemySeq.Count <= 0) {
+            return;
         }
-        onScreenEnemySequence.Clear();
         enemySequence = enemySeq;
 
         this.maskHashCode = maskHashCode;
-
-        nextEnemyTileIndex = (int) Mathf.Min( enemySeq.Count, numOfTilesOnEnemySequence );
-
-        for (int i = 0; i < nextEnemyTileIndex; ++i) {
-
-            if (i >= enemySeq.Count) {
-                break;
-            }
-
-            MakeNewEnemyTileObject(enemySeq[i], i, i);
-        }
-
+        UpdateEnemyCancelTileObject(enemySequence[0], 0);
         UpdateCancelSuggestion(0);
     }
 
@@ -165,25 +100,29 @@ public class ComboView : View {
             
             suggestCancelElem1 = 
                 Instantiate(tiles[suggestedCancels.Item1 - 1]
-                            , new Vector3( 18.0f, 1.0f, 0F)
+                            , new Vector3( 16.5f, enemyYOffSet-0.5f, 0F)
                             , Quaternion.identity) as GameObject;
 
             suggestCancelElem2 = 
                 Instantiate(tiles[suggestedCancels.Item2 - 1]
-                            , new Vector3( 18.0f, 3.0f, 0F)
+                            , new Vector3( 16.5f, enemyYOffSet+1.0f, 0F)
                             , Quaternion.identity) as GameObject;
 
-            suggestCancelElem1.transform.localScale = new Vector3(0.5F, 0.5F, 0);
+            suggestCancelElem1.transform.localScale = new Vector3(0.85F, 0.85F, 0);
             suggestCancelElem1.transform.SetParent(comboDisplayer);
-            suggestCancelElem2.transform.localScale = new Vector3(0.5F, 0.5F, 0);
+            suggestCancelElem2.transform.localScale = new Vector3(0.85F, 0.85F, 0);
             suggestCancelElem2.transform.SetParent(comboDisplayer);
         }
     }
 
-    private void MakeNewEnemyTileObject(int tileNumber, int onScreenTileSeqIndex, int tileSeqIndex) {
+    private void UpdateEnemyCancelTileObject(int tileNumber, int tileSeqIndex) {
+        if (enemyCancelTile != null) {
+            Destroy(enemyCancelTile);
+            enemyCancelTile = null;
+        }
         GameObject instance = 
             Instantiate(tiles[tileNumber - 1]
-                        , new Vector3( xOffset + onScreenTileSeqIndex * distanceBetweenTile, enemyYOffSet, 0F)
+                        , new Vector3( xOffset, enemyYOffSet, 0F)
                         , Quaternion.identity) as GameObject;
 
         instance.transform.localScale = new Vector3(0.5f, 0.5f, 0);
@@ -193,7 +132,7 @@ public class ComboView : View {
             instance.GetComponent<SpriteRenderer>().sprite = maskTileSprite;
         }
 
-        onScreenEnemySequence.Add(instance);
+        enemyCancelTile = instance;
     }
 
     private bool EnemyTileIsHiddenAtIndex(int tileSeqIndex) {

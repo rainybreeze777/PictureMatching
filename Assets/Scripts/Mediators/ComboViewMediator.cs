@@ -34,6 +34,6 @@ public class ComboViewMediator : Mediator {
 
     public void ClearCancelSequence() {
         comboModel.ClearCancelSequence();
-        view.ClearOnScreenSequence();
+        view.Reset();
     }
 }
