@@ -8,7 +8,7 @@ public class EquipmentViewMediator : Mediator {
     [Inject]
     public EquipmentView equipmentView { get; set; }
     [Inject]
-    public StartGameSignal startGameSignal { get; set; }
+    public MapChangeSignal mapChangeSignal { get; set; }
     [Inject]
     public PlayerEquipWeaponUpdatedSignal equipWeaponUpdatedSignal { get; set; }
 
@@ -21,7 +21,7 @@ public class EquipmentViewMediator : Mediator {
 
     private void OnConfirmEquip() {
         equipWeaponUpdatedSignal.Dispatch(equipmentView.GetEquippedWeapons());
-        startGameSignal.Dispatch();
+        mapChangeSignal.Dispatch(EMapChange.MAP);
     }
 
 }

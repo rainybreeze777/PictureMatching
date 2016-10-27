@@ -15,7 +15,7 @@ public class BackgroundView : View {
     [Inject]
     public InitiateBattleResolutionSignal initiateBattleResolutionSignal { get; set; }
     [Inject]
-    public StartGameSignal gameStartSignal { get; set; }
+    public EngageCombatSignal gameStartSignal { get; set; }
 
     [SerializeField] private GameObject mainMenuBackground;
     [SerializeField] private GameObject cancellationBackground;

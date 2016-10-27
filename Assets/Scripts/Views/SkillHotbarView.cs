@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using strange.extensions.mediation.impl;
 using strange.extensions.signal.impl;
@@ -26,7 +25,11 @@ public class SkillHotbarView : View {
     }
 
     public void UpdateSkillHotbar(List<int> comboIds) {
+        foreach(KeyValuePair<int, Button> kvp in comboButtons) {
+            Destroy(kvp.Value.gameObject);
+        }
         comboButtons.Clear();
+        comboButtonsReverse.Clear();
         foreach (int id in comboIds) {
             Button newButton = Instantiate(toInstantiateButton, skillHotbarPanel.transform) as Button;
             newButton.name = "Combo" + id + "Button";

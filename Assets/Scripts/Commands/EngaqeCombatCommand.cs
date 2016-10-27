@@ -3,9 +3,7 @@ using UnityEngine;
 using strange.extensions.context.api;
 using strange.extensions.command.impl;
 
-// Triggered by StartGame signal
-// different from StartSignal, where startSignal starts the executable
-public class StartGameCommand : Command
+public class EngageCombatCommand : Command
 {
     
     [Inject]

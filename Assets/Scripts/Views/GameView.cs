@@ -14,6 +14,7 @@ public class GameView : View {
     private Vector3 cancelTileCamPos = new Vector3(10.5f, 5f, -10f);
     private Vector3 battleResolveCamPos = new Vector3(10.5f, 20f, -10f);
     private Vector3 opEdCamPos = new Vector3(10.5f, -10f, -10f);
+    private Vector3 mapCamPos = new Vector3(10.5f, -25f, -10f);
 
     [SerializeField] private Text playerHealthText;
     [SerializeField] private Text enemyHealthText;
@@ -49,6 +50,8 @@ public class GameView : View {
     [SerializeField] private GameObject resolutionUIPanel;
     private const string EQUIP_KEY = "EQUIP";
     [SerializeField] private GameObject equipPanel;
+    private const string MAP_KEY = "MAP";
+    [SerializeField] private GameObject mapPanel;
 
     private RadioUIGroup flowControlGroup = new RadioUIGroup();
     private RadioUIGroup gameGroup = new RadioUIGroup();
@@ -57,7 +60,7 @@ public class GameView : View {
     public Signal endThisRoundSignal = new Signal();
 
     [Inject]
-    public StartGameSignal gameStartSignal { get; set; }
+    public EngageCombatSignal gameStartSignal { get; set; }
 
 
     internal void Init() {
@@ -66,6 +69,7 @@ public class GameView : View {
         flowControlGroup.AddToGroup(START_SCREEN_KEY, startScreenPanel);
         flowControlGroup.AddToGroup(GAME_KEY, gamePanel);
         flowControlGroup.AddToGroup(EQUIP_KEY, equipPanel);
+        flowControlGroup.AddToGroup(MAP_KEY, mapPanel);
         gameGroup.AddToGroup(CANCEL_STAGE_KEY, cancellationStageUIPanel);
         gameGroup.AddToGroup(BATTLE_RESOLVE_KEY, battleResolutionUIPanel);
         startMenuGroup.AddToGroup(START_MENU_KEY, startMenuUIPanel);
@@ -81,7 +85,7 @@ public class GameView : View {
         startMenuGroup.ActivateUI(START_MENU_KEY);
 
         startGameButton.GetComponent<Button>().onClick.AddListener(() => {
-                SwitchToEquipScreen();
+                SwitchToMap();
             });
         optionButton.GetComponent<Button>().onClick.AddListener(() => {
                 SwitchToOptionsMenu();
@@ -117,18 +121,18 @@ public class GameView : View {
         mainCam.transform.position = cancelTileCamPos;
     }
 
-    private void SwitchToOptionsMenu() {
+    public void SwitchToOptionsMenu() {
         startMenuGroup.ActivateUI(RESOLUTION_KEY);
     }
 
-    private void SwitchToMainMenu() {
+    public void SwitchToMainMenu() {
         titleText.text = "";
         flowControlGroup.ActivateUI(START_SCREEN_KEY);
         startMenuGroup.ActivateUI(START_MENU_KEY);
         mainCam.transform.position = opEdCamPos;
     }
 
-    private void SwitchToEquipScreen() {
+    public void SwitchToEquipScreen() {
         flowControlGroup.ActivateUI(EQUIP_KEY);
     }
 
@@ -136,6 +140,11 @@ public class GameView : View {
         titleText.text = setText;
         flowControlGroup.ActivateUI(START_SCREEN_KEY);
         mainCam.transform.position = opEdCamPos;
+    }
+
+    public void SwitchToMap() {
+        flowControlGroup.ActivateUI(MAP_KEY);
+        mainCam.transform.position = mapCamPos;
     }
 
     public void UpdateProgressBar(float percent) {

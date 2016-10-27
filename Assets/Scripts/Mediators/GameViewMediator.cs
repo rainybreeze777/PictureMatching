@@ -34,9 +34,11 @@ public class GameViewMediator : Mediator {
     [Inject]
     public AddToTimeSignal addToTimeSignal { get; set; }
     [Inject]
-    public StartGameSignal gameStartSignal { get; set; }
+    public EngageCombatSignal gameStartSignal { get; set; }
     [Inject]
     public ElemGatherUpdatedSignal elemGatherUpdatedSignal { get; set; }
+    [Inject]
+    public MapChangeSignal mapChangeSignal { get; set; }
 
     private const float TIME_PER_CANCEL = 60.0f;
     private float timer = TIME_PER_CANCEL;
@@ -66,6 +68,7 @@ public class GameViewMediator : Mediator {
         enemyHealthUpdatedSignal.AddListener(OnEnemyHealthUpdate);
         addToTimeSignal.AddListener(AddToTimer);
         elemGatherUpdatedSignal.AddListener(OnElementGatherUpdated);
+        mapChangeSignal.AddListener(OnMapChange);
 
         gameView.Init();
     }
@@ -73,15 +76,15 @@ public class GameViewMediator : Mediator {
     public void OnBattleWon()
     {
         ResetActiveState();
-        gameView.SwitchToEdScreen("You Win!");
         // resetBattleSignal.Dispatch();
+        gameView.SwitchToMap();
     }
 
     public void OnBattleLost()
     {
         ResetActiveState();
-        gameView.SwitchToEdScreen("You Lost!");
         // resetBattleSignal.Dispatch();
+        gameView.SwitchToMap();
     }
 
     public void OnBattleUnresolved()
@@ -131,5 +134,21 @@ public class GameViewMediator : Mediator {
 
     private void OnElementGatherUpdated(EElements elem, int updateTo) {
         gameView.SetElementGathered(elem, updateTo);
+    }
+
+    private void OnMapChange(EMapChange changeTo) {
+        switch(changeTo) {
+            case EMapChange.MAP:
+                gameView.SwitchToMap();
+                break;
+            case EMapChange.HQ:
+                gameView.SwitchToEquipScreen();
+                break;
+            case EMapChange.SMELT:
+                break;
+            case EMapChange.ARENA:
+                gameStartSignal.Dispatch();
+                break;
+        }
     }
 }
