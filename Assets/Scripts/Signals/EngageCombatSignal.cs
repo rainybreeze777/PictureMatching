@@ -1,8 +1,7 @@
 ﻿using System;
 using strange.extensions.signal.impl;
 
-// Signal to start the game
-// differs from StartSignal, where StartSignal starts the executable
+// Signal to start a battle
 public class EngageCombatSignal : Signal
 {
 }

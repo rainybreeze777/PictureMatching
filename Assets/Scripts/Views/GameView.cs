@@ -48,10 +48,10 @@ public class GameView : View {
     [SerializeField] private GameObject startMenuUIPanel;
     private const string RESOLUTION_KEY = "RESOLUTION";
     [SerializeField] private GameObject resolutionUIPanel;
-    private const string EQUIP_KEY = "EQUIP";
-    [SerializeField] private GameObject equipPanel;
+    private const string STATUS_KEY = "STATUS";
+    [SerializeField] private GameObject statusCanvas;
     private const string MAP_KEY = "MAP";
-    [SerializeField] private GameObject mapPanel;
+    [SerializeField] private GameObject mapCanvas;
 
     private RadioUIGroup flowControlGroup = new RadioUIGroup();
     private RadioUIGroup gameGroup = new RadioUIGroup();
@@ -68,8 +68,8 @@ public class GameView : View {
 
         flowControlGroup.AddToGroup(START_SCREEN_KEY, startScreenPanel);
         flowControlGroup.AddToGroup(GAME_KEY, gamePanel);
-        flowControlGroup.AddToGroup(EQUIP_KEY, equipPanel);
-        flowControlGroup.AddToGroup(MAP_KEY, mapPanel);
+        flowControlGroup.AddToGroup(STATUS_KEY, statusCanvas);
+        flowControlGroup.AddToGroup(MAP_KEY, mapCanvas);
         gameGroup.AddToGroup(CANCEL_STAGE_KEY, cancellationStageUIPanel);
         gameGroup.AddToGroup(BATTLE_RESOLVE_KEY, battleResolutionUIPanel);
         startMenuGroup.AddToGroup(START_MENU_KEY, startMenuUIPanel);
@@ -85,7 +85,7 @@ public class GameView : View {
         startMenuGroup.ActivateUI(START_MENU_KEY);
 
         startGameButton.GetComponent<Button>().onClick.AddListener(() => {
-                SwitchToMap();
+                SwitchToMapScreen();
             });
         optionButton.GetComponent<Button>().onClick.AddListener(() => {
                 SwitchToOptionsMenu();
@@ -132,8 +132,9 @@ public class GameView : View {
         mainCam.transform.position = opEdCamPos;
     }
 
-    public void SwitchToEquipScreen() {
-        flowControlGroup.ActivateUI(EQUIP_KEY);
+    public void SwitchToStatusScreen() {
+        flowControlGroup.ActivateUI(STATUS_KEY);
+        mainCam.transform.position = mapCamPos;
     }
 
     public void SwitchToEdScreen(string setText) {
@@ -142,7 +143,7 @@ public class GameView : View {
         mainCam.transform.position = opEdCamPos;
     }
 
-    public void SwitchToMap() {
+    public void SwitchToMapScreen() {
         flowControlGroup.ActivateUI(MAP_KEY);
         mainCam.transform.position = mapCamPos;
     }

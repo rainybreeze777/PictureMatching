@@ -1,3 +1,7 @@
 ﻿public enum EMapChange {
-    MAP, HQ, SMELT, ARENA
+	METAL_ARENA,
+	WOOD_ARENA,
+	WATER_ARENA,
+	FIRE_ARENA,
+	EARTH_ARENA    
 }

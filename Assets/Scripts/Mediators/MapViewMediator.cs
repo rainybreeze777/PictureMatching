@@ -10,15 +10,21 @@ public class MapViewMediator : Mediator {
 
     [Inject]
     public MapChangeSignal mapChangeSignal { get; set; }
+    [Inject]
+    public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
 
     public override void OnRegister() {
 
         mapView.mapButtonClickedSignal.AddListener(OnMapButtonClicked);
-
+        mapView.swapToStatusButtonClickedSignal.AddListener(OnSwapToStatusClicked);
         mapView.Init();
     }
 
-    public void OnMapButtonClicked(EMapChange mapChange) {
+    private void OnMapButtonClicked(EMapChange mapChange) {
         mapChangeSignal.Dispatch(mapChange);
+    }
+
+    private void OnSwapToStatusClicked() {
+        gameFlowStateChangeSignal.Dispatch(EGameFlowState.STATUS);
     }
 }

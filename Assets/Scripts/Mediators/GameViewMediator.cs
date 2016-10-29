@@ -39,6 +39,8 @@ public class GameViewMediator : Mediator {
     public ElemGatherUpdatedSignal elemGatherUpdatedSignal { get; set; }
     [Inject]
     public MapChangeSignal mapChangeSignal { get; set; }
+    [Inject]
+    public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
 
     private const float TIME_PER_CANCEL = 60.0f;
     private float timer = TIME_PER_CANCEL;
@@ -69,6 +71,7 @@ public class GameViewMediator : Mediator {
         addToTimeSignal.AddListener(AddToTimer);
         elemGatherUpdatedSignal.AddListener(OnElementGatherUpdated);
         mapChangeSignal.AddListener(OnMapChange);
+        gameFlowStateChangeSignal.AddListener(OnGameFlowStateChange);
 
         gameView.Init();
     }
@@ -77,14 +80,14 @@ public class GameViewMediator : Mediator {
     {
         ResetActiveState();
         // resetBattleSignal.Dispatch();
-        gameView.SwitchToMap();
+        gameView.SwitchToMapScreen();
     }
 
     public void OnBattleLost()
     {
         ResetActiveState();
         // resetBattleSignal.Dispatch();
-        gameView.SwitchToMap();
+        gameView.SwitchToMapScreen();
     }
 
     public void OnBattleUnresolved()
@@ -138,16 +141,21 @@ public class GameViewMediator : Mediator {
 
     private void OnMapChange(EMapChange changeTo) {
         switch(changeTo) {
-            case EMapChange.MAP:
-                gameView.SwitchToMap();
-                break;
-            case EMapChange.HQ:
-                gameView.SwitchToEquipScreen();
-                break;
-            case EMapChange.SMELT:
-                break;
-            case EMapChange.ARENA:
+            case EMapChange.METAL_ARENA:
                 gameStartSignal.Dispatch();
+                break;
+        }
+    }
+
+    private void OnGameFlowStateChange(EGameFlowState state) {
+        switch(state) {
+            case EGameFlowState.MAP:
+                gameView.SwitchToMapScreen();
+                break;
+            case EGameFlowState.STATUS:
+                gameView.SwitchToStatusScreen();
+                break;
+            default:
                 break;
         }
     }

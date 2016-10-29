@@ -21,7 +21,7 @@ public class EquipmentViewMediator : Mediator {
 
     private void OnConfirmEquip() {
         equipWeaponUpdatedSignal.Dispatch(equipmentView.GetEquippedWeapons());
-        mapChangeSignal.Dispatch(EMapChange.MAP);
+        // mapChangeSignal.Dispatch(EMapChange.MAP);
     }
 
 }
