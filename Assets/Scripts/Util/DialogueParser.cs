@@ -10,9 +10,12 @@ public class DialogueParser : IDialogueParser {
     private JSONNode parsedDialogue = null;
     private string language = "zh_cn";
 
+    private int gameScene = -1;
+
     public void ParseDialogue(TextAsset dialogueText) {
         try {
             parsedText = JSON.Parse(dialogueText.text);
+            gameScene = parsedText["gameScene"].AsInt;
             parsedDialogue = parsedText["dialogue"];
         } catch (Exception ex) {
             Debug.LogError(ex.ToString());
@@ -27,10 +30,17 @@ public class DialogueParser : IDialogueParser {
 
             int charId = node["characterId"].AsInt;
             string text = node["text"][language];
+            int combatEnemyId = node["combatEnemyId"].AsInt;
 
-            dialogues.Add(new Dialogue(charId, text));
+            if (charId != 0 && combatEnemyId == 0) {
+                dialogues.Add(new Dialogue(charId, text));
+            } else if (charId == 0 && combatEnemyId != 0){
+                dialogues.Add(new Dialogue(combatEnemyId));
+            }
         }
 
         return dialogues;
     }
+
+    public int GetGameSceneId() { return gameScene; }
 }

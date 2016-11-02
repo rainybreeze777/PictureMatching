@@ -21,8 +21,11 @@ public class SceneView : View {
     [Inject]
     public IDialogueParser dialogueParser { get; set; }
 
+    public Signal<int, int> dialogueTriggerCombatSignal = new Signal<int, int>();
+
     private List<Dialogue> readingDialogue;
     private int lineNumber = 0;
+    private int gameSceneId = -1;
 
     internal void Init() {
 
@@ -45,6 +48,8 @@ public class SceneView : View {
 
     public void PrepareScene(EMapChange scene) {
         dialogueParser.ParseDialogue(scripts[scene]);
+
+        gameSceneId = dialogueParser.GetGameSceneId();
     
         List<Dialogue> onEnterDialogues = dialogueParser.GetOnEnterDialogues();
         if (onEnterDialogues.Count > 0) {
@@ -59,7 +64,12 @@ public class SceneView : View {
 
         if (readingDialogue == null || readingDialogue.Count == 0) {
             return;
-        } else if (lineNumber >= readingDialogue.Count) {
+        } 
+        if (readingDialogue[lineNumber].IsCombatSignal()) {
+            dialogueTriggerCombatSignal.Dispatch(gameSceneId, readingDialogue[lineNumber].GetCombatEnemyId());
+            ++lineNumber;
+        }
+        if (lineNumber >= readingDialogue.Count) {
             readingDialogue.Clear();
             readingDialogue = null;
             lineNumber = 0;

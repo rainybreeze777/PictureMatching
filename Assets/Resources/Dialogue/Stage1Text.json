@@ -1,4 +1,5 @@
 {
+    "gameScene" : 1,
     "dialogue" : {
         "onEnter" : [
             {
@@ -28,6 +29,9 @@
                     "en_ca" : "You are so dead!",
                     "zh_cn" : "小子活腻了!"
                 }
+            },
+            {
+                "combatEnemyId" : 1
             }
         ],
         "random" : [
