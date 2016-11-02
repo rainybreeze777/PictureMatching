@@ -45,6 +45,7 @@ public class PictureMatchingContext : MVCSContext {
         mediationBinder.Bind<EquipmentView>().To<EquipmentViewMediator>();
         mediationBinder.Bind<MapView>().To<MapViewMediator>();
         mediationBinder.Bind<StatusView>().To<StatusViewMediator>();
+        mediationBinder.Bind<SceneView>().To<SceneViewMediator>();
         // Binding Signals with Commands
         commandBinder.Bind<StartSignal>().To<StartCommand>().Once();
         commandBinder.Bind<AttemptTileCancelSignal>().To<AttemptTileCancelCommand>();
@@ -59,6 +60,7 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<IInBattleStatus>().To<InBattleEnemyStatus>().ToSingleton().ToName(EInBattleStatusType.ENEMY);
         injectionBinder.Bind<IEnemyModel>().To<EnemyModel>().ToSingleton();
         injectionBinder.Bind<IBattleResolver>().To<BattleResolver>().ToSingleton();
+        injectionBinder.Bind<IDialogueParser>().To<DialogueParser>();
         // Instantiating Signals that are triggered manually
         injectionBinder.Bind<BattleWonSignal>().ToSingleton();
         injectionBinder.Bind<BattleLostSignal>().ToSingleton();

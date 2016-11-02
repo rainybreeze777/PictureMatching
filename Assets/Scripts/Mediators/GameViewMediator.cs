@@ -34,11 +34,9 @@ public class GameViewMediator : Mediator {
     [Inject]
     public AddToTimeSignal addToTimeSignal { get; set; }
     [Inject]
-    public EngageCombatSignal gameStartSignal { get; set; }
+    public EngageCombatSignal engageCombatSignal { get; set; }
     [Inject]
     public ElemGatherUpdatedSignal elemGatherUpdatedSignal { get; set; }
-    [Inject]
-    public MapChangeSignal mapChangeSignal { get; set; }
     [Inject]
     public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
 
@@ -64,13 +62,12 @@ public class GameViewMediator : Mediator {
         battleLostSignal.AddListener(OnBattleLost);
         battleUnresolvedSignal.AddListener(OnBattleUnresolved);
         boardIsEmptySignal.AddListener(SwitchToBattleResolve);
-        gameStartSignal.AddListener(SwitchToCancelTiles);
+        engageCombatSignal.AddListener(SwitchToCancelTiles);
         gameView.endThisRoundSignal.AddListener(SwitchToBattleResolve);
         playerHealthUpdatedSignal.AddListener(OnPlayerHealthUpdate);
         enemyHealthUpdatedSignal.AddListener(OnEnemyHealthUpdate);
         addToTimeSignal.AddListener(AddToTimer);
         elemGatherUpdatedSignal.AddListener(OnElementGatherUpdated);
-        mapChangeSignal.AddListener(OnMapChange);
         gameFlowStateChangeSignal.AddListener(OnGameFlowStateChange);
 
         gameView.Init();
@@ -137,14 +134,6 @@ public class GameViewMediator : Mediator {
 
     private void OnElementGatherUpdated(EElements elem, int updateTo) {
         gameView.SetElementGathered(elem, updateTo);
-    }
-
-    private void OnMapChange(EMapChange changeTo) {
-        switch(changeTo) {
-            case EMapChange.METAL_ARENA:
-                gameStartSignal.Dispatch();
-                break;
-        }
     }
 
     private void OnGameFlowStateChange(EGameFlowState state) {
