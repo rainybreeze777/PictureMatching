@@ -12,36 +12,46 @@ public class EquipmentView : View {
     [SerializeField] private GameObject weaponEquipPanel;
 
     public Signal confirmEquipSignal = new Signal();
-    private List<Weapon> weapons = new List<Weapon>();
+    private List<Weapon> weaponsInPossession = null;
     private List<Weapon> equippedWeapons = new List<Weapon>();
     private List<Toggle> selections = new List<Toggle>();
 
     private const int EQUIP_NUM_MAX = 3;
     private int numOfEquipped = 0;
 
+    private GameObject toInstantiate = null;
+
     internal void Init() {
 
-        GameObject toInstantiate = Resources.Load("Prefabs/UI/Toggle") as GameObject;
-        object[] objs = Resources.LoadAll("Weapons", typeof(Weapon));
-
-        for (int i = 0; i < objs.Length; ++i) {
-            weapons.Add((Weapon) objs[i]);
-        }
-
-        foreach (Weapon w in weapons) {
-            Toggle newToggle =(Toggle.Instantiate(toInstantiate, weaponEquipPanel.transform) as GameObject).GetComponent<Toggle>();
-            newToggle.name = w.GetWeaponName() + "Toggle";
-            newToggle.GetComponentInChildren<Text>().text = w.GetWeaponDesc();
-            newToggle.isOn = false;
-            newToggle.onValueChanged.AddListener(OnToggleValueChange);
-            selections.Add(newToggle);
-        }
+        toInstantiate = Resources.Load("Prefabs/UI/Toggle") as GameObject;
 
         confirmEquipButton.GetComponent<Button>().onClick.AddListener(OnConfirmEquipButtonClicked);
+        confirmEquipButton.interactable = false;
     }
 
     public List<Weapon> GetEquippedWeapons() {
         return new List<Weapon>(equippedWeapons);
+    }
+
+    public void RefreshEquipmentView(List<Weapon> weapons, List<Weapon> alreadyEquippedWeapons) {
+
+        foreach (Toggle t in selections) {
+            Destroy(t.gameObject);
+        }
+        selections.Clear();
+
+        foreach (Weapon w in weapons) {
+            Toggle newToggle = (Toggle.Instantiate(toInstantiate, weaponEquipPanel.transform) as GameObject).GetComponent<Toggle>();
+            newToggle.name = w.GetWeaponName() + "Toggle";
+            newToggle.GetComponentInChildren<Text>().text = w.GetWeaponDesc();
+            newToggle.isOn = alreadyEquippedWeapons.Contains(w);
+            newToggle.onValueChanged.AddListener(OnToggleValueChange);
+            selections.Add(newToggle);
+        }
+
+        weaponsInPossession = weapons;
+        equippedWeapons.Clear();
+        equippedWeapons = alreadyEquippedWeapons;
     }
 
     private void OnConfirmEquipButtonClicked() {
@@ -50,6 +60,9 @@ public class EquipmentView : View {
     }
 
     private void OnToggleValueChange(bool isChecked) {
+        
+        confirmEquipButton.interactable = true;
+
         if (isChecked) {
             numOfEquipped += 1;
             if (numOfEquipped == EQUIP_NUM_MAX) {
@@ -75,7 +88,7 @@ public class EquipmentView : View {
         equippedWeapons.Clear();
         for (int i = 0; i < selections.Count; ++i) {
             if (selections[i].isOn) {
-                equippedWeapons.Add(weapons[i]);
+                equippedWeapons.Add(weaponsInPossession[i]);
             }
         }        
     }

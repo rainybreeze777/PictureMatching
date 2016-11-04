@@ -16,4 +16,22 @@ public class Weapon : ScriptableObject {
     public string GetWeaponName() { return weaponName; }
     public string GetWeaponDesc() { return weaponDescription; }
 
+    public override bool Equals(object other) {
+        if (other == null) { return false; }
+        if (ReferenceEquals(this, other)) { return true; }
+        if (typeof(Weapon) != other.GetType()) { return false; }
+        Weapon otherWeapon = (Weapon) other;
+        return possessComboIdList.Equals(otherWeapon.possessComboIdList) 
+                && weaponName.Equals(otherWeapon.weaponName);
+    }
+
+    public override int GetHashCode() {
+        int hash = 13;
+        hash = (hash * 7) + possessComboIdList.GetHashCode();
+        hash = (hash * 7) + weaponName.GetHashCode();
+        hash = (hash * 7) + weaponDescription.GetHashCode();
+
+        return hash;
+    }
+
 }

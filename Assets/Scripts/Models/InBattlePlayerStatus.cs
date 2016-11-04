@@ -5,8 +5,8 @@ public class InBattlePlayerStatus : InBattleStatus {
 
     [Inject]
     public PlayerHealthUpdatedSignal receivedDmgSignal { get; set; }
-    [Inject]
-    public PlayerEquipWeaponUpdatedSignal equipWeaponUpdatedSignal { get; set; }
+    // [Inject]
+    // public PlayerEquipWeaponUpdatedSignal equipWeaponUpdatedSignal { get; set; }
     [Inject]
     public PlayerEquipComboUpdatedSignal equipComboUpdatedSignal { get; set; }
     [Inject]
@@ -19,11 +19,11 @@ public class InBattlePlayerStatus : InBattleStatus {
     }
 
     protected override void FireEquipComboUpdatedSignal() {
-    	equipComboUpdatedSignal.Dispatch();
+        equipComboUpdatedSignal.Dispatch();
     }
 
     protected override void BindSignals() {
-    	equipWeaponUpdatedSignal.AddListener(UpdateEquipWeapon);
+        // equipWeaponUpdatedSignal.AddListener(UpdateEquipWeapon);
         engageCombatSignal.AddListener(UpdateInBattleStatus);
     }
 
@@ -31,5 +31,7 @@ public class InBattlePlayerStatus : InBattleStatus {
         maxHealth = playerStatus.Health;
         currentHealth = maxHealth;
         damage = playerStatus.Damage;
+
+        UpdateEquipWeapon(playerStatus.GetEquippedWeapons());
     }
 }

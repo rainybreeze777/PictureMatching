@@ -11,14 +11,37 @@ public class PlayerStatus : IPlayerStatus {
     private int health = 60;
     private int damage = 10;
 
-    private List<int> weaponsInPossession = new List<int>();
-    private List<int> equippedWeapons = new List<int>();
+    private List<Weapon> weaponsInPossession = new List<Weapon>();
+    private List<Weapon> equippedWeapons = new List<Weapon>();
 
-    public List<int> GetPossessedWeaponIds() {
-        return new List<int>(weaponsInPossession);
+    [Inject]
+    public PlayerEquipWeaponUpdatedSignal equipWeaponUpdatedSignal { get; set; }
+    [Inject]
+    public PlayerWeaponsInfoUpdatedSignal weaponsInfoUpdatedSignal { get; set; }
+
+    public List<Weapon> GetPossessedWeapons() {
+        return new List<Weapon>(weaponsInPossession);
     }
 
-    public List<int> GetEquippedWeaponIds() {
-        return new List<int>(equippedWeapons);
+    public List<Weapon> GetEquippedWeapons() {
+        return new List<Weapon>(equippedWeapons);
+    }
+
+    public PlayerStatus() {
+        object[] objs = Resources.LoadAll("Weapons", typeof(Weapon));
+        // Can access all weapons for now
+        for (int i = 0; i < objs.Length; ++i) {
+            weaponsInPossession.Add((Weapon) objs[i]);
+        }
+    }
+
+    [PostConstruct]
+    public void PostConstruct() {
+        equipWeaponUpdatedSignal.AddListener(UpdateEquippedWeapons);
+        weaponsInfoUpdatedSignal.Dispatch();
+    }
+
+    private void UpdateEquippedWeapons(List<Weapon> equippedWeapons) {
+        this.equippedWeapons = equippedWeapons;
     }
 }

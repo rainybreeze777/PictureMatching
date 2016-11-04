@@ -60,8 +60,8 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<IInBattleStatus>().To<InBattleEnemyStatus>().ToSingleton().ToName(EInBattleStatusType.ENEMY);
         injectionBinder.Bind<IEnemyModel>().To<EnemyModel>().ToSingleton();
         injectionBinder.Bind<IBattleResolver>().To<BattleResolver>().ToSingleton();
+        injectionBinder.Bind<IPlayerStatus>().To<PlayerStatus>().ToSingleton();
         injectionBinder.Bind<IDialogueParser>().To<DialogueParser>();
-        injectionBinder.Bind<IPlayerStatus>().To<PlayerStatus>();
         // Instantiating Signals that are triggered manually
         injectionBinder.Bind<BattleWonSignal>().ToSingleton();
         injectionBinder.Bind<BattleLostSignal>().ToSingleton();
@@ -87,6 +87,7 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<PlayerEquipWeaponUpdatedSignal>().ToSingleton();
         injectionBinder.Bind<MapChangeSignal>().ToSingleton();
         injectionBinder.Bind<GameFlowStateChangeSignal>().ToSingleton();
+        injectionBinder.Bind<PlayerWeaponsInfoUpdatedSignal>().ToSingleton();
         // Manually Instantiate SkillInitiator and inject to skill classes
         injectionBinder.GetInstance<ISkillInitiator>().InjectInitialize(injectionBinder);
     }

@@ -6,6 +6,6 @@ public interface IPlayerStatus {
     int Health { get; }
     int Damage { get; }
 
-    List<int> GetPossessedWeaponIds();
-    List<int> GetEquippedWeaponIds();
+    List<Weapon> GetPossessedWeapons();
+    List<Weapon> GetEquippedWeapons();
 }
