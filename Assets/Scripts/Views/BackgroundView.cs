@@ -15,7 +15,7 @@ public class BackgroundView : View {
     [Inject]
     public InitiateBattleResolutionSignal initiateBattleResolutionSignal { get; set; }
     [Inject]
-    public EngageCombatSignal gameStartSignal { get; set; }
+    public EngageCombatSignal engageCombatSignal { get; set; }
 
     [SerializeField] private GameObject mainMenuBackground;
     [SerializeField] private GameObject cancellationBackground;
@@ -27,7 +27,7 @@ public class BackgroundView : View {
         battleLostSignal.AddListener(ShowMainMenuBackground);
         battleUnresolvedSignal.AddListener(ShowCancellationBackground);
         initiateBattleResolutionSignal.AddListener(HideAllBackground);
-        gameStartSignal.AddListener(ShowCancellationBackground);
+        engageCombatSignal.AddListener(ShowCancellationBackground);
 
         cancellationBackground.SetActive(false);
     }

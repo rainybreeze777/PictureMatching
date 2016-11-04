@@ -59,10 +59,6 @@ public class GameView : View {
 
     public Signal endThisRoundSignal = new Signal();
 
-    [Inject]
-    public EngageCombatSignal gameStartSignal { get; set; }
-
-
     internal void Init() {
         Screen.SetResolution (1366, 768, false);
 

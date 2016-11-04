@@ -61,6 +61,7 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<IEnemyModel>().To<EnemyModel>().ToSingleton();
         injectionBinder.Bind<IBattleResolver>().To<BattleResolver>().ToSingleton();
         injectionBinder.Bind<IDialogueParser>().To<DialogueParser>();
+        injectionBinder.Bind<IPlayerStatus>().To<PlayerStatus>();
         // Instantiating Signals that are triggered manually
         injectionBinder.Bind<BattleWonSignal>().ToSingleton();
         injectionBinder.Bind<BattleLostSignal>().ToSingleton();

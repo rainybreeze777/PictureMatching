@@ -3,18 +3,17 @@ using System.Collections.Generic;
 
 public interface IInBattleStatus {
 
-	int CurrentHealth { get; }
-	int MaxHealth { get; }
-	int Damage { get; }
-	int ComboDamage { get; }
-	bool IsDead { get; }
+    int CurrentHealth { get; }
+    int MaxHealth { get; }
+    int Damage { get; }
+    bool IsDead { get; }
 
-	void ReceiveDmg(int dmg);
-	void AddToHealth(int addAmount);
-	void ResetHealth();
+    void ReceiveDmg(int dmg);
+    void AddToHealth(int addAmount);
+    void ResetHealth();
 
-	void UpdateReceiveDamageModifier(double modifier);
-	void UpdateEquipWeapon(List<Weapon> equippedWeaponList);
-	Dictionary<int, OneCombo> GetEquippedCombos();
+    void UpdateReceiveDamageModifier(double modifier);
+    void UpdateEquipWeapon(List<Weapon> equippedWeaponList);
+    Dictionary<int, OneCombo> GetEquippedCombos();
 
 }
