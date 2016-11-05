@@ -14,11 +14,7 @@ public class GameViewMediator : Mediator {
 
     // Injected Signals
     [Inject]
-    public BattleWonSignal battleWonSignal{ get; set;}
-    [Inject]
-    public BattleLostSignal battleLostSignal{ get; set;}
-    [Inject]
-    public BattleUnresolvedSignal battleUnresolvedSignal{ get; set;}
+    public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
     [Inject]
     public ResetBattleSignal resetBattleSignal{ get; set; }
     [Inject]
@@ -58,9 +54,7 @@ public class GameViewMediator : Mediator {
     public override void OnRegister()
     {
         // Place to add listeners for signals
-        battleWonSignal.AddListener(OnBattleWon);
-        battleLostSignal.AddListener(OnBattleLost);
-        battleUnresolvedSignal.AddListener(OnBattleUnresolved);
+        battleResultUpdatedSignal.AddListener(OnBattleResultUpdated);
         boardIsEmptySignal.AddListener(SwitchToBattleResolve);
         engageCombatSignal.AddListener(SwitchToCancelTiles);
         gameView.endThisRoundSignal.AddListener(SwitchToBattleResolve);
@@ -73,27 +67,17 @@ public class GameViewMediator : Mediator {
         gameView.Init();
     }
 
-    public void OnBattleWon()
-    {
-        ResetActiveState();
-        // resetBattleSignal.Dispatch();
-        gameView.SwitchToMapScreen();
-    }
-
-    public void OnBattleLost()
-    {
-        ResetActiveState();
-        // resetBattleSignal.Dispatch();
-        gameView.SwitchToMapScreen();
-    }
-
-    public void OnBattleUnresolved()
-    {
+    private void OnBattleResultUpdated(EBattleResult battleResult) {
+        if (battleResult == EBattleResult.WON || battleResult == EBattleResult.LOST) {
+            ResetActiveState();
+            gameView.SwitchToMapScreen();
+        } else if (battleResult == EBattleResult.UNRESOLVED) {
 #if !UNLIMITED_TIME
-        countingDown = true;
+            countingDown = true;
 #endif
-        ResetActiveState();
-        gameView.SwitchToCancelTiles();
+            ResetActiveState();
+            gameView.SwitchToCancelTiles();
+        }
     }
 
     public void AddToTimer(double seconds) {

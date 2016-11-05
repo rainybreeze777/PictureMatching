@@ -7,11 +7,7 @@ using strange.extensions.mediation.impl;
 public class BackgroundView : View {
 
     [Inject]
-    public BattleWonSignal battleWonSignal{ get; set;}
-    [Inject]
-    public BattleLostSignal battleLostSignal{ get; set;}
-    [Inject]
-    public BattleUnresolvedSignal battleUnresolvedSignal{ get; set;}
+    public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
     [Inject]
     public InitiateBattleResolutionSignal initiateBattleResolutionSignal { get; set; }
     [Inject]
@@ -23,13 +19,19 @@ public class BackgroundView : View {
     [PostConstruct]
     public void PostConstruct() {
 
-        battleWonSignal.AddListener(ShowMainMenuBackground);
-        battleLostSignal.AddListener(ShowMainMenuBackground);
-        battleUnresolvedSignal.AddListener(ShowCancellationBackground);
+        battleResultUpdatedSignal.AddListener(OnBattleResultUpdated);
         initiateBattleResolutionSignal.AddListener(HideAllBackground);
         engageCombatSignal.AddListener(ShowCancellationBackground);
 
         cancellationBackground.SetActive(false);
+    }
+
+    private void OnBattleResultUpdated(EBattleResult battleResult) {
+        if (battleResult == EBattleResult.WON || battleResult == EBattleResult.LOST) {
+            ShowMainMenuBackground();
+        } else if (battleResult == EBattleResult.UNRESOLVED) {
+            ShowCancellationBackground();
+        }
     }
 
     private void ShowMainMenuBackground() {

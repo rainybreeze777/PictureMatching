@@ -9,11 +9,7 @@ public class BattleResolver : IBattleResolver {
     public IEnemyModel enemyModel { get; set; }
     // Injected Signals
     [Inject]
-    public BattleWonSignal battleWonSignal { get; set; }
-    [Inject]
-    public BattleLostSignal battleLostSignal { get; set; }
-    [Inject]
-    public BattleUnresolvedSignal battleUnresolvedSignal { get; set; }
+    public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
     [Inject]
     public OneExchangeDoneSignal oneExchangeDoneSignal { get; set; }
 
@@ -27,9 +23,9 @@ public class BattleResolver : IBattleResolver {
     public void ResolveNextMove() {
 
         if (playerStatus.IsDead) {
-            battleLostSignal.Dispatch();
+            battleResultUpdatedSignal.Dispatch(EBattleResult.LOST);
         } else if (enemyStatus.IsDead) {
-            battleWonSignal.Dispatch();
+            battleResultUpdatedSignal.Dispatch(EBattleResult.WON);
         }
 
         if (playerStatus.IsDead || enemyStatus.IsDead) {
@@ -42,7 +38,7 @@ public class BattleResolver : IBattleResolver {
         List<int> enemySeq = enemyModel.GetPrevGeneratedSequence();
 
         if (resolvingIndex >= playerSeq.Count && resolvingIndex >= enemySeq.Count) {
-            battleUnresolvedSignal.Dispatch();
+            battleResultUpdatedSignal.Dispatch(EBattleResult.UNRESOLVED);
         }
 
         int playerMove = (resolvingIndex < playerSeq.Count) ? playerSeq[resolvingIndex] : -1;

@@ -63,9 +63,7 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<IPlayerStatus>().To<PlayerStatus>().ToSingleton();
         injectionBinder.Bind<IDialogueParser>().To<DialogueParser>();
         // Instantiating Signals that are triggered manually
-        injectionBinder.Bind<BattleWonSignal>().ToSingleton();
-        injectionBinder.Bind<BattleLostSignal>().ToSingleton();
-        injectionBinder.Bind<BattleUnresolvedSignal>().ToSingleton();
+        injectionBinder.Bind<BattleResultUpdatedSignal>().ToSingleton();
         injectionBinder.Bind<ComboPossibleSignal>().ToSingleton();
         injectionBinder.Bind<BoardIsEmptySignal>().ToSingleton();
         injectionBinder.Bind<InitiateBattleResolutionSignal>().ToSingleton();

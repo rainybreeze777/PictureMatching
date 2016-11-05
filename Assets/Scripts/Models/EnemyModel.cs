@@ -10,13 +10,19 @@ public class EnemyModel : IEnemyModel {
     [Inject]
     public EnemySeqGenSignal seqGenSignal { get; set; }
     [Inject]
-    public BattleUnresolvedSignal battleUnresolvedSignal { get; set; }
+    public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
 
     private uint cancelSeqMask = 0; // Binary hash code stored in int
 
     [PostConstruct]
     public void PostConstruct() {
-        battleUnresolvedSignal.AddListener(GenerateSequence);
+        battleResultUpdatedSignal.AddListener(OnBattleResultUpdated);
+    }
+
+    private void OnBattleResultUpdated(EBattleResult battleResult) {
+        if (battleResult == EBattleResult.UNRESOLVED) {
+            GenerateSequence();
+        }
     }
 
     public void GenerateSequence() {

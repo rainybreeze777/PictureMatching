@@ -20,7 +20,7 @@ public class SkillInitiator : ISkillInitiator {
     [Inject]
     public InitiateBattleResolutionSignal initiateBattleResolutionSignal { get; set; }
     [Inject]
-    public BattleUnresolvedSignal battleUnresolvedSignal{ get; set;}
+    public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
     [Inject]
     public ComboExecFinishedSignal comboExecFinishedSignal { get; set; }
     [Inject]
@@ -75,7 +75,7 @@ public class SkillInitiator : ISkillInitiator {
 
     [PostConstruct]
     public void PostConstruct() {
-        battleUnresolvedSignal.AddListener(SwitchToCancelStage);
+        battleResultUpdatedSignal.AddListener(OnBattleResultUpdated);
         initiateBattleResolutionSignal.AddListener(SwitchToResolutionStage);
         skillExecFinishedSignal.AddListener(ExecuteNextSkill);
     }
@@ -135,6 +135,12 @@ public class SkillInitiator : ISkillInitiator {
         } else {
             comboExecFinishedSignal.Dispatch(executing.comboId);
             executing = null;
+        }
+    }
+
+    private void OnBattleResultUpdated(EBattleResult battleResult) {
+        if (battleResult == EBattleResult.UNRESOLVED) {
+            SwitchToCancelStage();
         }
     }
 }
