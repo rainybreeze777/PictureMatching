@@ -8,7 +8,7 @@ public interface IComboModel {
 
     List<int> GetCancelSeq();
 
-    void ClearCancelSequence();
+    void ResetBattleStatus();
 
     Signal<int> CancelAddedSignal { get; }
 

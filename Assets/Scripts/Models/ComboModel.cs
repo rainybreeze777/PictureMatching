@@ -68,8 +68,16 @@ public class ComboModel : IComboModel {
         return cancelSequence;
     }
 
-    public void ClearCancelSequence() {
+    public void ResetBattleStatus() {
         cancelSequence.Clear();
+
+        List<EElements> elems = new List<EElements>(elemGathered.Keys);
+        foreach(EElements e in elems) {
+            elemGathered[e] = 0;
+            elemGatherUpdatedSignal.Dispatch(e, 0);
+        }
+
+        RefreshSkillPrepStatus();
     }
 
     public void DeductComboElems(int comboId) {
