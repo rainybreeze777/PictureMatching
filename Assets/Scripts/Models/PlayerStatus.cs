@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class PlayerStatus : IPlayerStatus {
 
@@ -28,6 +29,8 @@ public class PlayerStatus : IPlayerStatus {
     public PlayerWeaponsInfoUpdatedSignal weaponsInfoUpdatedSignal { get; set; }
     [Inject]
     public PlayerInfoUpdatedSignal playerInfoUpdatedSignal { get; set; }
+    [Inject]
+    public PlayerEssenceGainedSignal playerEssenceGainedSignal { get; set; }
 
     public List<Weapon> GetPossessedWeapons() {
         return new List<Weapon>(weaponsInPossession);
@@ -48,9 +51,19 @@ public class PlayerStatus : IPlayerStatus {
     [PostConstruct]
     public void PostConstruct() {
         equipWeaponUpdatedSignal.AddListener(UpdateEquippedWeapons);
+        playerEssenceGainedSignal.AddListener(OnEssenceGained);
     }
 
     private void UpdateEquippedWeapons(List<Weapon> equippedWeapons) {
         this.equippedWeapons = equippedWeapons;
+    }
+
+    private void OnEssenceGained(List<int> gainedEssence) {
+        Assert.IsTrue(gainedEssence.Count == 5);
+        for (int i = 0; i < gainedEssence.Count; ++i) {
+            essence[i] += gainedEssence[i];
+        }
+
+        playerInfoUpdatedSignal.Dispatch();
     }
 }

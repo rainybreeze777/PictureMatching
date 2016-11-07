@@ -12,6 +12,8 @@ public class BattleResolver : IBattleResolver {
     public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
     [Inject]
     public OneExchangeDoneSignal oneExchangeDoneSignal { get; set; }
+    [Inject]
+    public PlayerEssenceGainedSignal playerEssenceGainedSignal { get; set; }
 
     [Inject(EInBattleStatusType.PLAYER)]
     public IInBattleStatus playerStatus { get; set; }
@@ -23,8 +25,10 @@ public class BattleResolver : IBattleResolver {
     public void ResolveNextMove() {
 
         if (playerStatus.IsDead) {
+            playerEssenceGainedSignal.Dispatch(new List<int>() {0, 0, 0, 0, 0});
             battleResultUpdatedSignal.Dispatch(EBattleResult.LOST);
         } else if (enemyStatus.IsDead) {
+            playerEssenceGainedSignal.Dispatch(new List<int>() {5, 5, 5, 5, 5});
             battleResultUpdatedSignal.Dispatch(EBattleResult.WON);
         }
 

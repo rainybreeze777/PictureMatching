@@ -70,7 +70,7 @@ public class GameViewMediator : Mediator {
     private void OnBattleResultUpdated(EBattleResult battleResult) {
         if (battleResult == EBattleResult.WON || battleResult == EBattleResult.LOST) {
             ResetActiveState();
-            gameView.SwitchToMapScreen();
+            gameView.SwitchToBattleEndScreen();
         } else if (battleResult == EBattleResult.UNRESOLVED) {
 #if !UNLIMITED_TIME
             countingDown = true;
