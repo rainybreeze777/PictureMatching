@@ -47,6 +47,7 @@ public class PictureMatchingContext : MVCSContext {
         mediationBinder.Bind<StatusView>().To<StatusViewMediator>();
         mediationBinder.Bind<SceneView>().To<SceneViewMediator>();
         mediationBinder.Bind<PlayerInfoView>().To<PlayerInfoViewMediator>();
+        mediationBinder.Bind<SmeltView>().To<SmeltViewMediator>();
         // Binding Signals with Commands
         commandBinder.Bind<StartSignal>().To<StartCommand>().Once();
         commandBinder.Bind<AttemptTileCancelSignal>().To<AttemptTileCancelCommand>();
@@ -89,6 +90,7 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<PlayerWeaponsInfoUpdatedSignal>().ToSingleton();
         injectionBinder.Bind<PlayerInfoUpdatedSignal>().ToSingleton();
         injectionBinder.Bind<PlayerEssenceGainedSignal>().ToSingleton();
+        injectionBinder.Bind<StatusTabChangedSignal>().ToSingleton();
         // Manually Instantiate SkillInitiator and inject to skill classes
         injectionBinder.GetInstance<ISkillInitiator>().InjectInitialize(injectionBinder);
     }
