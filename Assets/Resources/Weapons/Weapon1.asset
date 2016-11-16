@@ -14,3 +14,5 @@ MonoBehaviour:
   possessComboIdList: 01000000
   weaponName: Weapon1
   weaponDescription: "4\u6728 2x2\u6D88\u9664"
+  tier: 1
+  id: 1

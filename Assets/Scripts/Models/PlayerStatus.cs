@@ -23,6 +23,8 @@ public class PlayerStatus : IPlayerStatus {
     // Metal, Wood, Water, Fire, Earth
     private List<int> essence = new List<int>() { 10, 10, 10, 10, 10 };
 
+    private WeaponsFetcher weaponsFetcher;
+
     [Inject]
     public PlayerEquipWeaponUpdatedSignal equipWeaponUpdatedSignal { get; set; }
     [Inject]
@@ -41,18 +43,24 @@ public class PlayerStatus : IPlayerStatus {
     }
 
     public PlayerStatus() {
-        object[] objs = Resources.LoadAll("Weapons", typeof(Weapon));
-        // Can access all weapons for now
-        for (int i = 0; i < objs.Length; ++i) {
-            weaponsInPossession.Add((Weapon) objs[i]);
-        }
+
     }
 
     [PostConstruct]
     public void PostConstruct() {
+
+        weaponsFetcher = WeaponsFetcher.GetInstance();
+
+        // Can access all weapons for now
+        for (int i = 0; i < weaponsFetcher.GetHighestWeaponTier(); ++i) {
+            List<Weapon> oneTier = weaponsFetcher.GetWeaponsByTier(i + 1);
+            foreach(Weapon w in oneTier) {
+                weaponsInPossession.Add(w);
+            }
+        }
+
         equipWeaponUpdatedSignal.AddListener(UpdateEquippedWeapons);
         playerEssenceGainedSignal.AddListener(OnEssenceGained);
-        
     }
 
     private void UpdateEquippedWeapons(List<Weapon> equippedWeapons) {

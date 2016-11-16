@@ -8,6 +8,8 @@ public class Weapon : ScriptableObject {
     [SerializeField] private List<int> possessComboIdList = new List<int>();
     [SerializeField] private string weaponName;
     [SerializeField] private string weaponDescription;
+    [SerializeField] private int tier;
+    [SerializeField] private int id;
 
     public List<int> GetComboIdList() {
         return new List<int>(possessComboIdList);
@@ -15,6 +17,8 @@ public class Weapon : ScriptableObject {
 
     public string GetWeaponName() { return weaponName; }
     public string GetWeaponDesc() { return weaponDescription; }
+    public int Tier { get { return tier; } }
+    public int ID { get { return id; } }
 
     public override bool Equals(object other) {
         if (other == null) { return false; }

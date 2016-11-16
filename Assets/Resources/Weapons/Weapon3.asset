@@ -14,3 +14,5 @@ MonoBehaviour:
   possessComboIdList: 03000000
   weaponName: Weapon3
   weaponDescription: "2\u571F1\u706B \u52A0\u65F65\u79D2"
+  tier: 1
+  id: 3
