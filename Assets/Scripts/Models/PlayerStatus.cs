@@ -21,7 +21,7 @@ public class PlayerStatus : IPlayerStatus {
     private List<Weapon> equippedWeapons = new List<Weapon>();
 
     // Metal, Wood, Water, Fire, Earth
-    private List<int> essence = new List<int>() { 0, 0, 0, 0, 0 };
+    private List<int> essence = new List<int>() { 10, 10, 10, 10, 10 };
 
     [Inject]
     public PlayerEquipWeaponUpdatedSignal equipWeaponUpdatedSignal { get; set; }
@@ -52,6 +52,7 @@ public class PlayerStatus : IPlayerStatus {
     public void PostConstruct() {
         equipWeaponUpdatedSignal.AddListener(UpdateEquippedWeapons);
         playerEssenceGainedSignal.AddListener(OnEssenceGained);
+        
     }
 
     private void UpdateEquippedWeapons(List<Weapon> equippedWeapons) {
@@ -62,6 +63,20 @@ public class PlayerStatus : IPlayerStatus {
         Assert.IsTrue(gainedEssence.Count == 5);
         for (int i = 0; i < gainedEssence.Count; ++i) {
             essence[i] += gainedEssence[i];
+        }
+
+        playerInfoUpdatedSignal.Dispatch();
+    }
+
+    public void DeductEssence(List<int> spentEssence) {
+        Assert.IsTrue(spentEssence.Count == 5);
+
+        for (int i = 0; i < spentEssence.Count; ++i) {
+            if (essence[i] < spentEssence[i]) { return; }
+        }
+
+        for (int i = 0; i < spentEssence.Count; ++i) {
+            essence[i] -= spentEssence[i];
         }
 
         playerInfoUpdatedSignal.Dispatch();

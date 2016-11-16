@@ -54,6 +54,7 @@ public class PictureMatchingContext : MVCSContext {
         commandBinder.Bind<EngageCombatSignal>().To<EngageCombatCommand>();
         commandBinder.Bind<ResolveOneExchangeSignal>().To<ResolveOneExchangeCommand>();
         commandBinder.Bind<UseComboSignal>().To<UseComboCommand>();
+        commandBinder.Bind<CommenceSmeltSignal>().To<CommenceSmeltCommand>();
         // Dependency Injection Binding
         injectionBinder.Bind<IComboModel>().To<ComboModel>().ToSingleton();
         injectionBinder.Bind<IBoardModel>().To<BoardModel>().ToSingleton();

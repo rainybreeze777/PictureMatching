@@ -12,10 +12,13 @@ public class SmeltViewMediator : Mediator {
     public StatusTabChangedSignal statusTabChangedSignal { get; set; }
     [Inject]
     public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
+    [Inject]
+    public CommenceSmeltSignal commenceSmeltSignal { get; set; }
 
     public override void OnRegister() {
         statusTabChangedSignal.AddListener(OnStatusTabChanged);
         gameFlowStateChangeSignal.AddListener(OnGameFlowStateChange);
+        smeltView.smeltButtonClickedSignal.AddListener(OnSmetlButtonClicked);
 
         smeltView.Init();
     }
@@ -33,5 +36,9 @@ public class SmeltViewMediator : Mediator {
         if (gameFlowState != EGameFlowState.STATUS) { return; }
 
         OnStatusTabChanged(SmeltView.THIS_STATUS_TAB, true);
+    }
+
+    private void OnSmetlButtonClicked(List<int> spentEssence) {
+        commenceSmeltSignal.Dispatch(spentEssence);
     }
 }
