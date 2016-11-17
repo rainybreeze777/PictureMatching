@@ -9,6 +9,8 @@ public class StatusTabView : View {
 
     [Inject]
     public StatusTabChangedSignal statusTabChangedSignal { get; set; }
+    [Inject]
+    public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
 
     [SerializeField] private Toggle smeltToggle;
     [SerializeField] private Toggle equipToggle;
@@ -19,10 +21,21 @@ public class StatusTabView : View {
     public void PostConstruct() {
         smeltToggle.onValueChanged.AddListener(OnSmeltToggleChanged);
         equipToggle.onValueChanged.AddListener(OnEquipToggleChanged);
+        gameFlowStateChangeSignal.AddListener(OnGameFlowStateChange);
+
 
         toggleGroup = GetComponent<ToggleGroup>();
-        toggleGroup.SetAllTogglesOff();
         smeltToggle.isOn = true;
+    }
+
+    // GameFlowStateChangeSignal will be fired when switching between map and status
+    // usually this is when status panel first gets called, so everything will be
+    // reset. Default SmeltView to be shown
+    private void OnGameFlowStateChange(EGameFlowState gameFlowState) {
+        if (gameFlowState != EGameFlowState.STATUS) { return; }
+
+        smeltToggle.isOn = true;
+        equipToggle.isOn = false;
     }
 
     private void OnSmeltToggleChanged(bool isOn) {
