@@ -16,6 +16,8 @@ public class ComboModel : IComboModel {
     public IInBattleStatus playerStatus { get; set; }
     [Inject]
     public PlayerEquipComboUpdatedSignal playerEquipComboUpdatedSignal { get; set; }
+    [Inject]
+    public ResetBattleSignal resetBattleSignal{ get; set; }
     public Signal<int> cancelAddedSignal = new Signal<int>();
     public Signal<int> CancelAddedSignal 
     {
@@ -50,6 +52,7 @@ public class ComboModel : IComboModel {
         equippedComboList = playerStatus.GetEquippedCombos();
         comboExecFinishedSignal.AddListener(DeductComboElems);
         playerEquipComboUpdatedSignal.AddListener(RefreshEquippedCombo);
+        resetBattleSignal.AddListener(ResetBattleStatus);
     }
 
     public void AddToCancelSequence(int tileNumber) {
@@ -68,9 +71,11 @@ public class ComboModel : IComboModel {
         return cancelSequence;
     }
 
-    public void ResetBattleStatus() {
+    public void ClearCancelSequence() {
         cancelSequence.Clear();
+    }
 
+    public void ResetBattleStatus() {
         List<EElements> elems = new List<EElements>(elemGathered.Keys);
         foreach(EElements e in elems) {
             elemGathered[e] = 0;

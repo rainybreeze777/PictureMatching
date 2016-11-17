@@ -16,8 +16,6 @@ public class GameViewMediator : Mediator {
     [Inject]
     public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
     [Inject]
-    public ResetBattleSignal resetBattleSignal{ get; set; }
-    [Inject]
     public BoardIsEmptySignal boardIsEmptySignal { get; set; }
     [Inject]
     public ResetActiveStateSignal resetActiveStateSignal { get; set; }

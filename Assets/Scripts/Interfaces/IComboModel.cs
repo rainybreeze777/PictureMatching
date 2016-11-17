@@ -14,5 +14,7 @@ public interface IComboModel {
 
     void DeductComboElems(int comboId);
 
+    void ClearCancelSequence();
+
     void RefreshEquippedCombo();
 }

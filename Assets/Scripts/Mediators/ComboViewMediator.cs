@@ -20,7 +20,7 @@ public class ComboViewMediator : Mediator {
         view.Init();
 
         comboModel.CancelAddedSignal.AddListener(OnTileCancelled);
-        resetActiveStateSignal.AddListener(ResetBattle);
+        resetActiveStateSignal.AddListener(ResetRound);
         enemySeqGenSignal.AddListener(OnEnemySeqGeneration);
     }
 
@@ -32,8 +32,8 @@ public class ComboViewMediator : Mediator {
         view.ConstructNewEnemySequence(enemyModel.GetPrevGeneratedSequence(), enemyModel.GetPrevSequenceMask());
     }
 
-    public void ResetBattle() {
-        comboModel.ResetBattleStatus();
+    public void ResetRound() {
+        comboModel.ClearCancelSequence();
         view.Reset();
     }
 }
