@@ -21,9 +21,7 @@ public class PlayerStatus : IPlayerStatus {
     private List<Weapon> equippedWeapons = new List<Weapon>();
 
     // Metal, Wood, Water, Fire, Earth
-    private List<int> essence = new List<int>() { 10, 10, 10, 10, 10 };
-
-    private WeaponsFetcher weaponsFetcher;
+    private List<int> essence = new List<int>() { 999, 999, 999, 999, 999 };
 
     [Inject]
     public PlayerEquipWeaponUpdatedSignal equipWeaponUpdatedSignal { get; set; }
@@ -35,7 +33,15 @@ public class PlayerStatus : IPlayerStatus {
     public PlayerEssenceGainedSignal playerEssenceGainedSignal { get; set; }
 
     public List<Weapon> GetPossessedWeapons() {
-        return new List<Weapon>(weaponsInPossession);
+        List<Weapon> weaponsList = new List<Weapon>();
+
+        foreach(Weapon w in weaponsInPossession) {
+            if (!weaponsList.Contains(w)) {
+                weaponsList.Add(w);
+            }
+        }
+
+        return weaponsList;
     }
 
     public List<Weapon> GetEquippedWeapons() {
@@ -48,16 +54,6 @@ public class PlayerStatus : IPlayerStatus {
 
     [PostConstruct]
     public void PostConstruct() {
-
-        weaponsFetcher = WeaponsFetcher.GetInstance();
-
-        // Can access all weapons for now
-        for (int i = 0; i < weaponsFetcher.GetHighestWeaponTier(); ++i) {
-            List<Weapon> oneTier = weaponsFetcher.GetWeaponsByTier(i + 1);
-            foreach(Weapon w in oneTier) {
-                weaponsInPossession.Add(w);
-            }
-        }
 
         equipWeaponUpdatedSignal.AddListener(UpdateEquippedWeapons);
         playerEssenceGainedSignal.AddListener(OnEssenceGained);
@@ -88,5 +84,11 @@ public class PlayerStatus : IPlayerStatus {
         }
 
         playerInfoUpdatedSignal.Dispatch();
+    }
+
+    public void ObtainWeapon(Weapon w) {
+        weaponsInPossession.Add(w);
+
+        weaponsInfoUpdatedSignal.Dispatch();
     }
 }

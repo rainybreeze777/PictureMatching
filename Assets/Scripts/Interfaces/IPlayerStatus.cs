@@ -15,4 +15,6 @@ public interface IPlayerStatus {
     int FireEssence { get; }
     int EarthEssence { get; }
     void DeductEssence(List<int> spentEssence);
+
+    void ObtainWeapon(Weapon weapon);
 }
