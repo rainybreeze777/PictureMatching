@@ -32,7 +32,7 @@ public class EquipmentViewMediator : Mediator {
         equipWeaponUpdatedSignal.Dispatch(equipmentView.GetEquippedWeapons());
     }
 
-    private void OnWeaponsInfoUpdated() {
+    private void OnWeaponsInfoUpdated(EWeaponPossessionStatus status, Weapon w) {
         equipmentView.RefreshEquipmentView(playerStatus.GetPossessedWeapons(), playerStatus.GetEquippedWeapons());
     }
 

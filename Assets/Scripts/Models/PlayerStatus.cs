@@ -89,6 +89,6 @@ public class PlayerStatus : IPlayerStatus {
     public void ObtainWeapon(Weapon w) {
         weaponsInPossession.Add(w);
 
-        weaponsInfoUpdatedSignal.Dispatch();
+        weaponsInfoUpdatedSignal.Dispatch(EWeaponPossessionStatus.ADD, w);
     }
 }

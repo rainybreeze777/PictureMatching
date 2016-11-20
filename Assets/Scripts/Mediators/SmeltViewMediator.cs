@@ -12,10 +12,15 @@ public class SmeltViewMediator : Mediator {
     public StatusTabChangedSignal statusTabChangedSignal { get; set; }
     [Inject]
     public CommenceSmeltSignal commenceSmeltSignal { get; set; }
+    [Inject]
+    public PlayerWeaponsInfoUpdatedSignal weaponsInfoUpdatedSignal { get; set; }
+
+    private bool waitingForSmeltResult = false;
 
     public override void OnRegister() {
         statusTabChangedSignal.AddListener(OnStatusTabChanged);
-        smeltView.smeltButtonClickedSignal.AddListener(OnSmetlButtonClicked);
+        smeltView.smeltButtonClickedSignal.AddListener(OnSmeltButtonClicked);
+        weaponsInfoUpdatedSignal.AddListener(OnWeaponsInfoUpdated);
 
         smeltView.Init();
     }
@@ -26,7 +31,14 @@ public class SmeltViewMediator : Mediator {
         smeltView.gameObject.SetActive(isOn);
     }
     
-    private void OnSmetlButtonClicked(List<int> spentEssence) {
+    private void OnSmeltButtonClicked(List<int> spentEssence) {
+        waitingForSmeltResult = true;
         commenceSmeltSignal.Dispatch(spentEssence);
+    }
+
+    private void OnWeaponsInfoUpdated(EWeaponPossessionStatus status, Weapon w) {
+        if (waitingForSmeltResult && status == EWeaponPossessionStatus.ADD) {
+            smeltView.SmeltObtainedWeapon(w);
+        }
     }
 }

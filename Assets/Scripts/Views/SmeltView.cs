@@ -15,13 +15,27 @@ public class SmeltView : View {
     [SerializeField] private InputField fireInput;
     [SerializeField] private InputField earthInput;
     [SerializeField] private Button smeltButton;
+    [SerializeField] private GameObject obtainInfoPanel;
+    [SerializeField] private Text weaponInfoText;
 
     public Signal<List<int>> smeltButtonClickedSignal = new Signal<List<int>>();
 
     internal void Init() {
+
+        obtainInfoPanel.SetActive(false);
+
+        obtainInfoPanel.GetComponent<ClickDetector>().clickSignal.AddListener(OnObtainInfoPanelClicked);
         smeltButton.GetComponent<Button>().onClick.AddListener(() => {
                 OnSmelt();
             });
+    }
+
+    public void SmeltObtainedWeapon(Weapon w) {
+
+        weaponInfoText.text = w.GetWeaponDesc();
+
+        smeltButton.gameObject.SetActive(false);
+        obtainInfoPanel.SetActive(true);
     }
 
     private void OnSmelt() {
@@ -35,4 +49,10 @@ public class SmeltView : View {
 
         smeltButtonClickedSignal.Dispatch(spentEssence);
     }
+
+    private void OnObtainInfoPanelClicked() {
+        smeltButton.gameObject.SetActive(true);
+        obtainInfoPanel.SetActive(false);
+    }
+
 }
