@@ -54,6 +54,8 @@ public class GameView : View {
     [SerializeField] private GameObject mapCanvas;
     private const string BATTLE_END_KEY = "BATTLE_END";
     [SerializeField] private GameObject battleEndPanel;   
+    private const string SCENE_KEY = "SCENE";
+    [SerializeField] private GameObject sceneCanvas;  
 
     private RadioUIGroup flowControlGroup = new RadioUIGroup();
     private RadioUIGroup gameGroup = new RadioUIGroup();
@@ -68,6 +70,7 @@ public class GameView : View {
         flowControlGroup.AddToGroup(GAME_KEY, gamePanel);
         flowControlGroup.AddToGroup(STATUS_KEY, statusCanvas);
         flowControlGroup.AddToGroup(MAP_KEY, mapCanvas);
+        flowControlGroup.AddToGroup(SCENE_KEY, sceneCanvas);
         flowControlGroup.AddToGroup(BATTLE_END_KEY, battleEndPanel);
         gameGroup.AddToGroup(CANCEL_STAGE_KEY, cancellationStageUIPanel);
         gameGroup.AddToGroup(BATTLE_RESOLVE_KEY, battleResolutionUIPanel);
@@ -108,7 +111,7 @@ public class GameView : View {
                 SwitchToMainMenu();
             });
 
-        battleEndPanel.GetComponent<BattleEndView>().clickedSignal.AddListener(SwitchToMapScreen);
+        battleEndPanel.GetComponent<BattleEndView>().clickedSignal.AddListener(SwitchToScene);
     }
 
     public void SwitchToBattleResolve() {
@@ -145,6 +148,11 @@ public class GameView : View {
 
     public void SwitchToMapScreen() {
         flowControlGroup.ActivateUI(MAP_KEY);
+        mainCam.transform.position = mapCamPos;
+    }
+
+    public void SwitchToScene() {
+        flowControlGroup.ActivateUI(SCENE_KEY);
         mainCam.transform.position = mapCamPos;
     }
 

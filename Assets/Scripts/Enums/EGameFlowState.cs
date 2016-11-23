@@ -1,3 +1,3 @@
 ﻿public enum EGameFlowState {
-    START, MAP, STATUS
+    START, MAP, STATUS, SCENE
 }

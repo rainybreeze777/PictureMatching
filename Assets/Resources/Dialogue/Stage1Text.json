@@ -50,7 +50,8 @@
                         "en_ca" : "Ugh... Fine.",
                         "zh_cn" : "哎……打吧。"
                     }
-                ]
+                ],
+                "combatEnemyId" : 1
             },
             {
                 "characterId" : 11,
@@ -71,7 +72,8 @@
                         "en_ca" : "Was about to rest a bit but sure.",
                         "zh_cn" : "本来打算歇下的，打完再说吧。"
                     }
-                ]
+                ],
+                "combatEnemyId" : 2
             }
         ]
     }

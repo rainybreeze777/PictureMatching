@@ -12,11 +12,14 @@ public class SceneViewMediator : Mediator {
     public MapChangeSignal mapChangeSignal { get; set; }
     [Inject]
     public EngageCombatSignal engageCombatSignal { get; set; }
+    [Inject]
+    public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
 
     public override void OnRegister() {
 
         mapChangeSignal.AddListener(OnMapChange);
         sceneView.dialogueTriggerCombatSignal.AddListener(OnDialogueTriggerCombat);
+        sceneView.toMapButtonClickedSignal.AddListener(OnToMapButtonClicked);
 
         sceneView.Init();
     }
@@ -27,6 +30,10 @@ public class SceneViewMediator : Mediator {
 
     private void OnDialogueTriggerCombat(int gameSceneId, int enemyId) {
         engageCombatSignal.Dispatch();
+    }
+
+    private void OnToMapButtonClicked() {
+        gameFlowStateChangeSignal.Dispatch(EGameFlowState.MAP);
     }
 
 }

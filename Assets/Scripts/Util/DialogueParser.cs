@@ -3,6 +3,7 @@ using UnityEngine;
 using SimpleJSON;
 using System.Collections;
 using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
 public class DialogueParser : IDialogueParser {
 
@@ -12,13 +13,39 @@ public class DialogueParser : IDialogueParser {
 
     private int gameScene = -1;
 
+    private Dictionary<int, List<List<Dialogue>>> randomDialogues = new Dictionary<int, List<List<Dialogue>>>();
+
     public void ParseDialogue(TextAsset dialogueText) {
+
+        randomDialogues.Clear();
+
         try {
             parsedText = JSON.Parse(dialogueText.text);
             gameScene = parsedText["gameScene"].AsInt;
             parsedDialogue = parsedText["dialogue"];
         } catch (Exception ex) {
             Debug.LogError(ex.ToString());
+        }
+
+        JSONArray randomDialoguesList = parsedDialogue["random"] as JSONArray;
+        foreach (JSONNode node in randomDialoguesList) {
+
+            int charId = node["characterId"].AsInt;
+            int combatEnemyId = node["combatEnemyId"].AsInt;
+            JSONArray randomText = node["texts"] as JSONArray;
+
+            List<List<Dialogue>> possibleDialogues = new List<List<Dialogue>>();
+
+            foreach(JSONNode textNode in randomText) {
+                List<Dialogue> dialogues = new List<Dialogue>();
+
+                dialogues.Add(new Dialogue(charId, textNode[language]));
+                dialogues.Add(new Dialogue(combatEnemyId));
+
+                possibleDialogues.Add(dialogues);
+            }
+
+            randomDialogues.Add(charId, possibleDialogues);
         }
     }
 
@@ -43,4 +70,15 @@ public class DialogueParser : IDialogueParser {
     }
 
     public int GetGameSceneId() { return gameScene; }
+
+    public List<int> GetAllCharsInScene() {
+        return new List<int>(randomDialogues.Keys);
+    }
+
+    public List<Dialogue> GetRandomDialogueForChar(int charId) {
+
+        List<List<Dialogue>> possibleDialogues = randomDialogues[charId];
+
+        return possibleDialogues[Random.Range(0, possibleDialogues.Count)];
+    }
 }

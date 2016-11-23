@@ -22,6 +22,7 @@ public class MapViewMediator : Mediator {
 
     private void OnMapButtonClicked(EMapChange mapChange) {
         mapChangeSignal.Dispatch(mapChange);
+        gameFlowStateChangeSignal.Dispatch(EGameFlowState.SCENE);
     }
 
     private void OnSwapToStatusClicked() {

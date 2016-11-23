@@ -126,6 +126,9 @@ public class GameViewMediator : Mediator {
             case EGameFlowState.STATUS:
                 gameView.SwitchToStatusScreen();
                 break;
+            case EGameFlowState.SCENE:
+                gameView.SwitchToScene();
+                break;
             default:
                 break;
         }

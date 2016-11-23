@@ -9,19 +9,23 @@ using strange.extensions.mediation.impl;
 // https://github.com/thesecretlab/YarnSpinner
 public class SceneView : View {
 
-    [SerializeField]
-    private List<TextAsset> scriptsList;
+    [SerializeField] private List<TextAsset> scriptsList;
     private Dictionary<EMapChange, TextAsset> scripts = new Dictionary<EMapChange, TextAsset>();
     private Dictionary<int, Character> charactersMap = new Dictionary<int, Character>();
     [SerializeField] private Text charNameText;
     [SerializeField] private Text dialogueText;
 
-    [SerializeField] private ClickDetector dialogueSystemPanel;
+    [SerializeField] private GameObject dialogueSystemPanel;
+    [SerializeField] private GameObject interestPointsPanel;
+
+    [SerializeField] private Button sceneButton;
+    private Dictionary<Button, int> charButtons = new Dictionary<Button, int>();
 
     [Inject]
     public IDialogueParser dialogueParser { get; set; }
 
     public Signal<int, int> dialogueTriggerCombatSignal = new Signal<int, int>();
+    public Signal toMapButtonClickedSignal = new Signal();
 
     private List<Dialogue> readingDialogue;
     private int lineNumber = 0;
@@ -41,23 +45,59 @@ public class SceneView : View {
 
         scripts.Add(EMapChange.METAL_ARENA, scriptsList[0]);
     
-        dialogueSystemPanel.clickSignal.AddListener(OnPanelClicked);
+        dialogueSystemPanel.GetComponent<ClickDetector>().clickSignal.AddListener(OnPanelClicked);
     
-        gameObject.SetActive(false);
+        // Init ToMapButton
+        Button toMapButton = Instantiate(sceneButton, interestPointsPanel.transform) as Button;
+        toMapButton.name = "ToMapButton";
+        toMapButton.GetComponentInChildren<Text>().text = "离开";
+        toMapButton.onClick.AddListener(toMapButtonClickedSignal.Dispatch);
+
+        dialogueSystemPanel.SetActive(false);
+        interestPointsPanel.SetActive(false);
     }
 
     public void PrepareScene(EMapChange scene) {
         dialogueParser.ParseDialogue(scripts[scene]);
 
+        // Clear the existing buttons in interestPointsPanel
+        foreach(KeyValuePair<Button, int> kvp in charButtons) {
+            Destroy(kvp.Key.gameObject);
+        }
+        charButtons.Clear();
+
         gameSceneId = dialogueParser.GetGameSceneId();
-    
+
+        // Build the interest points panel
+        List<int> allCharsInScene = dialogueParser.GetAllCharsInScene();
+        foreach(int charId in allCharsInScene) {
+            Button newButton = Instantiate(sceneButton, interestPointsPanel.transform) as Button;
+            newButton.name = charId + "Button";
+            newButton.GetComponentInChildren<Text>().text = charactersMap[charId].DisplayName;
+            newButton.onClick.AddListener(() => {
+                StartConversationWith(charButtons[newButton]);
+            });
+            charButtons.Add(newButton, charId);
+        }
+
+        // Init on enter dialogues, if they exist.
         List<Dialogue> onEnterDialogues = dialogueParser.GetOnEnterDialogues();
         if (onEnterDialogues.Count > 0) {
             readingDialogue = onEnterDialogues;
             lineNumber = 0;
-            gameObject.SetActive(true);
+            dialogueSystemPanel.SetActive(true);
             ReadNextLine();
+        } else {
+            interestPointsPanel.SetActive(true);
         }
+    }
+
+    private void StartConversationWith(int charId) {
+        readingDialogue = dialogueParser.GetRandomDialogueForChar(charId);
+        lineNumber = 0;
+        dialogueSystemPanel.SetActive(true);
+        interestPointsPanel.SetActive(false);
+        ReadNextLine();
     }
 
     private void ReadNextLine() {
@@ -73,7 +113,8 @@ public class SceneView : View {
             readingDialogue.Clear();
             readingDialogue = null;
             lineNumber = 0;
-            gameObject.SetActive(false);
+            dialogueSystemPanel.SetActive(false);
+            interestPointsPanel.SetActive(true);
             return;
         }
 
