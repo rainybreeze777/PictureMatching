@@ -58,7 +58,6 @@ public class BattleView : View {
             shouldResolve = false;
         }
         if (initiateMove) {
-            Debug.LogWarning("Move Initiated!");
             startPoint = battleResolveContainer.transform.position;
             endPoint = new Vector3(startPoint.x - widthBetweenTwoComboTiles, startPoint.y, startPoint.z);
             startTime = Time.time;
@@ -92,9 +91,6 @@ public class BattleView : View {
         enemySeq = enemySequence;
         
         int maxCount = System.Math.Max(playerSeq.Count, enemySeq.Count);
-
-        Debug.LogWarning("playerSeq Count " + playerSeq.Count);
-        Debug.LogWarning("enemySeq Count " + enemySeq.Count);
 
         startPoint = battleResolveContainer.transform.position;
         endPoint = Vector3.zero;

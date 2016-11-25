@@ -3178,8 +3178,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillHotbarPanel: {fileID: 730711387}
-  toInstantiateButton: {fileID: 114000013406759716, guid: a05515085a3ff824899dc9eb98cfdd1c,
-    type: 2}
+  toInstantiateButton: {fileID: 0}
 --- !u!1 &737824477
 GameObject:
   m_ObjectHideFlags: 0

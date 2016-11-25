@@ -14,4 +14,10 @@ public class CustomAssetCreator : MonoBehaviour
         Character c = ScriptableObject.CreateInstance<Character>();
         AssetDatabase.CreateAsset(c, "Assets/Resources/Characters/Character.asset");
     }
+
+    [MenuItem("Assets/Create/Custom Asset/EnemyData")]
+    static void CreateEnemyData() {
+        EnemyData e = ScriptableObject.CreateInstance<EnemyData>();
+        AssetDatabase.CreateAsset(e, "Assets/Resources/Enemies/Enemy.asset");
+    }
 }

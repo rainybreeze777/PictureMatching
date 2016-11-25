@@ -40,6 +40,10 @@ public class BackgroundView : View {
     }
 
     private void ShowCancellationBackground() {
+        ShowCancellationBackground(-1); // Stub enemyId data
+    }
+
+    private void ShowCancellationBackground(int enemyId) {
         mainMenuBackground.SetActive(false);
         cancellationBackground.SetActive(true);
     }

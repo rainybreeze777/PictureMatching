@@ -95,7 +95,7 @@ public class GameViewMediator : Mediator {
         initiateBattleResolutionSignal.Dispatch();
     }
 
-    private void SwitchToCancelTiles()
+    private void SwitchToCancelTiles(int enemyId)
     {
 #if !UNLIMITED_TIME
         countingDown = true;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using strange.extensions.dispatcher.eventdispatcher.api;
 using strange.extensions.mediation.impl;
@@ -29,7 +29,7 @@ public class SceneViewMediator : Mediator {
     }
 
     private void OnDialogueTriggerCombat(int gameSceneId, int enemyId) {
-        engageCombatSignal.Dispatch();
+        engageCombatSignal.Dispatch(enemyId);
     }
 
     private void OnToMapButtonClicked() {

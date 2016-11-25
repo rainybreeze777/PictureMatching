@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class InBattleEnemyStatus : InBattleStatus {
+public class InBattleEnemyStatus : InBattleStatus, IInBattleEnemyStatus {
 
 	[Inject]
 	public EnemyHealthUpdatedSignal receivedDmgSignal { get; set; }
@@ -16,6 +16,11 @@ public class InBattleEnemyStatus : InBattleStatus {
 
     protected override void BindSignals() {
     	// Empty for now
+    }
+
+    public void InitWithEnemyData(EnemyData enemyData) {
+        currentHealth = maxHealth = enemyData.Health;
+        damage = enemyData.Damage;
     }
 
 }

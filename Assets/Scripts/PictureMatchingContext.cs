@@ -93,7 +93,9 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<PlayerInfoUpdatedSignal>().ToSingleton();
         injectionBinder.Bind<PlayerEssenceGainedSignal>().ToSingleton();
         injectionBinder.Bind<StatusTabChangedSignal>().ToSingleton();
-        // Manually Instantiate SkillInitiator and inject to skill classes
+        // Manually Instantiate instances and inject
         injectionBinder.GetInstance<ISkillInitiator>().InjectInitialize(injectionBinder);
+        // Second Round injection for special circumstances
+        injectionBinder.Bind<IInBattleEnemyStatus>().ToValue(injectionBinder.GetInstance<IInBattleStatus>(EInBattleStatusType.ENEMY)).ToSingleton();    
     }
 }

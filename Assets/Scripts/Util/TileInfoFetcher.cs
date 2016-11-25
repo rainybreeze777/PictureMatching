@@ -50,7 +50,7 @@ public class TileInfoFetcher {
     public EElements GetElemEnumFromTileNumber(int tileNumber) {
 
         string elemName = GetInfoFromNumber(tileNumber, "name");
-        EElements eelem = EElements.INVALID;
+        EElements eelem = EElements.NONE;
         try {
             eelem = (EElements) Enum.Parse(typeof(EElements), elemName, true);
         } catch (ArgumentException) {

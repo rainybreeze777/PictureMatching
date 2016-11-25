@@ -34,7 +34,6 @@ public class BattleResolver : IBattleResolver {
 
         if (playerStatus.IsDead || enemyStatus.IsDead) {
             resolvingIndex = 0;
-            Debug.LogWarning("Skipping because someone's dead");
             return;
         }
 
