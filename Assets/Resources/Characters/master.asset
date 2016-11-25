@@ -8,11 +8,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79d4db30bc2c6fc41b3865243e686fd0, type: 3}
-  m_Name: 3
+  m_Script: {fileID: 11500000, guid: b9eadae9db5d3b34794b21763844eecf, type: 3}
+  m_Name: master
   m_EditorClassIdentifier: 
-  enemyId: 3
-  preferredElem: 3
-  level: 7
-  health: 3000
-  damage: 20
+  characterId: 101
+  en_caName: Master
+  zh_cnName: "\u5E08\u5085"

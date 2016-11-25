@@ -74,6 +74,20 @@
                     }
                 ],
                 "combatEnemyId" : 2
+            },
+            {
+                "characterId" : 101,
+                "texts" : [
+                    {
+                        "en_ca" : "Here to learn the celestial art?",
+                        "zh_cn" : "来讨教仙术了吗？"
+                    },
+                    {
+                        "en_ca" : "The five elements destroys and produces each other.",
+                        "zh_cn" : "五行元素相生相克。"
+                    }
+                ],
+                "combatEnemyId" : 3
             }
         ]
     }

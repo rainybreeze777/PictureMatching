@@ -79,6 +79,12 @@ public class DialogueParser : IDialogueParser {
 
         List<List<Dialogue>> possibleDialogues = randomDialogues[charId];
 
-        return possibleDialogues[Random.Range(0, possibleDialogues.Count)];
+        List<Dialogue> randomDialogue = new List<Dialogue>(possibleDialogues[Random.Range(0, possibleDialogues.Count)]);
+
+        if (randomDialogue.Count == 0) {
+            Debug.LogError("randomDialogue count is 0????");
+        }
+
+        return randomDialogue;
     }
 }
