@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 public class ReduceDamageSkill : ComboSkill {
 
+    [Inject(EInBattleStatusType.PLAYER)]
+    public IInBattleStatus playerBattleStatus { get; set; }
+
     protected override void ExecuteSkill() {
         return;
     }
@@ -23,7 +26,6 @@ public class ReduceDamageSkill : ComboSkill {
             Debug.LogWarning("ReduceDamageSkill received more than 1 argument; Make sure this is the desired data");
         }
 
-        Assert.IsTrue(battleStatus != null);
-        battleStatus.UpdateReceiveDamageModifier((double) skillParams.GetArg(0));
+        playerBattleStatus.UpdateReceiveDamageModifier((double) skillParams.GetArg(0));
     }
 }

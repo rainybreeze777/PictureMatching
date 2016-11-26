@@ -93,7 +93,6 @@ public class SceneView : View {
     }
 
     private void StartConversationWith(int charId) {
-        Debug.LogWarning("StartingConversationWith " + charId);
         readingDialogue = dialogueParser.GetRandomDialogueForChar(charId);
         lineNumber = 0;
         dialogueSystemPanel.SetActive(true);
@@ -102,8 +101,6 @@ public class SceneView : View {
     }
 
     private void ReadNextLine() {
-
-        Debug.LogWarning("NextLine");
 
         if (readingDialogue == null || readingDialogue.Count == 0) {
             return;

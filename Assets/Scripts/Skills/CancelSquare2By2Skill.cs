@@ -7,6 +7,9 @@ using System.Collections.Generic;
 
 public class CancelSquare2By2Skill : ComboSkill {
 
+    [Inject]
+    public IBoardModel playerBoardModel { get; set; }
+
     [Construct]
     public CancelSquare2By2Skill()
     {
@@ -44,11 +47,7 @@ public class CancelSquare2By2Skill : ComboSkill {
             }
         }
 
-        // If its null, something happened that turned
-        // the boardModel reference to null, which should
-        // never happen
-        Assert.IsNotNull(boardModel);
-        boardModel.removeRange(
+        playerBoardModel.removeRange(
             (int) inputData.GetArg(0),
             (int) inputData.GetArg(1),
             (int) inputData.GetArg(2),

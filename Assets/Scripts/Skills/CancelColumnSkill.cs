@@ -6,6 +6,9 @@ using System.Collections.Generic;
 
 public class CancelColumnSkill : ComboSkill {
 
+    [Inject]
+    public IBoardModel playerBoardModel { get; set; }
+
     [Construct]
     public CancelColumnSkill()
     {
@@ -27,11 +30,7 @@ public class CancelColumnSkill : ComboSkill {
             Debug.LogWarning("CancelColumnSkill received more than 1 argument; Make sure this is the desired data");
         }
 
-        // If its null, something happened that turned
-        // the boardModel reference to null, which should
-        // never happen
-        Assert.IsNotNull(boardModel);
-        boardModel.removeColumn((int) inputData.GetArg(0));
+        playerBoardModel.removeColumn((int) inputData.GetArg(0));
     }
 
     protected override void ExecuteBattleSkill() {

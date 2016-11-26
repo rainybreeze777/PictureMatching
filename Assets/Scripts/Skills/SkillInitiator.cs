@@ -12,12 +12,6 @@ using strange.extensions.injector.impl;
 public class SkillInitiator : ISkillInitiator {
 
     [Inject]
-    public IBoardModel boardModel { get; set; }
-    [Inject(EInBattleStatusType.PLAYER)]
-    public IInBattleStatus playerStatus { get; set; }
-    [Inject(EInBattleStatusType.ENEMY)]
-    public IInBattleStatus enemyStatus { get; set; }
-    [Inject]
     public InitiateBattleResolutionSignal initiateBattleResolutionSignal { get; set; }
     [Inject]
     public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
@@ -64,9 +58,9 @@ public class SkillInitiator : ISkillInitiator {
         executing = sg;
 
         if (currentStage == GameStage.CANCEL_STAGE) {
-            skillMap[executing.skillIds.Peek()].CancelStageExecuteWithArgs(boardModel, executing.skillParameters[0]);
+            skillMap[executing.skillIds.Peek()].CancelStageExecuteWithArgs(executing.skillParameters[0]);
         } else if (currentStage == GameStage.RESOLUTION_STAGE) {
-            skillMap[executing.skillIds.Peek()].BattleStageExecuteWithArgs(playerStatus, executing.skillParameters[0]);
+            skillMap[executing.skillIds.Peek()].BattleStageExecuteWithArgs(executing.skillParameters[0]);
         }
     }
 
@@ -128,7 +122,7 @@ public class SkillInitiator : ISkillInitiator {
         executing.skillIds.Dequeue();
         if (executing.skillIds.Count > 0) {
             if (currentStage == GameStage.CANCEL_STAGE) {
-                skillMap[executing.skillIds.Peek()].CancelStageExecuteWithArgs(boardModel, executing.skillParameters[0]);
+                skillMap[executing.skillIds.Peek()].CancelStageExecuteWithArgs(executing.skillParameters[0]);
             } else if (currentStage == GameStage.RESOLUTION_STAGE) {
                 skillMap[executing.skillIds.Peek()].BattleStageExecute();
             }

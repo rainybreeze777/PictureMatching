@@ -17,20 +17,15 @@ abstract public class ComboSkill : IComboSkill {
     protected Enum userInputEnum = null;
     protected ActionParams inputData = null;
     protected ActionParams skillParams = null;
-    protected IBoardModel boardModel = null;
-    protected IInBattleStatus battleStatus = null;
 
     private bool needUserInputData = false;
     private bool requestingData = false;
 
     public void CancelStageExecute() {
-        CancelStageExecuteWithArgs(null, null);
+        CancelStageExecuteWithArgs(null);
     }
-    public void CancelStageExecute(IBoardModel boardModel) {
-        CancelStageExecuteWithArgs(boardModel, null);
-    }
-    public void CancelStageExecuteWithArgs(IBoardModel boardModel, ActionParams args) {
-        this.boardModel = boardModel;
+
+    public void CancelStageExecuteWithArgs(ActionParams args) {
 
         skillParams = args;
 
@@ -42,20 +37,14 @@ abstract public class ComboSkill : IComboSkill {
         } else {
             ExecuteSkill();
             skillExecFinishedSignal.Dispatch();
-            boardModel = null;
         }
     }
 
     public void BattleStageExecute() {
-        BattleStageExecuteWithArgs(null, null);
+        BattleStageExecuteWithArgs(null);
     }
 
-    public void BattleStageExecute(IInBattleStatus inBattleStatus) {
-        BattleStageExecuteWithArgs(inBattleStatus, null);
-    }
-
-    public void BattleStageExecuteWithArgs(IInBattleStatus inBattleStatus, ActionParams args) {
-        battleStatus = inBattleStatus;
+    public void BattleStageExecuteWithArgs(ActionParams args) {
         skillParams = args;
         ExecuteBattleSkill();
         skillExecFinishedSignal.Dispatch();
@@ -68,7 +57,6 @@ abstract public class ComboSkill : IComboSkill {
     public void AbortExecution() {
         if (requestingData) {
             requestingData = false;
-            boardModel = null;
             inputData = null;
         }
     }
@@ -103,7 +91,6 @@ abstract public class ComboSkill : IComboSkill {
             inputData = paramsList;
             ExecuteSkill();
             skillExecFinishedSignal.Dispatch();
-            boardModel = null;
             inputData = null;
         } else if (requestingData && userInputType.Equals(ESkillStatus.INPUT_CANCELLED)) {
             AbortExecution();

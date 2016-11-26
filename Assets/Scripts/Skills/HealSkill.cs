@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 public class HealSkill : ComboSkill {
 
+    [Inject(EInBattleStatusType.PLAYER)]
+    public IInBattleStatus playerBattleStatus { get; set; }
+
     protected override void ExecuteSkill() {
         return;
     }
@@ -23,8 +26,7 @@ public class HealSkill : ComboSkill {
             Debug.LogWarning("HealSkill received more than 1 argument; Make sure this is the desired data");
         }
 
-        Assert.IsTrue(battleStatus != null);
         int result = (int) skillParams.GetArg(0);
-        battleStatus.AddToHealth(result);
+        playerBattleStatus.AddToHealth(result);
     }
 }
