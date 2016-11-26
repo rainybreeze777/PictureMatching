@@ -16,6 +16,7 @@ public class SmeltView : View {
     [SerializeField] private InputField earthInput;
     [SerializeField] private Button smeltButton;
     [SerializeField] private GameObject obtainInfoPanel;
+    [SerializeField] private Text infoPanelTitleText;
     [SerializeField] private Text weaponInfoText;
 
     public Signal<List<int>> smeltButtonClickedSignal = new Signal<List<int>>();
@@ -32,7 +33,17 @@ public class SmeltView : View {
 
     public void SmeltObtainedWeapon(Weapon w) {
 
+        infoPanelTitleText.text = "获得武器";
         weaponInfoText.text = w.GetWeaponDesc();
+
+        smeltButton.gameObject.SetActive(false);
+        obtainInfoPanel.SetActive(true);
+    }
+
+    public void SmeltInsufficientEssence() {
+
+        infoPanelTitleText.text = "炼制失败";
+        weaponInfoText.text = "灵气不足";
 
         smeltButton.gameObject.SetActive(false);
         obtainInfoPanel.SetActive(true);

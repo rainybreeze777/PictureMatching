@@ -72,11 +72,16 @@ public class PlayerStatus : IPlayerStatus {
         playerInfoUpdatedSignal.Dispatch();
     }
 
-    public void DeductEssence(List<int> spentEssence) {
+    public bool DeductEssence(List<int> spentEssence) {
         Assert.IsTrue(spentEssence.Count == 5);
 
         for (int i = 0; i < spentEssence.Count; ++i) {
-            if (essence[i] < spentEssence[i]) { return; }
+            if (essence[i] < spentEssence[i]) { 
+                // Insufficient Essence
+                weaponsInfoUpdatedSignal.Dispatch(EWeaponPossessionStatus.SMELT_INSUFFICIENT_ESSENCE, null);
+
+                return false; 
+            }
         }
 
         for (int i = 0; i < spentEssence.Count; ++i) {
@@ -84,6 +89,7 @@ public class PlayerStatus : IPlayerStatus {
         }
 
         playerInfoUpdatedSignal.Dispatch();
+        return true;
     }
 
     public void ObtainWeapon(Weapon w) {

@@ -6335,6 +6335,7 @@ MonoBehaviour:
   earthInput: {fileID: 868218204}
   smeltButton: {fileID: 461482494}
   obtainInfoPanel: {fileID: 1713888548}
+  infoPanelTitleText: {fileID: 1537639333}
   weaponInfoText: {fileID: 496159900}
 --- !u!1 &1537639331
 GameObject:

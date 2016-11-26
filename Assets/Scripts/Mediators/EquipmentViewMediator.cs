@@ -33,7 +33,8 @@ public class EquipmentViewMediator : Mediator {
     }
 
     private void OnWeaponsInfoUpdated(EWeaponPossessionStatus status, Weapon w) {
-        equipmentView.RefreshEquipmentView(playerStatus.GetPossessedWeapons(), playerStatus.GetEquippedWeapons());
+        if (status != EWeaponPossessionStatus.SMELT_INSUFFICIENT_ESSENCE) {
+            equipmentView.RefreshEquipmentView(playerStatus.GetPossessedWeapons(), playerStatus.GetEquippedWeapons());
+        }
     }
-
 }

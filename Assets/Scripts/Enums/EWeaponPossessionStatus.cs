@@ -1,3 +1,3 @@
 ﻿public enum EWeaponPossessionStatus {
-    ADD, DELETE
+    ADD, DELETE, SMELT_INSUFFICIENT_ESSENCE
 }

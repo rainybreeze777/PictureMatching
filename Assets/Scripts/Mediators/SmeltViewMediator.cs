@@ -37,8 +37,13 @@ public class SmeltViewMediator : Mediator {
     }
 
     private void OnWeaponsInfoUpdated(EWeaponPossessionStatus status, Weapon w) {
-        if (waitingForSmeltResult && status == EWeaponPossessionStatus.ADD) {
-            smeltView.SmeltObtainedWeapon(w);
+
+        if (waitingForSmeltResult) {
+            if (status == EWeaponPossessionStatus.ADD) {
+                smeltView.SmeltObtainedWeapon(w);
+            } else if ( status == EWeaponPossessionStatus.SMELT_INSUFFICIENT_ESSENCE) {
+                smeltView.SmeltInsufficientEssence();
+            }
         }
     }
 }

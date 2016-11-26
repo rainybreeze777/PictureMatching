@@ -14,7 +14,7 @@ public interface IPlayerStatus {
     int WaterEssence { get; }
     int FireEssence { get; }
     int EarthEssence { get; }
-    void DeductEssence(List<int> spentEssence);
+    bool DeductEssence(List<int> spentEssence);
 
     void ObtainWeapon(Weapon weapon);
 }

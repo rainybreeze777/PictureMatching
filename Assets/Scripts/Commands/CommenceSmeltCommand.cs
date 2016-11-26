@@ -13,8 +13,9 @@ public class CommenceSmeltCommand : Command
     public ISmeltery smeltery { get; set; }
 
     public override void Execute() {
-        playerStatus.DeductEssence(spentEssence);
-        Weapon forgedWeapon = smeltery.SmeltWeapon(spentEssence, 0);
-        playerStatus.ObtainWeapon(forgedWeapon);
+        if (playerStatus.DeductEssence(spentEssence)) {
+            Weapon forgedWeapon = smeltery.SmeltWeapon(spentEssence, 0);
+            playerStatus.ObtainWeapon(forgedWeapon);
+        }
     }
 }
