@@ -1,0 +1,9 @@
+{
+    "skillIdToSkillClass": {
+        "0" : "CancelSquare2By2Skill",
+        "1" : "CancelColumnSkill",
+        "2" : "AddToTimeSkill",
+        "3" : "HealSkill",
+        "4" : "ReduceDamageSkill"
+    }
+}
