@@ -11,4 +11,6 @@ public interface IEnemyModel {
 
 	void SetUpEnemyData(EnemyData enemy);
 
+	List<int> GetAvailableSkillIds();
+
 }

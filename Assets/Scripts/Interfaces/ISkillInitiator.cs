@@ -9,4 +9,5 @@ public interface ISkillInitiator {
     void InjectInitialize(ICrossContextInjectionBinder injectionBinder);
     void SwitchToCancelStage();
     void SwitchToResolutionStage();
+    List<int> DeduceReasonableSkillsToUse(List<int> equippedSkillIds);
 }

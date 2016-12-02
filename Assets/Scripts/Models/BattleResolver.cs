@@ -7,6 +7,8 @@ public class BattleResolver : IBattleResolver {
     public IComboModel comboModel { get; set; }
     [Inject]
     public IEnemyModel enemyModel { get; set; }
+    [Inject]
+    public ISkillInitiator skillInitiator { get; set; }
     // Injected Signals
     [Inject]
     public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
@@ -75,5 +77,9 @@ public class BattleResolver : IBattleResolver {
 
     public void Reset() {
         resolvingIndex = 0;
+    }
+
+    private void EnemyPonderUseSkill() {
+        List<int> reasonableSkills = skillInitiator.DeduceReasonableSkillsToUse(enemyModel.GetAvailableSkillIds());
     }
 }

@@ -89,6 +89,10 @@ public class SkillInitiator : ISkillInitiator {
     public void SwitchToCancelStage() { currentStage = GameStage.CANCEL_STAGE; }
     public void SwitchToResolutionStage() { currentStage = GameStage.RESOLUTION_STAGE; }
 
+    public List<int> DeduceReasonableSkillsToUse(List<int> equippedSkillIds) {
+        return null;
+    }
+
     private void InjectHelper(ICrossContextInjectionBinder injectionBinder, int skillId, IComboSkill comboSkill) {
         injectionBinder.injector.Inject(comboSkill);
         skillMap.Add(skillId, comboSkill);

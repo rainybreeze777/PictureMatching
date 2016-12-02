@@ -40,12 +40,6 @@ public class EnemyModel : IEnemyModel {
         battleResultUpdatedSignal.AddListener(OnBattleResultUpdated);
     }
 
-    private void OnBattleResultUpdated(EBattleResult battleResult) {
-        if (battleResult == EBattleResult.UNRESOLVED) {
-            GenerateSequence();
-        }
-    }
-
     public void SetUpEnemyData(EnemyData enemy) {
         readyEnemy = enemy;
 
@@ -108,6 +102,10 @@ public class EnemyModel : IEnemyModel {
 #endif
     }
 
+    public List<int> GetAvailableSkillIds() {
+        return readyEnemy.SkillIds;
+    }
+
     private int GetRandomTile() {
         // 0 is reserved for empty
         // Let the order of elements that form up to 100.0f% be
@@ -144,6 +142,12 @@ public class EnemyModel : IEnemyModel {
         warningMsg += "Final Upper Boundary is: " + upperBoundary + "\n";
         Debug.LogWarning( warningMsg );
         return 1;
+    }
+
+    private void OnBattleResultUpdated(EBattleResult battleResult) {
+        if (battleResult == EBattleResult.UNRESOLVED) {
+            GenerateSequence();
+        }
     }
 
 }

@@ -2,30 +2,30 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using SimpleJSON;
 
 public class EnemyDataFetcher {
 
     private static EnemyDataFetcher fetcher = null;
 
+    private JSONClass enemyDataJsonSheet = null;
+
     // Map of enemyId to EnemyData object
     private Dictionary<int, EnemyData> enemies = new Dictionary<int, EnemyData>();
 
     private EnemyDataFetcher() {
-        object[] objs = Resources.LoadAll("Enemies", typeof(EnemyData));
 
-        for (int i = 0; i < objs.Length; ++i) {
+        try {
+            enemyDataJsonSheet = JSON.Parse((Resources.Load("EnemyData") as TextAsset).text) as JSONClass;
+        } catch (Exception ex) {
+            Debug.LogError(ex.ToString());
+        }
 
-            EnemyData anEnemy = (EnemyData) objs[i];
-
-            if (enemies.ContainsKey(anEnemy.EnemyId)) {
-                string errMsg = "EnemyDataFetcher Init Error: An Enemy with the same ID already exists in the dictionary!\n";
-                errMsg += "Duplicating EnemyId: " + anEnemy.EnemyId + "\n";
-
-                Debug.LogError(errMsg);
-                continue;
-            }
-
-            enemies.Add(anEnemy.EnemyId, anEnemy);
+        foreach(KeyValuePair<string, JSONNode> node in enemyDataJsonSheet ) {
+            EnemyData enemy = ScriptableObject.CreateInstance(typeof(EnemyData)) as EnemyData;
+            JsonUtility.FromJsonOverwrite(node.Value.ToString(), enemy);
+            enemy.SerializeSkillReqAndArgs(node.Value["skillReqAndArgs"] as JSONClass);
+            enemies.Add(Int32.Parse(node.Key), enemy);
         }
     }
 

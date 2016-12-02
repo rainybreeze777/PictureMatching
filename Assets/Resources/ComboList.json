@@ -7,7 +7,9 @@
             ],
             "englishName" : "comboOne",
             "chineseName" : "4木",
-            "wood" : 4,
+            "skillReqAndArg" : {
+                "wood" : 4
+            },
             "description" : "cancel 2 by 2 square area"
         },
         {
@@ -17,9 +19,11 @@
             ],
             "englishName" : "comboTwo",
             "chineseName" : "2木1水1火",
-            "wood" : 2,
-            "water" : 1,
-            "fire" : 1,
+            "skillReqAndArg" : {
+                "wood" : 2,
+                "water" : 1,
+                "fire" : 1
+            },
             "description" : "cancel a column"
         },
         {
@@ -29,11 +33,13 @@
             ],
             "englishName" : "comboThree",
             "chineseName" : "2土1火",
-            "earth" : 2,
-            "fire" : 1,
-            "arguments" : [
-                5.0
-            ],
+            "skillReqAndArg" : {
+                "earth" : 2,
+                "fire" : 1,
+                "arguments" : [
+                    5.0
+                ]
+            },
             "description" : "add 5 seconds to timer"
         },
         {
@@ -43,11 +49,13 @@
             ],
             "englishName" : "Heal",
             "chineseName" : "2水2土",
-            "water" : 2,
-            "earth" : 2,
-            "arguments" : [
-                20
-            ],
+            "skillReqAndArg" : {
+                "water" : 2,
+                "earth" : 2,
+                "arguments" : [
+                    20
+                ]
+            },
             "description" : "heal for 20 health"
         },
         {
@@ -57,10 +65,12 @@
             ],
             "englishName" : "Half Damage",
             "chineseName" : "3金",
-            "metal" : 3,
-            "arguments" : [
-                0.5
-            ],
+            "skillReqAndArg" : {
+                "metal" : 3,
+                "arguments" : [
+                    0.5
+                ]
+            },
             "description" : "reduce damage by half for 3 turns"
         }
     ]

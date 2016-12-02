@@ -8,6 +8,16 @@ public class HealSkill : ComboSkill {
     [Inject(EInBattleStatusType.PLAYER)]
     public IInBattleStatus playerBattleStatus { get; set; }
 
+    public override bool AIDeduceIsLogicalToUse() {
+        // This skill is only valid for Player to use
+        // because AI currently has no cancel stage
+        return false;
+    }
+
+    public override void AIUseSkill() {
+        return;
+    }
+
     protected override void ExecuteSkill() {
         return;
     }

@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using SimpleJSON;
 
 public class EnemyData : ScriptableObject {
 
@@ -20,4 +21,27 @@ public class EnemyData : ScriptableObject {
     [SerializeField] private int damage;
     public int Damage { get { return damage; } }
 
+    public List<int> SkillIds { 
+        get { 
+            return new List<int>(skills.Keys);
+        }
+    }
+    public Dictionary<int, SkillReqAndArg> SkillReqsAndArgs { 
+        get {
+            return new Dictionary<int, SkillReqAndArg>(skills); 
+        }
+    }
+
+    private Dictionary<int, SkillReqAndArg> skills = new Dictionary<int, SkillReqAndArg>();
+
+    public void SerializeSkillReqAndArgs(JSONClass jsonClass) {
+
+        foreach(KeyValuePair<string, JSONNode> node in jsonClass) {
+            SkillReqAndArg skillReqAndArg = ScriptableObject.CreateInstance(typeof(SkillReqAndArg)) as SkillReqAndArg;
+            JsonUtility.FromJsonOverwrite(node.Value.ToString(), skillReqAndArg);
+            skillReqAndArg.InitRequirements();
+            skillReqAndArg.SerializeArguments(node.Value["arguments"] as JSONArray); // JsonUtility does not support polymorphic array serialization
+            skills.Add(Int32.Parse(node.Key), skillReqAndArg);
+        }
+    }
 }

@@ -6,29 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 [Serializable]
-public class OneCombo : ScriptableObject {
-
-    [SerializeField]
-    private string englishName;
-    public string Name { get { return englishName; } }
-
-    [SerializeField]
-    private string chineseName;
-    public string ChineseName { get {  return chineseName; } }
-
-    [SerializeField]
-    private int id;
-    public int ComboId { get { return id; } }
-
-    [SerializeField]
-    private int[] skillIds;
-    public int[] SkillIds { 
-        get { 
-            int[] newSkillIds = new int[skillIds.Length];
-            skillIds.CopyTo(newSkillIds, 0);
-            return newSkillIds; 
-        } 
-    }
+public class SkillReqAndArg : ScriptableObject {
 
     [SerializeField] private int metal;
     [SerializeField] private int wood;
@@ -42,7 +20,7 @@ public class OneCombo : ScriptableObject {
     public int Fire() { return GetReqFromEElements(EElements.FIRE); }
     public int Earth() { return GetReqFromEElements(EElements.EARTH); }
     public int GetReqFromEElements(EElements elem) {
-        Assert.IsTrue(initialized, "OneCombo's elem requirements are not initialized! Make sure InitRequirements() is called after calling FromJsonOverwrite()!");
+        Assert.IsTrue(initialized, "SkillReqAndArg's elem requirements are not initialized! Make sure InitRequirements() is called after calling FromJsonOverwrite()!");
         return elemReq[elem];
     }
 
@@ -73,7 +51,7 @@ public class OneCombo : ScriptableObject {
                     break;
                 // No Float, JSON doesn't support Float
                 default:
-                    Debug.LogError("OneCombo SerializeArguments Error: Unsupported serialization type " + jsonArray[i].Tag);
+                    Debug.LogError("SkillReqAndArg SerializeArguments Error: Unsupported serialization type " + jsonArray[i].Tag);
                     break;
             }
         }

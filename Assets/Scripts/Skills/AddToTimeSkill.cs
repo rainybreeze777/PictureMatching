@@ -8,6 +8,16 @@ public class AddToTimeSkill : ComboSkill {
     [Inject]
     public AddToTimeSignal addToTimeSignal { get; set; }
 
+    public override bool AIDeduceIsLogicalToUse() {
+        // This skill is only valid for Player to use
+        // because AI currently has no cancel stage
+        return false;
+    }
+
+    public override void AIUseSkill() {
+        return;
+    }
+
     protected override void ExecuteSkill() {
 
         // First verify that returned ActionParams object

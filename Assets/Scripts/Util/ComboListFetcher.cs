@@ -96,8 +96,7 @@ public class ComboListFetcher {
 
             OneCombo aCombo = ScriptableObject.CreateInstance(typeof(OneCombo)) as OneCombo;
             JsonUtility.FromJsonOverwrite(combosArray[i].ToString(), aCombo);
-            aCombo.InitRequirements();
-            aCombo.SerializeArguments(combosArray[i]["arguments"] as JSONArray); // JsonUtility does not support polymorphic array serialization
+            aCombo.SerializeSkillReqAndArg(combosArray[i]["skillReqAndArg"] as JSONClass);
             comboMap.Add(aCombo.ComboId, aCombo);
         }
     }

@@ -61,6 +61,9 @@ abstract public class ComboSkill : IComboSkill {
         }
     }
 
+    abstract public void AIUseSkill();
+    abstract public bool AIDeduceIsLogicalToUse();
+
     [PostConstruct]
     public void SignalBinder() {
         dataResponseSignal.AddListener(AwaitUserInput);
