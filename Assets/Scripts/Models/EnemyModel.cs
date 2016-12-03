@@ -24,14 +24,26 @@ public class EnemyModel : IEnemyModel {
 
     Dictionary<EElements, float> elemProbabilities = new Dictionary<EElements, float>();
 
+    // Dict to store gathered elements amount
+    private Dictionary<EElements, int> elemGathered = new Dictionary<EElements, int>();
+
+    List<EElements> elemOrder = new List<EElements>();
+
     [PostConstruct]
     public void PostConstruct() {
+
+        elemOrder.Add(EElements.METAL);
+        elemOrder.Add(EElements.WOOD);
+        elemOrder.Add(EElements.WATER);
+        elemOrder.Add(EElements.FIRE);
+        elemOrder.Add(EElements.EARTH);
 
         int count = 0;
 
         foreach(EElements e in Enum.GetValues(typeof(EElements))) {
             if (e == EElements.NONE) { continue; }
 
+            elemGathered.Add(e, 0);
             elemProbabilities.Add(e, 20.0f);
             count++;
         }
@@ -76,7 +88,9 @@ public class EnemyModel : IEnemyModel {
         // depending on the enemy's level
         int randomSequenceSize = Random.Range((int) Mathf.Min(9 + readyEnemy.Level - 1, 15), 16);
         for (int i = 0; i < randomSequenceSize; i++) {
-            seq.Add( GetRandomTile() ); 
+            int randomTile = GetRandomTile();
+            seq.Add( randomTile );
+            elemGathered[elemOrder[randomTile - 1]] += 1;
             if (Random.value < 0.5) { cancelSeqMask += (uint) Mathf.Pow(2, i); } // 50-50 chance of masked or not masked
             // Think of the encoding as this way:
             // Enemy Combo Seq: Fire <- Water <- Fire <- Metal <- Earth
@@ -102,8 +116,25 @@ public class EnemyModel : IEnemyModel {
 #endif
     }
 
-    public List<int> GetAvailableSkillIds() {
-        return readyEnemy.SkillIds;
+    public EnemyData GetEnemyData() { return readyEnemy; }
+
+    public Dictionary<EElements, int> GetGatheredElems() {
+        return new Dictionary<EElements, int>(elemGathered);
+    }
+
+    public void DeductSkillReqElems(int skillId) {
+        SkillReqAndArg req = readyEnemy.GetSkillReqAndArgFromSkillId(skillId);
+
+        // Cannot modify a dictionary while iterating
+        // so create a list of keys and iterate this list instead
+        List<EElements> elems = new List<EElements>();
+        foreach(EElements e in elemGathered.Keys) {
+            elems.Add(e);
+        }
+        foreach (EElements e in elems) {
+            Assert.IsTrue(elemGathered[e] >= req.GetReqFromEElements(e));
+            elemGathered[e] -= req.GetReqFromEElements(e);
+        }
     }
 
     private int GetRandomTile() {
@@ -114,13 +145,6 @@ public class EnemyModel : IEnemyModel {
         // then generate a random float from 0 to 100.0f,
         // and determine which range the float belongs to
         // which corresponds to the random element
-
-        List<EElements> elemOrder = new List<EElements>();
-        elemOrder.Add(EElements.METAL);
-        elemOrder.Add(EElements.WOOD);
-        elemOrder.Add(EElements.WATER);
-        elemOrder.Add(EElements.FIRE);
-        elemOrder.Add(EElements.EARTH);
 
         float randomElem = Random.Range(0.0f, 100.0f);
         float upperBoundary = 100.0f;
@@ -147,6 +171,11 @@ public class EnemyModel : IEnemyModel {
     private void OnBattleResultUpdated(EBattleResult battleResult) {
         if (battleResult == EBattleResult.UNRESOLVED) {
             GenerateSequence();
+        } else if (battleResult == EBattleResult.WON || battleResult == EBattleResult.LOST) {
+            List<EElements> elems = new List<EElements>(elemGathered.Keys);
+            foreach(EElements e in elems) {
+                elemGathered[e] = 0;
+            }
         }
     }
 

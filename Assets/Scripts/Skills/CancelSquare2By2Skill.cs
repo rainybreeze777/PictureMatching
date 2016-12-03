@@ -16,13 +16,13 @@ public class CancelSquare2By2Skill : ComboSkill {
         NeedUserInput(BoardViewRequest.SELECT_SQUARE2);
     }
 
-    public override bool AIDeduceIsLogicalToUse() {
+    protected override bool AIDeduceIsLogicalToUseLogic(ActionParams args) {
         // This skill is only valid for Player to use
         // because AI currently has no cancel stage
         return false;
     }
 
-    public override void AIUseSkill() {
+    public override void AIUseSkill(ActionParams args) {
         return;
     }
 

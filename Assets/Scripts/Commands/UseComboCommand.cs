@@ -20,11 +20,6 @@ public class UseComboCommand : Command
         fetcher = ComboListFetcher.GetInstance();
     }
 
-    [PostConstruct]
-    public void PostConstruct() {
-        Debug.LogWarning("Command post construct");
-    }
-
     public override void Execute()
     {
         // To trigger a combo, the combo must exist with a valid id

@@ -25,7 +25,17 @@ public class SkillReqAndArg : ScriptableObject {
     }
 
     private List<object> arguments;
-    public List<object> Arguments { get { return arguments; } }
+    public ActionParams Arguments { 
+        get {
+            ActionParams ap = new ActionParams();
+            foreach (object arg in arguments) {
+                ap.AddToParamList(arg);
+            }
+            return ap;
+        }
+    }
+    public List<object> RawArguments { get { return arguments; } }
+
 
     private Dictionary<EElements, int> elemReq;
 

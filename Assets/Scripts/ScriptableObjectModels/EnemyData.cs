@@ -15,9 +15,11 @@ public class EnemyData : ScriptableObject {
     [SerializeField] private int level;
     public int Level { get { return level; } }
 
+    // Initial health
     [SerializeField] private int health;
     public int Health { get { return health; } }
 
+    // Initial Damage
     [SerializeField] private int damage;
     public int Damage { get { return damage; } }
 
@@ -26,10 +28,13 @@ public class EnemyData : ScriptableObject {
             return new List<int>(skills.Keys);
         }
     }
-    public Dictionary<int, SkillReqAndArg> SkillReqsAndArgs { 
+    public Dictionary<int, SkillReqAndArg> AllSkillReqsAndArgs { 
         get {
             return new Dictionary<int, SkillReqAndArg>(skills); 
         }
+    }
+    public SkillReqAndArg GetSkillReqAndArgFromSkillId(int id) {
+        return skills[id];
     }
 
     private Dictionary<int, SkillReqAndArg> skills = new Dictionary<int, SkillReqAndArg>();

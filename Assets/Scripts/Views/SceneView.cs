@@ -82,7 +82,8 @@ public class SceneView : View {
 
         // Init on enter dialogues, if they exist.
         List<Dialogue> onEnterDialogues = dialogueParser.GetOnEnterDialogues();
-        if (onEnterDialogues.Count > 0) {
+        // if (onEnterDialogues.Count > 0) {
+        if (false) {
             readingDialogue = onEnterDialogues;
             lineNumber = 0;
             dialogueSystemPanel.SetActive(true);

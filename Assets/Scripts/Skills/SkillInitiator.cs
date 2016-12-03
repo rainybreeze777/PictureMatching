@@ -89,8 +89,22 @@ public class SkillInitiator : ISkillInitiator {
     public void SwitchToCancelStage() { currentStage = GameStage.CANCEL_STAGE; }
     public void SwitchToResolutionStage() { currentStage = GameStage.RESOLUTION_STAGE; }
 
-    public List<int> DeduceReasonableSkillsToUse(List<int> equippedSkillIds) {
-        return null;
+    public List<int> DeduceReasonableSkillsToUse(EnemyData enemyData) {
+
+        List<int> reasonableSkills = new List<int>();
+        List<int> availableSkills = enemyData.SkillIds;
+
+        foreach(int skillId in availableSkills) {
+            if (skillMap[skillId].AIDeduceIsLogicalToUse(enemyData.GetSkillReqAndArgFromSkillId(skillId))) {
+                reasonableSkills.Add(skillId);
+            }
+        }
+
+        return reasonableSkills;
+    }
+
+    public void AIInvokeSkillFuncFromSkillId(int skillId, ActionParams parameters = null) {
+        skillMap[skillId].AIUseSkill(parameters);
     }
 
     private void InjectHelper(ICrossContextInjectionBinder injectionBinder, int skillId, IComboSkill comboSkill) {

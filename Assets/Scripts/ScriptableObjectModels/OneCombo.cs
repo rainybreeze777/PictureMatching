@@ -39,7 +39,8 @@ public class OneCombo : ScriptableObject {
         return skillReqAndArg.GetReqFromEElements(elem);
     }
 
-    public List<object> Arguments { get { return skillReqAndArg.Arguments; } }
+    public List<object> RawArguments { get { return skillReqAndArg.RawArguments; } }
+    public ActionParams Arguments { get { return skillReqAndArg.Arguments; } }
 
     public Dictionary<EElements, int> ElemRequirement() {
         return skillReqAndArg.ElemRequirement();

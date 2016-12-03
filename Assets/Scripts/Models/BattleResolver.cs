@@ -26,6 +26,8 @@ public class BattleResolver : IBattleResolver {
 
     public void ResolveNextMove() {
 
+        EnemyPonderUseSkill();
+
         if (playerStatus.IsDead) {
             playerEssenceGainedSignal.Dispatch(new List<int>() {0, 0, 0, 0, 0});
             battleResultUpdatedSignal.Dispatch(EBattleResult.LOST);
@@ -80,6 +82,13 @@ public class BattleResolver : IBattleResolver {
     }
 
     private void EnemyPonderUseSkill() {
-        List<int> reasonableSkills = skillInitiator.DeduceReasonableSkillsToUse(enemyModel.GetAvailableSkillIds());
+        List<int> reasonableSkills = skillInitiator.DeduceReasonableSkillsToUse(enemyModel.GetEnemyData());
+        // For now execute all reasonable skills
+        foreach(int skillId in reasonableSkills) {
+            enemyModel.DeductSkillReqElems(skillId);
+            skillInitiator.AIInvokeSkillFuncFromSkillId(
+                skillId
+                , enemyModel.GetEnemyData().GetSkillReqAndArgFromSkillId(skillId).Arguments);
+        }
     }
 }

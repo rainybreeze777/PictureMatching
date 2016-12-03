@@ -3,14 +3,18 @@ using System.Collections.Generic;
 
 public interface IEnemyModel {
 
-	void GenerateSequence();
+    void GenerateSequence();
 
-	List<int> GetPrevGeneratedSequence();
+    List<int> GetPrevGeneratedSequence();
 
-	uint GetPrevSequenceMask(); // Returns a binary hash code used to indicate which tile should appear unknown
+    uint GetPrevSequenceMask(); // Returns a binary hash code used to indicate which tile should appear unknown
 
-	void SetUpEnemyData(EnemyData enemy);
+    void SetUpEnemyData(EnemyData enemy);
 
-	List<int> GetAvailableSkillIds();
+    EnemyData GetEnemyData();
+
+    Dictionary<EElements, int> GetGatheredElems();
+
+    void DeductSkillReqElems(int skillId);
 
 }

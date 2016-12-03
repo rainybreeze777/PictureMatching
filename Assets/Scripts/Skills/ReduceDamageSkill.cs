@@ -8,13 +8,12 @@ public class ReduceDamageSkill : ComboSkill {
     [Inject(EInBattleStatusType.PLAYER)]
     public IInBattleStatus playerBattleStatus { get; set; }
 
-    public override bool AIDeduceIsLogicalToUse() {
-        // This skill is only valid for Player to use
-        // because AI currently has no cancel stage
+    protected override bool AIDeduceIsLogicalToUseLogic(ActionParams args) {
         return false;
     }
 
-    public override void AIUseSkill() {
+    public override void AIUseSkill(ActionParams args) {
+        Debug.Log("ReduceDamageSkill used!");
         return;
     }
 

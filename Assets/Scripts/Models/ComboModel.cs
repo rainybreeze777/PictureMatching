@@ -76,6 +76,10 @@ public class ComboModel : IComboModel {
     }
 
     public void ResetBattleStatus() {
+        // When iterating through the dictionary with foreach,
+        // the values cannot be modified. Therefore taking
+        // a differently approach, i.e. creating a list of keys
+        // and access the dictionary using the list
         List<EElements> elems = new List<EElements>(elemGathered.Keys);
         foreach(EElements e in elems) {
             elemGathered[e] = 0;

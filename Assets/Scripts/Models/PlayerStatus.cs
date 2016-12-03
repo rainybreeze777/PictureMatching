@@ -14,7 +14,7 @@ public class PlayerStatus : IPlayerStatus {
     public int FireEssence { get { return essence[3]; } }
     public int EarthEssence { get { return essence[4]; } }
 
-    private int health = 60;
+    private int health = 500;
     private int damage = 10;
 
     private List<Weapon> weaponsInPossession = new List<Weapon>();

@@ -13,6 +13,8 @@ abstract public class ComboSkill : IComboSkill {
     public UserInputDataResponseSignal dataResponseSignal { get; set; }
     [Inject]
     public SkillExecFinishedSignal skillExecFinishedSignal { get; set; }
+    [Inject]
+    public IEnemyModel enemyModel { get; set; }
 
     protected Enum userInputEnum = null;
     protected ActionParams inputData = null;
@@ -61,8 +63,22 @@ abstract public class ComboSkill : IComboSkill {
         }
     }
 
-    abstract public void AIUseSkill();
-    abstract public bool AIDeduceIsLogicalToUse();
+    abstract public void AIUseSkill(ActionParams args);
+    abstract protected bool AIDeduceIsLogicalToUseLogic(ActionParams args);
+    public virtual bool AIDeduceIsLogicalToUse(SkillReqAndArg skillReqAndArg) {
+
+        Dictionary<EElements, int> elemReq = skillReqAndArg.ElemRequirement();
+        Dictionary<EElements, int> elemGathered = enemyModel.GetGatheredElems();
+
+        // First check if there are enough elements to spend
+        foreach(KeyValuePair<EElements, int> kvp in elemReq) {
+            if (elemGathered[kvp.Key] < elemReq[kvp.Key]) {
+                return false;
+            }
+        }
+
+        return AIDeduceIsLogicalToUseLogic(skillReqAndArg.Arguments);
+    }
 
     [PostConstruct]
     public void SignalBinder() {

@@ -9,6 +9,6 @@ public interface IComboSkill {
     void BattleStageExecuteWithArgs(ActionParams args);
     bool NeedsUserInputData();
     void AbortExecution();
-    bool AIDeduceIsLogicalToUse();
-    void AIUseSkill();
+    bool AIDeduceIsLogicalToUse(SkillReqAndArg skillReqAndArg);
+    void AIUseSkill(ActionParams args);
 }

@@ -9,5 +9,6 @@ public interface ISkillInitiator {
     void InjectInitialize(ICrossContextInjectionBinder injectionBinder);
     void SwitchToCancelStage();
     void SwitchToResolutionStage();
-    List<int> DeduceReasonableSkillsToUse(List<int> equippedSkillIds);
+    List<int> DeduceReasonableSkillsToUse(EnemyData enemyData); // For Enemies
+    void AIInvokeSkillFuncFromSkillId(int skillId, ActionParams parameters = null);
 }

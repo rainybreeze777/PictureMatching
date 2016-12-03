@@ -65,15 +65,7 @@ public class ComboListFetcher {
     public ActionParams GetComboSkillParamsById(int id) {
         OneCombo aCombo;
         if (comboMap.TryGetValue(id, out aCombo)) {
-
-            ActionParams ap = new ActionParams();
-            if (aCombo.Arguments != null) {
-                foreach (object arg in aCombo.Arguments) {
-                    ap.AddToParamList(arg);
-                }
-            }
-            
-            return ap;
+            return aCombo.Arguments;           
         } else {
             return null;
         }
