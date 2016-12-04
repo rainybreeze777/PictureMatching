@@ -7,6 +7,8 @@ public class GameViewMediator : Mediator {
 
     [Inject]
     public GameView gameView{ get; set;}
+    [Inject]
+    public IGameStateMachine gameStateMachine { get; set; }
     [Inject(EInBattleStatusType.PLAYER)]
     public IInBattleStatus playerStatus { get; set; }
     [Inject(EInBattleStatusType.ENEMY)]
