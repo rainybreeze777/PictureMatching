@@ -53,9 +53,9 @@ public abstract class InBattleStatus : IInBattleStatus {
         FireHealthUpdatedSignal();
     }
 
-    public void UpdateReceiveDamageModifier(double modifier) {
+    public void UpdateReceiveDamageModifier(double modifier, int inEffectExchangeCount) {
         takeDmgModifier = modifier;
-        skillEffectCountdown = 3; // TODO: Hardcode to 3 for now;
+        skillEffectCountdown = inEffectExchangeCount;
     }
 
     public Dictionary<int, OneCombo> GetEquippedCombos() {

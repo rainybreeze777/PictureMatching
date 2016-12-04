@@ -12,7 +12,7 @@ public interface IInBattleStatus {
     void AddToHealth(int addAmount);
     void ResetHealth();
 
-    void UpdateReceiveDamageModifier(double modifier);
+    void UpdateReceiveDamageModifier(double modifier, int inEffectExchangeCount);
     void UpdateEquipWeapon(List<Weapon> equippedWeaponList);
     Dictionary<int, OneCombo> GetEquippedCombos();
 

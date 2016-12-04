@@ -41,25 +41,26 @@ public class SkillInitiator : ISkillInitiator {
             }
             if (thisOneNeedsUserData) {
                 oneNeedsUserData = true;
-                sg.needsData = true;
+                sg.NeedsData = true;
             }
         }
         
-        if (executing != null && executing.needsData) {
-            foreach (int skillId in executing.skillIds) {
+        if (executing != null && executing.NeedsData) {
+            Queue<int> remainingSkillIds = executing.GetRemainingSkillIds();
+            foreach (int skillId in remainingSkillIds) {
                 skillMap[skillId].AbortExecution();
             }
             executing = null;
-        } else if (executing != null && !executing.needsData){
+        } else if (executing != null && !executing.NeedsData){
             return; // Ignore the new skill request
         }
 
         executing = sg;
 
         if (currentStage == GameStage.CANCEL_STAGE) {
-            skillMap[executing.skillIds.Peek()].CancelStageExecuteWithArgs(executing.skillParameters[0]);
+            skillMap[executing.PeekSkillId()].CancelStageExecuteWithArgs(executing.PeekActionParams());
         } else if (currentStage == GameStage.RESOLUTION_STAGE) {
-            skillMap[executing.skillIds.Peek()].BattleStageExecuteWithArgs(executing.skillParameters[0]);
+            skillMap[executing.PeekSkillId()].BattleStageExecuteWithArgs(executing.PeekActionParams());
         }
     }
 
@@ -113,29 +114,45 @@ public class SkillInitiator : ISkillInitiator {
     }
 
     private class SkillGroup {
-        public int comboId;
-        public Queue<int> skillIds;
-        public List<ActionParams> skillParameters;
-        public bool needsData;
+        private int comboId;
+        private Queue<int> skillIds;
+        private Queue<ActionParams> skillParameters;
+        private bool needsData;
+
+        public int ComboId { get { return comboId; } }
+        public bool NeedsData { 
+            get { return needsData; } 
+            set { needsData = value; }
+        }
+
+        public int PeekSkillId() { return skillIds.Peek(); }
+        public ActionParams PeekActionParams() { return skillParameters.Peek(); }
+        public void Dequeue() {
+            skillIds.Dequeue();
+            skillParameters.Dequeue();
+        }
+
+        public Queue<int> GetRemainingSkillIds() { return new Queue<int>(skillIds); }
+        public int RemainingSkillIdsCount() { return skillIds.Count; }
 
         public SkillGroup(int comboId, int[] skillIds, List<ActionParams> parameters) {
             this.comboId = comboId;
             this.skillIds = new Queue<int>(skillIds);
-            skillParameters = parameters;
+            skillParameters = new Queue<ActionParams>(parameters);
             needsData = false;
         }
     }
 
     private void ExecuteNextSkill() {
-        executing.skillIds.Dequeue();
-        if (executing.skillIds.Count > 0) {
+        executing.Dequeue();
+        if (executing.RemainingSkillIdsCount() > 0) {
             if (currentStage == GameStage.CANCEL_STAGE) {
-                skillMap[executing.skillIds.Peek()].CancelStageExecuteWithArgs(executing.skillParameters[0]);
+                skillMap[executing.PeekSkillId()].CancelStageExecuteWithArgs(executing.PeekActionParams());
             } else if (currentStage == GameStage.RESOLUTION_STAGE) {
-                skillMap[executing.skillIds.Peek()].BattleStageExecute();
+                skillMap[executing.PeekSkillId()].BattleStageExecuteWithArgs(executing.PeekActionParams());
             }
         } else {
-            comboExecFinishedSignal.Dispatch(executing.comboId);
+            comboExecFinishedSignal.Dispatch(executing.ComboId);
             executing = null;
         }
     }

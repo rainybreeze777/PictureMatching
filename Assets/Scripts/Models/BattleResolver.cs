@@ -81,6 +81,44 @@ public class BattleResolver : IBattleResolver {
         resolvingIndex = 0;
     }
 
+    public List<EOneExchangeWinner> ForecastExchangeResult(int forecastSize) {
+        List<EOneExchangeWinner> forecastResult = new List<EOneExchangeWinner>();
+
+        List<int> playerSeq = comboModel.GetCancelSeq();
+        List<int> enemySeq = enemyModel.GetPrevGeneratedSequence();
+
+        if (resolvingIndex < playerSeq.Count || resolvingIndex < enemySeq.Count) {
+
+            for(int i = resolvingIndex; i < resolvingIndex + forecastSize; ++i) {
+                int playerMove = (i < playerSeq.Count) ? playerSeq[i] : -1;
+                int enemyMove = (i < enemySeq.Count) ? enemySeq[i] : -1;
+
+                if (playerMove != -1 || enemyMove != -1) {
+                    int compareResult = ElementResolver.ResolveAttack(playerMove, enemyMove);
+                    switch (compareResult) {
+                        case 0:
+                            forecastResult.Add(EOneExchangeWinner.TIE);
+                            break;
+                        case 1:
+                            forecastResult.Add(EOneExchangeWinner.PLAYER);
+                            break;
+                        case 2:
+                            forecastResult.Add(EOneExchangeWinner.ENEMY);
+                            break;
+                        case -1:
+                            Debug.LogError("ForecastExchangeResult got Invalid Parameters!");
+                            break;
+                        default:
+                            Debug.LogError("Unrecognized result!");
+                            break;
+                    }
+                }
+            }
+        }
+
+        return forecastResult;
+    }
+
     private void EnemyPonderUseSkill() {
         List<int> reasonableSkills = skillInitiator.DeduceReasonableSkillsToUse(enemyModel.GetEnemyData());
         // For now execute all reasonable skills

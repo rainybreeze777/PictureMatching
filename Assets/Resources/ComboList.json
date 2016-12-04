@@ -68,7 +68,8 @@
             "skillReqAndArg" : {
                 "metal" : 3,
                 "arguments" : [
-                    0.5
+                    0.5,
+                    3
                 ]
             },
             "description" : "reduce damage by half for 3 turns"

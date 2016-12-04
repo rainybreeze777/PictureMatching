@@ -34,6 +34,7 @@ public class UseComboCommand : Command
             p = new List<ActionParams>();
             p.Add(ap);
         }
+        Assert.IsTrue(p.Count == skillIds.Length, "UseComboCommand Error: Number of skills and parameters do not match!");
         skillInitiator.InvokeSkillFuncFromSkillId(comboId, skillIds, p);
     }
 }
