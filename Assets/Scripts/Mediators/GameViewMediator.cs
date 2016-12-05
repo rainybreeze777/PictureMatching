@@ -7,8 +7,6 @@ public class GameViewMediator : Mediator {
 
     [Inject]
     public GameView gameView{ get; set;}
-    [Inject]
-    public IGameStateMachine gameStateMachine { get; set; }
     [Inject(EInBattleStatusType.PLAYER)]
     public IInBattleStatus playerStatus { get; set; }
     [Inject(EInBattleStatusType.ENEMY)]
@@ -35,12 +33,19 @@ public class GameViewMediator : Mediator {
     public ElemGatherUpdatedSignal elemGatherUpdatedSignal { get; set; }
     [Inject]
     public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
+    [Inject]
+    public EscKeyPressedSignal escKeyPressedSignal { get; set; }
 
     private const float TIME_PER_CANCEL = 60.0f;
     private float timer = TIME_PER_CANCEL;
     private bool countingDown = false;
 
     void Update () {
+
+        if (Input.GetKeyDown("escape")) {
+            escKeyPressedSignal.Dispatch();
+        }
+
         if (countingDown) {
             timer -= Time.deltaTime;
             gameView.UpdateProgressBar(Mathf.Min(timer, TIME_PER_CANCEL) / TIME_PER_CANCEL * 100);
@@ -58,6 +63,10 @@ public class GameViewMediator : Mediator {
         boardIsEmptySignal.AddListener(SwitchToBattleResolve);
         engageCombatSignal.AddListener(SwitchToCancelTiles);
         gameView.endThisRoundSignal.AddListener(SwitchToBattleResolve);
+        gameView.startGameButtonClickedSignal.AddListener(()=>{
+            gameFlowStateChangeSignal.Dispatch(EGameFlowState.MAP);
+        });
+        gameView.battleEndPanelClickedSignal.AddListener(OnBattleEndPanelClicked);
         playerHealthUpdatedSignal.AddListener(OnPlayerHealthUpdate);
         enemyHealthUpdatedSignal.AddListener(OnEnemyHealthUpdate);
         addToTimeSignal.AddListener(AddToTimer);
@@ -71,12 +80,14 @@ public class GameViewMediator : Mediator {
         if (battleResult == EBattleResult.WON || battleResult == EBattleResult.LOST) {
             ResetActiveState();
             gameView.SwitchToBattleEndScreen();
+            gameFlowStateChangeSignal.Dispatch(EGameFlowState.BATTLE_END);
         } else if (battleResult == EBattleResult.UNRESOLVED) {
 #if !UNLIMITED_TIME
             countingDown = true;
 #endif
             ResetActiveState();
             gameView.SwitchToCancelTiles();
+            gameFlowStateChangeSignal.Dispatch(EGameFlowState.CANCELLATION);
         }
     }
 
@@ -95,6 +106,7 @@ public class GameViewMediator : Mediator {
         countingDown = false;
         gameView.SwitchToBattleResolve();
         initiateBattleResolutionSignal.Dispatch();
+        gameFlowStateChangeSignal.Dispatch(EGameFlowState.BATTLE_RESOLUTION);
     }
 
     private void SwitchToCancelTiles(int enemyId)
@@ -134,5 +146,9 @@ public class GameViewMediator : Mediator {
             default:
                 break;
         }
+    }
+
+    private void OnBattleEndPanelClicked() {
+        gameFlowStateChangeSignal.Dispatch(EGameFlowState.SCENE);
     }
 }

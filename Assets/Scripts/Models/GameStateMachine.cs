@@ -18,6 +18,7 @@ public class GameStateMachine : IGameStateMachine {
     }
 
     private void OnGameFlowStateChange(EGameFlowState flowState) {
+        Debug.Log("GameState changed to " + flowState);
         currentState = flowState;
     }
 }

@@ -62,6 +62,8 @@ public class GameView : View {
     private RadioUIGroup startMenuGroup = new RadioUIGroup();
 
     public Signal endThisRoundSignal = new Signal();
+    public Signal startGameButtonClickedSignal = new Signal();
+    public Signal battleEndPanelClickedSignal = new Signal();
 
     internal void Init() {
         Screen.SetResolution (1366, 768, false);
@@ -87,7 +89,7 @@ public class GameView : View {
         startMenuGroup.ActivateUI(START_MENU_KEY);
 
         startGameButton.GetComponent<Button>().onClick.AddListener(() => {
-                SwitchToMapScreen();
+                startGameButtonClickedSignal.Dispatch();
             });
         optionButton.GetComponent<Button>().onClick.AddListener(() => {
                 SwitchToOptionsMenu();
@@ -111,7 +113,7 @@ public class GameView : View {
                 SwitchToMainMenu();
             });
 
-        battleEndPanel.GetComponent<BattleEndView>().clickedSignal.AddListener(SwitchToScene);
+        battleEndPanel.GetComponent<BattleEndView>().clickedSignal.AddListener(battleEndPanelClickedSignal.Dispatch);
     }
 
     public void SwitchToBattleResolve() {

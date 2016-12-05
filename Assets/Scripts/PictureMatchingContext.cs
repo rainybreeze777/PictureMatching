@@ -48,6 +48,7 @@ public class PictureMatchingContext : MVCSContext {
         mediationBinder.Bind<SceneView>().To<SceneViewMediator>();
         mediationBinder.Bind<PlayerInfoView>().To<PlayerInfoViewMediator>();
         mediationBinder.Bind<SmeltView>().To<SmeltViewMediator>();
+        mediationBinder.Bind<InGameMenuView>().To<InGameMenuViewMediator>();
         // Binding Signals with Commands
         commandBinder.Bind<StartSignal>().To<StartCommand>().Once();
         commandBinder.Bind<AttemptTileCancelSignal>().To<AttemptTileCancelCommand>();
@@ -94,6 +95,7 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<PlayerInfoUpdatedSignal>().ToSingleton();
         injectionBinder.Bind<PlayerEssenceGainedSignal>().ToSingleton();
         injectionBinder.Bind<StatusTabChangedSignal>().ToSingleton();
+        injectionBinder.Bind<EscKeyPressedSignal>().ToSingleton();
         // Manually Instantiate instances and inject
         injectionBinder.GetInstance<ISkillInitiator>().InjectInitialize(injectionBinder);
         // Second Round injection for special circumstances

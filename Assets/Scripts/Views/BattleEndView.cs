@@ -13,6 +13,8 @@ public class BattleEndView : View, IPointerClickHandler {
     public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
     [Inject]
     public PlayerEssenceGainedSignal playerEssenceGainedSignal { get; set; }
+    [Inject]
+    public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
 
     public Signal clickedSignal = new Signal();
 

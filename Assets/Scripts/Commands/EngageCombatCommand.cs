@@ -15,6 +15,8 @@ public class EngageCombatCommand : Command
     [Inject]
     public IInBattleEnemyStatus enemyStatus { get; set; }
     [Inject]
+    public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
+    [Inject]
     public int enemyId { get; set; }
 
     private EnemyDataFetcher enemyDataFetcher = EnemyDataFetcher.GetInstance();
@@ -27,5 +29,6 @@ public class EngageCombatCommand : Command
         enemyStatus.InitWithEnemyData(theEnemy);
     	skillInitiator.SwitchToCancelStage();
     	resetBattleSignal.Dispatch();
+        gameFlowStateChangeSignal.Dispatch(EGameFlowState.CANCELLATION);
     }
 }
