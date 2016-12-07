@@ -14,10 +14,16 @@ public class ConfirmModal : MonoBehaviour {
     private Action affirmativeAction = ()=>{};
     private Action negativeAction = ()=>{};
 
-    void Start() {
+    void Awake() {
         gameObject.SetActive(false);
         yesButton.onClick.AddListener(OnYesButtonClicked);
         noButton.onClick.AddListener(OnNoButtonClicked);
+    }
+
+    void Update() {
+        if (gameObject.activeInHierarchy && Input.GetKeyDown("escape")) {
+            OnNoButtonClicked();
+        }
     }
 
     public void ShowConfirmModal(string confirmMsg, Action affirmativeCallback) {

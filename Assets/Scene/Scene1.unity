@@ -2152,7 +2152,7 @@ RectTransform:
   m_Children:
   - {fileID: 2047698235}
   m_Father: {fileID: 1578859955}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -4228,7 +4228,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 1
+  m_ScrollSensitivity: 50
   m_Viewport: {fileID: 892687402}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 56251399}
@@ -9178,8 +9178,8 @@ RectTransform:
   - {fileID: 1977313729}
   - {fileID: 688528668}
   - {fileID: 1787414652}
-  - {fileID: 331153163}
   - {fileID: 1609588209}
+  - {fileID: 331153163}
   m_Father: {fileID: 1131158831}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9500,7 +9500,7 @@ RectTransform:
   - {fileID: 682006316}
   - {fileID: 2052250395}
   m_Father: {fileID: 1578859955}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -9575,9 +9575,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   saveLoadSlotTemplate: {fileID: 1406745736692070, guid: 5f84863891d2f7e4eadd172d1bbec1bf,
     type: 2}
+  slotInfoPanel: {fileID: 1686218645666660, guid: bfdaf74cc7722554482f52713a815eaa,
+    type: 2}
   content: {fileID: 468588369}
   titleText: {fileID: 952559813}
   backButton: {fileID: 432861074}
+  confirmModal: {fileID: 331153166}
 --- !u!1 &1615703897
 GameObject:
   m_ObjectHideFlags: 0

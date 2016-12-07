@@ -15,14 +15,12 @@ public class InGameMenuViewMediator : Mediator {
     [Inject]
     public EscKeyPressedSignal escKeyPressedSignal { get; set; }
 
-    private bool isActive = false;
-
     public override void OnRegister() {
 
         escKeyPressedSignal.AddListener(OnEscKeyPressed);
         inGameMenuView.backButtonClickedSignal.AddListener(OnEscKeyPressed);
 
-        gameObject.SetActive(isActive);
+        gameObject.SetActive(false);
 
         inGameMenuView.Init();
     }
@@ -32,8 +30,7 @@ public class InGameMenuViewMediator : Mediator {
         if (gameStateMachine.CurrentState == EGameFlowState.SCENE
             || gameStateMachine.CurrentState == EGameFlowState.MAP
             || gameStateMachine.CurrentState == EGameFlowState.STATUS) {
-            isActive = !isActive;
-            gameObject.SetActive(isActive);
+            inGameMenuView.OnEscKeyPressed();
         }
     }
 }

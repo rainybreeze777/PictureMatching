@@ -19,18 +19,27 @@ public class InGameMenuView : View {
 
     internal void Init() {
 
+        // This is necessary, because it prepares the confirmModal
+        // on load, otherwise bugs may appear with confirmModal appearing
+        confirmModal.gameObject.SetActive(true);
+        confirmModal.gameObject.SetActive(false);
+
         saveButton.onClick.AddListener(()=> {
-            Debug.Log("saveButton clicked");
             openSaveLoadViewSignal.Dispatch(true);
         });
         loadButton.onClick.AddListener(()=>{
-            Debug.Log("loadButton clicked");
             openSaveLoadViewSignal.Dispatch(false);    
         });
         quitButton.onClick.AddListener(()=>{
             confirmModal.ShowConfirmModal("确定退出游戏？未保存的游戏进度将会遗失！", QuitGame);
         });
         backButton.onClick.AddListener(()=>{ backButtonClickedSignal.Dispatch(); });
+    }
+
+    public void OnEscKeyPressed() {
+        if (!confirmModal.gameObject.activeInHierarchy) {
+            gameObject.SetActive(!gameObject.activeInHierarchy);
+        }
     }
 
     private void QuitGame() {

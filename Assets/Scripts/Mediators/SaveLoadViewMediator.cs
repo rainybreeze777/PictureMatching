@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using strange.extensions.dispatcher.eventdispatcher.api;
@@ -28,7 +28,6 @@ public class SaveLoadViewMediator : Mediator {
     }
 
     private void OnOpenSaveLoadViewSignal(bool isSaveView) {
-        Debug.Log("OnOpenSaveLoadViewSignal");
         saveLoadView.OpenView(isSaveView);
     }
 }
