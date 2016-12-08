@@ -22,11 +22,13 @@ public class GameSave {
     public string GetSaveTime() { return saveTime.ToString(DATE_FORMAT); }
     [SerializeField] private EGameFlowState state = EGameFlowState.MAP; // default to MAP state
     public EGameFlowState GameState { get { return state; } }
+    [SerializeField] private ESceneChange scene = ESceneChange.VOID; // default to void scene
+    public ESceneChange GameScene { get { return scene; } }
 
     private static string DATE_FORMAT = "yyyy/MM/dd";
     public static string GetDateFormat() { return DATE_FORMAT; }
 
-    public GameSave(IPlayerStatus status, int index, EGameFlowState gameState) {
+    public GameSave(IPlayerStatus status, int index, EGameFlowState gameState, ESceneChange gameScene) {
         saveTime = DateTime.Now;
         slotIndex = index;
 
@@ -38,6 +40,12 @@ public class GameSave {
             state = EGameFlowState.MAP;
         } else {
             state = gameState;
+        }
+
+        if (gameState == EGameFlowState.SCENE && gameScene == ESceneChange.VOID) {
+            throw new ArgumentException("GameSave constructor received a void scene enum when the state is SCENE");
+        } else {
+            scene = gameScene;
         }
 
         health = status.Health;

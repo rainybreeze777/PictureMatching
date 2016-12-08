@@ -9,7 +9,7 @@ public class MapViewMediator : Mediator {
     public MapView mapView{ get; set;}
 
     [Inject]
-    public MapChangeSignal mapChangeSignal { get; set; }
+    public SceneChangeSignal sceneChangeSignal { get; set; }
     [Inject]
     public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
 
@@ -20,8 +20,8 @@ public class MapViewMediator : Mediator {
         mapView.Init();
     }
 
-    private void OnMapButtonClicked(EMapChange mapChange) {
-        mapChangeSignal.Dispatch(mapChange);
+    private void OnMapButtonClicked(ESceneChange sceneChange) {
+        sceneChangeSignal.Dispatch(sceneChange);
         gameFlowStateChangeSignal.Dispatch(EGameFlowState.SCENE);
     }
 

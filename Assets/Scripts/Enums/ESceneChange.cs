@@ -1,4 +1,5 @@
-﻿public enum EMapChange {
+﻿public enum ESceneChange {
+	VOID,
 	METAL_ARENA,
 	WOOD_ARENA,
 	WATER_ARENA,

@@ -7,6 +7,6 @@ using UnityEngine;
 [CustomPropertyDrawer(typeof(StringStringDict))]
 public class StringStringDictDrawer : DictionaryDrawer<string, string> { }
 
-[Serializable] public class EMapChangeTextAssetDict : SerializableDictionary<EMapChange, TextAsset> { }
-[CustomPropertyDrawer(typeof(EMapChangeTextAssetDict))]
-public class EMapChangeTextAssetDictDrawer : DictionaryDrawer<EMapChange, TextAsset> { }
+[Serializable] public class ESceneChangeTextAssetDict : SerializableDictionary<ESceneChange, TextAsset> { }
+[CustomPropertyDrawer(typeof(ESceneChangeTextAssetDict))]
+public class ESceneChangeTextAssetDictDrawer : DictionaryDrawer<ESceneChange, TextAsset> { }

@@ -9,7 +9,7 @@ public class EquipmentViewMediator : Mediator {
     [Inject]
     public EquipmentView equipmentView { get; set; }
     [Inject]
-    public MapChangeSignal mapChangeSignal { get; set; }
+    public SceneChangeSignal sceneChangeSignal { get; set; }
     [Inject]
     public PlayerEquipWeaponUpdatedSignal equipWeaponUpdatedSignal { get; set; }
     [Inject]

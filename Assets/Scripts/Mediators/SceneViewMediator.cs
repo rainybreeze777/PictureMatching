@@ -9,7 +9,7 @@ public class SceneViewMediator : Mediator {
     public SceneView sceneView{ get; set;}
 
     [Inject]
-    public MapChangeSignal mapChangeSignal { get; set; }
+    public SceneChangeSignal sceneChangeSignal { get; set; }
     [Inject]
     public EngageCombatSignal engageCombatSignal { get; set; }
     [Inject]
@@ -17,14 +17,14 @@ public class SceneViewMediator : Mediator {
 
     public override void OnRegister() {
 
-        mapChangeSignal.AddListener(OnMapChange);
+        sceneChangeSignal.AddListener(OnSceneChange);
         sceneView.dialogueTriggerCombatSignal.AddListener(OnDialogueTriggerCombat);
         sceneView.toMapButtonClickedSignal.AddListener(OnToMapButtonClicked);
 
         sceneView.Init();
     }
 
-    private void OnMapChange(EMapChange changeTo) {
+    private void OnSceneChange(ESceneChange changeTo) {
         sceneView.PrepareScene(changeTo);
     }
 

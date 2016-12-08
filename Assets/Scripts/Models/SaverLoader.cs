@@ -25,7 +25,7 @@ public class SaverLoader : ISaverLoader {
     public void SaveGame(int saveSlotIndex) {
         Debug.Log("Application Data: " + Application.dataPath);
 
-        GameSave save = new GameSave(playerStatus, saveSlotIndex, gameStateMachine.CurrentState);
+        GameSave save = new GameSave(playerStatus, saveSlotIndex, gameStateMachine.CurrentState, gameStateMachine.CurrentScene);
 
         BinaryFormatter bf = new BinaryFormatter();
         FileStream saveFile = File.Create(Application.dataPath + "\\Saves\\saveFile" + saveSlotIndex + ".sav");

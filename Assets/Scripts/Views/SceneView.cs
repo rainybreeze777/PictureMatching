@@ -10,7 +10,7 @@ using strange.extensions.mediation.impl;
 public class SceneView : View {
 
     [SerializeField] private List<TextAsset> scriptsList;
-    private Dictionary<EMapChange, TextAsset> scripts = new Dictionary<EMapChange, TextAsset>();
+    private Dictionary<ESceneChange, TextAsset> scripts = new Dictionary<ESceneChange, TextAsset>();
     private Dictionary<int, Character> charactersMap = new Dictionary<int, Character>();
     [SerializeField] private Text charNameText;
     [SerializeField] private Text dialogueText;
@@ -43,7 +43,7 @@ public class SceneView : View {
         // is too dumb to serialize a dictionary
         // Always make sure the mappings are correct
 
-        scripts.Add(EMapChange.METAL_ARENA, scriptsList[0]);
+        scripts.Add(ESceneChange.METAL_ARENA, scriptsList[0]);
     
         dialogueSystemPanel.GetComponent<ClickDetector>().clickSignal.AddListener(OnPanelClicked);
     
@@ -57,7 +57,7 @@ public class SceneView : View {
         interestPointsPanel.SetActive(false);
     }
 
-    public void PrepareScene(EMapChange scene) {
+    public void PrepareScene(ESceneChange scene) {
         dialogueParser.ParseDialogue(scripts[scene]);
 
         // Clear the existing buttons in interestPointsPanel

@@ -91,7 +91,7 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<ComboExecFinishedSignal>().ToSingleton();
         injectionBinder.Bind<PlayerEquipComboUpdatedSignal>().ToSingleton();
         injectionBinder.Bind<PlayerEquipWeaponUpdatedSignal>().ToSingleton();
-        injectionBinder.Bind<MapChangeSignal>().ToSingleton();
+        injectionBinder.Bind<SceneChangeSignal>().ToSingleton();
         injectionBinder.Bind<GameFlowStateChangeSignal>().ToSingleton();
         injectionBinder.Bind<PlayerWeaponsInfoUpdatedSignal>().ToSingleton();
         injectionBinder.Bind<PlayerInfoUpdatedSignal>().ToSingleton();

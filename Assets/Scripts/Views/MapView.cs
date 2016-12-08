@@ -10,11 +10,11 @@ public class MapView : View {
     [SerializeField] private Button swapToStatusButton;
 
     public Signal swapToStatusButtonClickedSignal = new Signal();
-    public Signal<EMapChange> mapButtonClickedSignal = new Signal<EMapChange>();
+    public Signal<ESceneChange> mapButtonClickedSignal = new Signal<ESceneChange>();
 
     internal void Init() {
         arenaButton.onClick.AddListener(() => {
-            mapButtonClickedSignal.Dispatch(EMapChange.METAL_ARENA);
+            mapButtonClickedSignal.Dispatch(ESceneChange.METAL_ARENA);
         });
         swapToStatusButton.onClick.AddListener(() => {
             swapToStatusButtonClickedSignal.Dispatch();
