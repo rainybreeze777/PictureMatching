@@ -5,8 +5,6 @@ public class InBattlePlayerStatus : InBattleStatus {
 
     [Inject]
     public PlayerHealthUpdatedSignal receivedDmgSignal { get; set; }
-    // [Inject]
-    // public PlayerEquipWeaponUpdatedSignal equipWeaponUpdatedSignal { get; set; }
     [Inject]
     public PlayerEquipComboUpdatedSignal equipComboUpdatedSignal { get; set; }
     [Inject]
@@ -23,7 +21,6 @@ public class InBattlePlayerStatus : InBattleStatus {
     }
 
     protected override void BindSignals() {
-        // equipWeaponUpdatedSignal.AddListener(UpdateEquipWeapon);
         engageCombatSignal.AddListener(UpdateInBattleStatus);
     }
 

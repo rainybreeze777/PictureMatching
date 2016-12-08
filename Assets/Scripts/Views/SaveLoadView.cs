@@ -15,10 +15,12 @@ public class SaveLoadView : View {
 
     [SerializeField] private ConfirmModal confirmModal;
 
+    [Inject]
+    public GameSaveFileOpSignal gameSaveFileOpSignal { get; set; }
+
     public Signal backButtonClickedSignal = new Signal();
 
     private bool isSaveView = true;
-    private const int SLOTS_COUNT = 20; 
 
     private List<SlotInfo> slotsInfoArray;
 
@@ -32,7 +34,7 @@ public class SaveLoadView : View {
         }
     }
 
-    public void OpenView(bool isSaveView) {
+    public void OpenView(bool isSaveView, int slotsCount, List<GameSave> existingSaves) {
         this.isSaveView = isSaveView;
         gameObject.SetActive(true);
         if (isSaveView) {
@@ -42,7 +44,7 @@ public class SaveLoadView : View {
         }
 
         slotsInfoArray = new List<SlotInfo>();
-        for (int i = 0; i < SLOTS_COUNT; ++i) {
+        for (int i = 0; i < slotsCount; ++i) {
             int slotIndex = i; // This step cannot be omitted, otherwise the click listener will not behave correctly
             GameObject slot = Instantiate(saveLoadSlotTemplate) as GameObject;
             slot.transform.SetParent(content.transform, false);
@@ -51,8 +53,24 @@ public class SaveLoadView : View {
                     OnSlotClicked(slotIndex);
                 }
             );
-            slotsInfoArray.Add(new SlotInfo(slotIndex, slot, slotInfoPanel));
+            slotsInfoArray.Add(new SlotInfo(slotIndex, slot));
         }
+        foreach(GameSave gs in existingSaves) {
+            slotsInfoArray[gs.SlotIndex].SaveGameInThisSlot(slotInfoPanel, gs.GetSaveTime());
+        }
+    }
+
+    public void CloseView() {
+        slotsInfoArray.Clear();
+        slotsInfoArray = null;
+        List<GameObject> children = new List<GameObject>();
+        foreach(Transform child in content.transform) {
+            children.Add(child.gameObject);
+        }
+        foreach(GameObject child in children) {
+            Destroy(child);
+        }
+        gameObject.SetActive(false);
     }
 
     private void OnSlotClicked(int slotIndex) {
@@ -64,13 +82,18 @@ public class SaveLoadView : View {
             if (info.IsOccupied) {
                 confirmModal.ShowConfirmModal(
                     "你确定要覆盖这个存档吗？"
-                    , ()=>{ info.SaveGameInThisSlot(slotInfoPanel); }
+                    , ()=>{
+                        info.SaveGameInThisSlot(slotInfoPanel);
+                        gameSaveFileOpSignal.Dispatch(info.SlotIndex, EGameSaveFileOp.SAVE);
+                    }
                 );
             } else {
                 info.SaveGameInThisSlot(slotInfoPanel);
+                gameSaveFileOpSignal.Dispatch(info.SlotIndex, EGameSaveFileOp.SAVE);
             }
         } else {
-
+            gameSaveFileOpSignal.Dispatch(info.SlotIndex, EGameSaveFileOp.LOAD);
+            backButtonClickedSignal.Dispatch();
         }
     }
 
@@ -84,34 +107,29 @@ public class SaveLoadView : View {
         public bool IsOccupied {
             get { return m_isOccupied; }
         }
-        private string m_saveFilePath = "";
-        public string SaveFilePath {
-            get { return m_isOccupied ? m_saveFilePath : null; }
-        }
         private GameObject m_slotGameObj;
         public GameObject SlotGameObject {
             get { return m_slotGameObj; }
         }
         private GameObject m_slotInfoObj;
 
-        public SlotInfo(int index, GameObject slotGameObjectInstance, GameObject slotInfoPanelTemplate, string saveFilePath = null) {
+        public SlotInfo(int index, GameObject slotGameObjectInstance) {
             m_slotIndex = index;
             m_slotGameObj = slotGameObjectInstance;
-            if (saveFilePath != null && saveFilePath != "") {
-                m_isOccupied = true;
-                m_saveFilePath = saveFilePath;
-                m_slotInfoObj = Instantiate(slotInfoPanelTemplate) as GameObject;
-                m_slotInfoObj.transform.SetParent(slotGameObjectInstance.transform, false);
-            }
+            m_isOccupied = false;
         }
 
-        public void SaveGameInThisSlot(GameObject slotInfoPanelTemplate) {
+        public void SaveGameInThisSlot(GameObject slotInfoPanelTemplate, string saveTime = null) {
             m_isOccupied = true;
-            if (m_slotInfoObj != null) {
-
-            } else {
+            if (m_slotInfoObj == null) {
                 m_slotInfoObj = Instantiate(slotInfoPanelTemplate) as GameObject;
                 m_slotInfoObj.transform.SetParent(m_slotGameObj.transform, false);
+            }
+
+            if (saveTime != null && saveTime != "") {
+                m_slotInfoObj.GetComponentInChildren<Text>().text = saveTime;
+            } else {
+                m_slotInfoObj.GetComponentInChildren<Text>().text = DateTime.Now.ToString(GameSave.GetDateFormat());
             }
         }
     }

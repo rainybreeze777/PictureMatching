@@ -23,6 +23,8 @@ public class PlayerStatus : IPlayerStatus {
     // Metal, Wood, Water, Fire, Earth
     private List<int> essence = new List<int>() { 0, 0, 0, 0, 0 };
 
+    private WeaponsFetcher weaponsFetcher;
+
     [Inject]
     public PlayerEquipWeaponUpdatedSignal equipWeaponUpdatedSignal { get; set; }
     [Inject]
@@ -48,15 +50,13 @@ public class PlayerStatus : IPlayerStatus {
         return new List<Weapon>(equippedWeapons);
     }
 
-    public PlayerStatus() {
-
-    }
-
     [PostConstruct]
     public void PostConstruct() {
 
         equipWeaponUpdatedSignal.AddListener(UpdateEquippedWeapons);
         playerEssenceGainedSignal.AddListener(OnEssenceGained);
+
+        weaponsFetcher = WeaponsFetcher.GetInstance();
     }
 
     private void UpdateEquippedWeapons(List<Weapon> equippedWeapons) {
@@ -96,5 +96,22 @@ public class PlayerStatus : IPlayerStatus {
         weaponsInPossession.Add(w);
 
         weaponsInfoUpdatedSignal.Dispatch(EWeaponPossessionStatus.ADD, w);
+    }
+
+    public void InitFromGameSave(GameSave save) {
+        health = save.Health;
+        damage = save.Damage;
+        essence = new List<int>(save.Essence);
+        weaponsInPossession.Clear();
+        equippedWeapons.Clear();
+        foreach(int weaponId in save.WeaponsInPossession) {
+            weaponsInPossession.Add(weaponsFetcher.GetWeaponByID(weaponId));
+        }
+        foreach(int equippedWeaponId in save.EquippedWeapons) {
+            equippedWeapons.Add(weaponsFetcher.GetWeaponByID(equippedWeaponId));
+        }
+
+        playerInfoUpdatedSignal.Dispatch();
+        weaponsInfoUpdatedSignal.Dispatch(EWeaponPossessionStatus.BATCH_ADD, null);
     }
 }

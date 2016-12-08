@@ -17,4 +17,5 @@ public interface IPlayerStatus {
     bool DeductEssence(List<int> spentEssence);
 
     void ObtainWeapon(Weapon weapon);
+    void InitFromGameSave(GameSave save);
 }

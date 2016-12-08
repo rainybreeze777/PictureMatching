@@ -17,6 +17,10 @@ public class GameStateMachine : IGameStateMachine {
         gameFlowStateChangeSignal.AddListener(OnGameFlowStateChange);
     }
 
+    public void InitFromGameSave(GameSave save) {
+        currentState = save.GameState;
+    }
+
     private void OnGameFlowStateChange(EGameFlowState flowState) {
         Debug.Log("GameState changed to " + flowState);
         currentState = flowState;

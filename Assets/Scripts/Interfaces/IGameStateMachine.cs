@@ -4,4 +4,5 @@ using strange.extensions.signal.impl;
 
 public interface IGameStateMachine {
     EGameFlowState CurrentState { get; }
+    void InitFromGameSave(GameSave save);
 }

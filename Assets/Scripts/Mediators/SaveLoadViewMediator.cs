@@ -10,6 +10,9 @@ public class SaveLoadViewMediator : Mediator {
     public SaveLoadView saveLoadView { get; set; }
 
     [Inject]
+    public ISaverLoader saverLoader { get; set; }
+
+    [Inject]
     public OpenSaveLoadViewSignal openSaveLoadViewSignal { get; set; }
 
     public override void OnRegister() {
@@ -20,14 +23,13 @@ public class SaveLoadViewMediator : Mediator {
         openSaveLoadViewSignal.AddListener(OnOpenSaveLoadViewSignal);
 
         saveLoadView.Init();
-
     }
 
     private void OnBackButtonClicked() {
-        gameObject.SetActive(false);
+        saveLoadView.CloseView();
     }
 
     private void OnOpenSaveLoadViewSignal(bool isSaveView) {
-        saveLoadView.OpenView(isSaveView);
+        saveLoadView.OpenView(isSaveView, saverLoader.SlotsCount, saverLoader.LoadGameSaveFromDisk());
     }
 }
