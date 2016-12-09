@@ -35,6 +35,8 @@ public class GameViewMediator : Mediator {
     public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
     [Inject]
     public EscKeyPressedSignal escKeyPressedSignal { get; set; }
+    [Inject]
+    public OpenSaveLoadViewSignal openSaveLoadViewSignal { get; set; }
 
     private const float TIME_PER_CANCEL = 60.0f;
     private float timer = TIME_PER_CANCEL;
@@ -65,6 +67,9 @@ public class GameViewMediator : Mediator {
         gameView.endThisRoundSignal.AddListener(SwitchToBattleResolve);
         gameView.startGameButtonClickedSignal.AddListener(()=>{
             gameFlowStateChangeSignal.Dispatch(EGameFlowState.MAP);
+        });
+        gameView.loadGameButtonClickedSignal.AddListener(()=>{
+            openSaveLoadViewSignal.Dispatch(false); // Open load view    
         });
         gameView.battleEndPanelClickedSignal.AddListener(OnBattleEndPanelClicked);
         playerHealthUpdatedSignal.AddListener(OnPlayerHealthUpdate);

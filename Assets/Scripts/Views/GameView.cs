@@ -21,6 +21,7 @@ public class GameView : View {
     [SerializeField] private Text titleText;
     [SerializeField] private Text resolutionText;
     [SerializeField] private Button startGameButton;
+    [SerializeField] private Button loadGameButton;
     [SerializeField] private Button optionButton;
     [SerializeField] private Button quitButton;
     [SerializeField] private Button endRoundButton;
@@ -64,6 +65,7 @@ public class GameView : View {
     public Signal endThisRoundSignal = new Signal();
     public Signal startGameButtonClickedSignal = new Signal();
     public Signal battleEndPanelClickedSignal = new Signal();
+    public Signal loadGameButtonClickedSignal = new Signal();
 
     internal void Init() {
         Screen.SetResolution (1366, 768, false);
@@ -88,27 +90,30 @@ public class GameView : View {
         flowControlGroup.ActivateUI(START_SCREEN_KEY);
         startMenuGroup.ActivateUI(START_MENU_KEY);
 
-        startGameButton.GetComponent<Button>().onClick.AddListener(() => {
+        startGameButton.onClick.AddListener(() => {
                 startGameButtonClickedSignal.Dispatch();
             });
-        optionButton.GetComponent<Button>().onClick.AddListener(() => {
+        loadGameButton.onClick.AddListener(()=>{
+                loadGameButtonClickedSignal.Dispatch();
+            });
+        optionButton.onClick.AddListener(() => {
                 SwitchToOptionsMenu();
             });
-        quitButton.GetComponent<Button>().onClick.AddListener(() => {
+        quitButton.onClick.AddListener(() => {
                 Application.Quit();
             });
-        endRoundButton.GetComponent<Button>().onClick.AddListener(() => {
+        endRoundButton.onClick.AddListener(() => {
                 endThisRoundSignal.Dispatch();
             });
-        resButton1.GetComponent<Button>().onClick.AddListener(
+        resButton1.onClick.AddListener(
             () => {
                 Screen.SetResolution (1024, 768, false);
             });
-        resButton2.GetComponent<Button>().onClick.AddListener(
+        resButton2.onClick.AddListener(
             () => {
                 Screen.SetResolution (1366, 768, false);
             });
-        backButton.GetComponent<Button>().onClick.AddListener(
+        backButton.onClick.AddListener(
             () => {
                 SwitchToMainMenu();
             });
