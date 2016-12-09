@@ -70,6 +70,7 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<ISmeltery>().To<Smeltery>().ToSingleton();
         injectionBinder.Bind<IGameStateMachine>().To<GameStateMachine>().ToSingleton();
         injectionBinder.Bind<ISaverLoader>().To<SaverLoader>().ToSingleton();
+        injectionBinder.Bind<IBiographer>().To<PlayerBiographer>().ToSingleton();
         // Instantiating Signals that are triggered manually
         injectionBinder.Bind<BattleResultUpdatedSignal>().ToSingleton();
         injectionBinder.Bind<ComboPossibleSignal>().ToSingleton();
@@ -100,6 +101,7 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<EscKeyPressedSignal>().ToSingleton();
         injectionBinder.Bind<OpenSaveLoadViewSignal>().ToSingleton();
         injectionBinder.Bind<GameSaveFileOpSignal>().ToSingleton();
+        injectionBinder.Bind<SceneLoadFromSaveSignal>().ToSingleton();
         // Manually Instantiate instances and inject
         injectionBinder.GetInstance<ISkillInitiator>().InjectInitialize(injectionBinder);
         // Second Round injection for special circumstances

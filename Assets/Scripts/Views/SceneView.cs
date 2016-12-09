@@ -22,6 +22,7 @@ public class SceneView : View {
     public Signal<int> dialogueTriggerCombatSignal = new Signal<int>();
     public Signal<int> charButtonClickedSignal = new Signal<int>();
     public Signal toMapButtonClickedSignal = new Signal();
+    public Signal endConversationSignal = new Signal();
 
     private List<Dialogue> readingDialogue;
     private int lineNumber = 0;
@@ -99,6 +100,7 @@ public class SceneView : View {
             lineNumber = 0;
             dialogueSystemPanel.SetActive(false);
             interestPointsPanel.SetActive(true);
+            endConversationSignal.Dispatch();
             return;
         }
 

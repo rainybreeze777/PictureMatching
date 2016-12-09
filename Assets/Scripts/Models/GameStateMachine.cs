@@ -10,6 +10,8 @@ public class GameStateMachine : IGameStateMachine {
     public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
     [Inject]
     public SceneChangeSignal sceneChangeSignal { get; set; }
+    [Inject]
+    public SceneLoadFromSaveSignal sceneLoadFromSaveSignal { get; set; }
 
     private EGameFlowState currentState = EGameFlowState.START;
     public EGameFlowState CurrentState { get { return currentState; } }
@@ -20,10 +22,13 @@ public class GameStateMachine : IGameStateMachine {
     [PostConstruct]
     public void PostConstruct() {
         gameFlowStateChangeSignal.AddListener(OnGameFlowStateChange);
+        sceneChangeSignal.AddListener(OnSceneChange);
+        sceneLoadFromSaveSignal.AddListener(OnDirectLoadSceneFromSave);
     }
 
     public void InitFromGameSave(GameSave save) {
         currentState = save.GameState;
+        currentScene = save.GameScene;
     }
 
     private void OnGameFlowStateChange(EGameFlowState flowState) {
@@ -34,5 +39,10 @@ public class GameStateMachine : IGameStateMachine {
     private void OnSceneChange(ESceneChange changeToScene) {
         Debug.Log("GameScene changed to " + changeToScene);
         currentScene = changeToScene;
+    }
+
+    private void OnDirectLoadSceneFromSave(ESceneChange loadScene) {
+        currentState = EGameFlowState.SCENE;
+        currentScene = loadScene;
     }
 }

@@ -10,9 +10,15 @@ public class SaverLoader : ISaverLoader {
     public IPlayerStatus playerStatus { get; set; }
     [Inject]
     public IGameStateMachine gameStateMachine { get; set; }
+    [Inject]
+    public IBiographer playerBiographer { get; set; }
 
     [Inject]
     public GameSaveFileOpSignal gameSaveFileOpSignal { get; set; }
+    [Inject]
+    public SceneLoadFromSaveSignal sceneLoadFromSaveSignal { get; set; }
+    [Inject]
+    public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
 
     private const int SLOTS_COUNT = 20; 
     public int SlotsCount { get { return SLOTS_COUNT; } }
@@ -25,7 +31,7 @@ public class SaverLoader : ISaverLoader {
     public void SaveGame(int saveSlotIndex) {
         Debug.Log("Application Data: " + Application.dataPath);
 
-        GameSave save = new GameSave(playerStatus, saveSlotIndex, gameStateMachine.CurrentState, gameStateMachine.CurrentScene);
+        GameSave save = new GameSave(playerStatus, playerBiographer, saveSlotIndex, gameStateMachine.CurrentState, gameStateMachine.CurrentScene);
 
         BinaryFormatter bf = new BinaryFormatter();
         FileStream saveFile = File.Create(Application.dataPath + "\\Saves\\saveFile" + saveSlotIndex + ".sav");
@@ -47,7 +53,11 @@ public class SaverLoader : ISaverLoader {
         }
 
         playerStatus.InitFromGameSave(saveToLoad);
-
+        playerBiographer.InitFromGameSave(saveToLoad);
+        gameFlowStateChangeSignal.Dispatch(saveToLoad.GameState);
+        if (saveToLoad.GameState == EGameFlowState.SCENE) {
+            sceneLoadFromSaveSignal.Dispatch(saveToLoad.GameScene);
+        }
     }
 
     public List<GameSave> LoadGameSaveFromDisk() {
