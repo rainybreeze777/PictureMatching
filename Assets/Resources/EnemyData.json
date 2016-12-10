@@ -6,7 +6,10 @@
         "health" : 30,
         "damage" : 5,
         "skillReqAndArgs" : {
-        }
+        },
+        "rewardEssence" : [
+            2, 2, 2, 2, 2
+        ]
     },
     "2" : {
         "enemyId" : 2,
@@ -22,13 +25,16 @@
                     2
                 ]
             }
-        }
+        },
+        "rewardEssence" : [
+            5, 5, 5, 5, 5
+        ]
     },
     "3" : {
         "enemyId" : 3,
         "preferredElem" : 3, 
         "level" : 7,
-        "health" : 3000,
+        "health" : 300,
         "damage" : 20,
         "skillReqAndArgs" : {
             "3" : {
@@ -44,6 +50,9 @@
                     5
                 ]
             }
-        }
+        },
+        "rewardEssence" : [
+            200, 200, 200, 200, 200
+        ]
     }
 }

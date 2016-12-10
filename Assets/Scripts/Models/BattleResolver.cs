@@ -32,7 +32,8 @@ public class BattleResolver : IBattleResolver {
             playerEssenceGainedSignal.Dispatch(new List<int>() {0, 0, 0, 0, 0});
             battleResultUpdatedSignal.Dispatch(EBattleResult.LOST);
         } else if (enemyStatus.IsDead) {
-            playerEssenceGainedSignal.Dispatch(new List<int>() {5, 5, 5, 5, 5});
+            IInBattleEnemyStatus inBattleEnemyStatus = enemyStatus as IInBattleEnemyStatus;
+            playerEssenceGainedSignal.Dispatch(inBattleEnemyStatus.GetRewardEssence());
             battleResultUpdatedSignal.Dispatch(EBattleResult.WON);
         }
 

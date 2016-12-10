@@ -23,6 +23,10 @@ public class EnemyData : ScriptableObject {
     [SerializeField] private int damage;
     public int Damage { get { return damage; } }
 
+    // Metal, Wood, Water, Fire, Earth
+    [SerializeField] private List<int> rewardEssence;
+    public List<int> RewardEssence { get { return rewardEssence; } }
+
     public List<int> SkillIds { 
         get { 
             return new List<int>(skills.Keys);
