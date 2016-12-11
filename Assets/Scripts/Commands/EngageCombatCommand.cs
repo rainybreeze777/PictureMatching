@@ -19,8 +19,6 @@ public class EngageCombatCommand : Command
     public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
     [Inject]
     public int enemyId { get; set; }
-    [Inject]
-    public List<int> injectedEssence { get; set; }
 
     private EnemyDataFetcher enemyDataFetcher = EnemyDataFetcher.GetInstance();
 

@@ -115,7 +115,7 @@ public class GameViewMediator : Mediator {
         gameFlowStateChangeSignal.Dispatch(EGameFlowState.BATTLE_RESOLUTION);
     }
 
-    private void SwitchToCancelTiles(int enemyId, List<int> injectedEssence)
+    private void SwitchToCancelTiles(int enemyId)
     {
 #if !UNLIMITED_TIME
         countingDown = true;

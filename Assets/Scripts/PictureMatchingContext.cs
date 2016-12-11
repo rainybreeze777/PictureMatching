@@ -102,7 +102,6 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<OpenSaveLoadViewSignal>().ToSingleton();
         injectionBinder.Bind<GameSaveFileOpSignal>().ToSingleton();
         injectionBinder.Bind<SceneLoadFromSaveSignal>().ToSingleton();
-        injectionBinder.Bind<PrepareForCombatSignal>().ToSingleton();
         // Manually Instantiate instances and inject
         injectionBinder.GetInstance<ISkillInitiator>().InjectInitialize(injectionBinder);
         // Second Round injection for special circumstances
