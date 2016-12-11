@@ -23,18 +23,23 @@ public class SaverLoader : ISaverLoader {
     private const int SLOTS_COUNT = 20; 
     public int SlotsCount { get { return SLOTS_COUNT; } }
 
+    private string savePath;
+
     [PostConstruct]
     public void PostConstruct() {
+        savePath = Application.dataPath + "/Saves/";
         gameSaveFileOpSignal.AddListener(InterpretSignal);
     }
 
     public void SaveGame(int saveSlotIndex) {
-        Debug.Log("Application Data: " + Application.dataPath);
+        Debug.Log("Save path: " + savePath);
+
+        System.IO.Directory.CreateDirectory(savePath);
 
         GameSave save = new GameSave(playerStatus, playerBiographer, saveSlotIndex, gameStateMachine.CurrentState, gameStateMachine.CurrentScene);
 
         BinaryFormatter bf = new BinaryFormatter();
-        FileStream saveFile = File.Create(Application.dataPath + "\\Saves\\saveFile" + saveSlotIndex + ".sav");
+        FileStream saveFile = File.Create(savePath + "saveFile" + saveSlotIndex + ".sav");
         bf.Serialize(saveFile, save);
         saveFile.Close();
     }
@@ -43,9 +48,11 @@ public class SaverLoader : ISaverLoader {
 
         GameSave saveToLoad = null;
 
-        if(File.Exists(Application.dataPath + "\\Saves\\saveFile" + loadSlotIndex + ".sav")) {
+        System.IO.Directory.CreateDirectory(savePath);
+
+        if(File.Exists(savePath + "saveFile" + loadSlotIndex + ".sav")) {
             BinaryFormatter bf = new BinaryFormatter();
-            FileStream saveFile = File.Open(Application.dataPath + "\\Saves\\saveFile"+ loadSlotIndex + ".sav", FileMode.Open);
+            FileStream saveFile = File.Open(savePath + "saveFile"+ loadSlotIndex + ".sav", FileMode.Open);
             saveToLoad = (GameSave) bf.Deserialize(saveFile);
             saveFile.Close();
         } else {
@@ -65,9 +72,11 @@ public class SaverLoader : ISaverLoader {
 
         BinaryFormatter bf = new BinaryFormatter();
 
+        System.IO.Directory.CreateDirectory(savePath);
+
         for (int i = 0; i < SLOTS_COUNT; ++i) {
-            if(File.Exists(Application.dataPath + "\\Saves\\saveFile" + i + ".sav")) {
-                FileStream saveFile = File.Open(Application.dataPath + "\\Saves\\saveFile"+ i + ".sav", FileMode.Open);
+            if(File.Exists(savePath + "saveFile" + i + ".sav")) {
+                FileStream saveFile = File.Open(savePath + "saveFile"+ i + ".sav", FileMode.Open);
                 saveFilesList.Add( (GameSave) bf.Deserialize(saveFile));
                 saveFile.Close();
             }

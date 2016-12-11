@@ -92,8 +92,10 @@ public class SaveLoadView : View {
                 gameSaveFileOpSignal.Dispatch(info.SlotIndex, EGameSaveFileOp.SAVE);
             }
         } else {
-            gameSaveFileOpSignal.Dispatch(info.SlotIndex, EGameSaveFileOp.LOAD);
-            backButtonClickedSignal.Dispatch();
+            if (info.IsOccupied) {
+                gameSaveFileOpSignal.Dispatch(info.SlotIndex, EGameSaveFileOp.LOAD);
+                backButtonClickedSignal.Dispatch();
+            }
         }
     }
 
