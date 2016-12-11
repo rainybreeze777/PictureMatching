@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using strange.extensions.context.api;
 using strange.extensions.command.impl;
@@ -18,6 +19,8 @@ public class EngageCombatCommand : Command
     public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
     [Inject]
     public int enemyId { get; set; }
+    [Inject]
+    public List<int> injectedEssence { get; set; }
 
     private EnemyDataFetcher enemyDataFetcher = EnemyDataFetcher.GetInstance();
 

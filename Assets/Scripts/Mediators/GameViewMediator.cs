@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using strange.extensions.dispatcher.eventdispatcher.api;
 using strange.extensions.mediation.impl;
@@ -114,7 +115,7 @@ public class GameViewMediator : Mediator {
         gameFlowStateChangeSignal.Dispatch(EGameFlowState.BATTLE_RESOLUTION);
     }
 
-    private void SwitchToCancelTiles(int enemyId)
+    private void SwitchToCancelTiles(int enemyId, List<int> injectedEssence)
     {
 #if !UNLIMITED_TIME
         countingDown = true;

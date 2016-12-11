@@ -65,7 +65,7 @@ public class SceneViewMediator : Mediator {
     }
 
     private void OnDialogueTriggerCombat(int enemyId) {
-        engageCombatSignal.Dispatch(enemyId);
+        engageCombatSignal.Dispatch(enemyId, new List<int>());
     }
 
     private void OnToMapButtonClicked() {

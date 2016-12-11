@@ -24,7 +24,7 @@ public class InBattlePlayerStatus : InBattleStatus {
         engageCombatSignal.AddListener(UpdateInBattleStatus);
     }
 
-    private void UpdateInBattleStatus(int enemyId) {
+    private void UpdateInBattleStatus(int enemyId, List<int> injectedEssence) {
         maxHealth = playerStatus.Health;
         currentHealth = maxHealth;
         damage = playerStatus.Damage;

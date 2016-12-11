@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Collections.Generic;
 using strange.extensions.signal.impl;
 using strange.extensions.mediation.impl;
 
@@ -40,10 +41,10 @@ public class BackgroundView : View {
     }
 
     private void ShowCancellationBackground() {
-        ShowCancellationBackground(-1); // Stub enemyId data
+        ShowCancellationBackground(-1, null); // Stub enemyId data
     }
 
-    private void ShowCancellationBackground(int enemyId) {
+    private void ShowCancellationBackground(int enemyId, List<int> injectedEssence) {
         mainMenuBackground.SetActive(false);
         cancellationBackground.SetActive(true);
     }
