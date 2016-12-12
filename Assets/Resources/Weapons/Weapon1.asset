@@ -16,3 +16,4 @@ MonoBehaviour:
   weaponDescription: "4\u6728 2x2\u6D88\u9664"
   tier: 1
   id: 1
+  weaponElem: 2

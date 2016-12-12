@@ -10,6 +10,7 @@ public class Weapon : ScriptableObject {
     [SerializeField] private string weaponDescription;
     [SerializeField] private int tier;
     [SerializeField] private int id;
+    [SerializeField] private EElements weaponElem;
 
     public List<int> GetComboIdList() {
         return new List<int>(possessComboIdList);
@@ -19,6 +20,7 @@ public class Weapon : ScriptableObject {
     public string GetWeaponDesc() { return weaponDescription; }
     public int Tier { get { return tier; } }
     public int ID { get { return id; } }
+    public EElements Elem { get { return weaponElem; } }
 
     public override bool Equals(object other) {
         if (other == null) { return false; }

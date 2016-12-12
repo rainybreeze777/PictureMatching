@@ -1,5 +1,8 @@
+using System;
 using UnityEngine;
+using UnityEngine.Assertions;
 using System.Collections.Generic;
+using System.Collections;
 using Random = UnityEngine.Random;
 
 public class BoardModel : IBoardModel {
@@ -15,6 +18,9 @@ public class BoardModel : IBoardModel {
     [Inject]
     public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
     
+    [Inject]
+    public IPlayerStatus playerStatus { get; set; }
+
     private const int numOfRow = 7;
     private const int numOfColumn = 8;
     private const int numOfSuits = 5;
@@ -24,8 +30,33 @@ public class BoardModel : IBoardModel {
 
     private int[,] gameBoard = new int[numOfRow, numOfColumn];
     
+    // Base probability is arbitrarily chosen as 10%
+    private float BASE_PROB = 10.0f;
+    // Arbitrarily chosen max prob for one elem
+    private float ONE_ELEM_MAX_PROB = 30.0f;
+
+    Dictionary<EElements, float> elemProbabilities = new Dictionary<EElements, float>();
+    Dictionary<EElements, int> equippedElemTendency = new Dictionary<EElements, int>();
+    List<EElements> elemOrder = new List<EElements>();
+
     [PostConstruct]
     public void PostConstruct() {
+
+        elemOrder.Add(EElements.METAL);
+        elemOrder.Add(EElements.WOOD);
+        elemOrder.Add(EElements.WATER);
+        elemOrder.Add(EElements.FIRE);
+        elemOrder.Add(EElements.EARTH);
+        int count = 0;
+        foreach(EElements e in Enum.GetValues(typeof(EElements))) {
+            if (e == EElements.NONE) { continue; }
+
+            elemProbabilities.Add(e, 0.0f);
+            equippedElemTendency.Add(e, 0);
+            count++;
+        }
+        Assert.IsTrue(count == 5); // Make sure theres only 5 elements for now
+
         battleResultUpdatedSignal.AddListener(OnBattleResultUpdated);
     }
 
@@ -53,9 +84,80 @@ public class BoardModel : IBoardModel {
 
         int randomSuit;
         
+        List<Weapon> playerEquippedWeapons = playerStatus.GetEquippedWeapons();
+
+        // Probability of 0 -> Metal -> Wood -> Water -> Fire -> Earth -> 100
+        // Count the distribution of equipped elems; Reset first
+        foreach(EElements e in Enum.GetValues(typeof(EElements))) { 
+            if (e == EElements.NONE) { continue; }
+            equippedElemTendency[e] = 0;
+        }
+
+        // Base weapon to element attraction tendency conversion ratio
+        // First attempt to assign the elem prob according to
+        // each weapon's tier, 1 tier = 1 weaponElemConversion
+        float weaponElemConversion = 1.0f; 
+
+        int totalElemTendencyCount = 0;
+        foreach(Weapon w in playerEquippedWeapons) {
+            if (w.Elem == EElements.NONE) { return; }
+            equippedElemTendency[w.Elem] += w.Tier;
+            totalElemTendencyCount += w.Tier;
+        }
+
+        if (totalElemTendencyCount > 0) {
+
+            // Record calculated raw ratio according to elems
+            Dictionary<EElements, float> intermediateProbs = new Dictionary<EElements, float>();
+
+            // First find out the ratio of equipped weapon elems
+            float probToBeDistributed = 100.0f - BASE_PROB * elemOrder.Count; // 5 elements
+            
+            if (totalElemTendencyCount * weaponElemConversion <= probToBeDistributed) {
+                // First take the approach of multiplying each elem's tendency with
+                // the initial suggested conversion rate. If this total sum doesn't
+                // exceed the available probabilities, take this approach and evenly
+                // divide the remaining available probabilities between all probabilities
+
+                float remainingProbPerElem = (probToBeDistributed - totalElemTendencyCount * weaponElemConversion) / equippedElemTendency.Count;
+                foreach(EElements e in Enum.GetValues(typeof(EElements))) { 
+                    if (e == EElements.NONE) { continue; }
+                    intermediateProbs.Add(e, weaponElemConversion * equippedElemTendency[e] + remainingProbPerElem);
+                }
+            } else {
+                // If the first suggested probability distribution method exceeds
+                // the total available probability, adjust down the conversion rate
+                // so that the total ratio of the elem tendencies fit
+                weaponElemConversion = probToBeDistributed / totalElemTendencyCount;
+                foreach(EElements e in Enum.GetValues(typeof(EElements))) { 
+                    if (e == EElements.NONE) { continue; }
+                    intermediateProbs.Add(e, weaponElemConversion * equippedElemTendency[e]);
+                }
+            }
+
+            // Only allow each elem to reach the max prob; if max prob is exceeded,
+            // find out the abundant probabilities, and evenly distribute exceeded prob
+            // to elems that didn't exceed the limit yet   
+            SmoothenElemProbDist(intermediateProbs);
+
+            Debug.Log("Board Generation Probabilities: ");
+            foreach(EElements e in Enum.GetValues(typeof(EElements))) { 
+                if (e == EElements.NONE) { continue; }
+
+                elemProbabilities[e] = BASE_PROB + intermediateProbs[e];
+                Debug.Log(e + " " + elemProbabilities[e]);
+            }
+        } else {
+            float avgProb = 100.0f / elemOrder.Count;
+            foreach(EElements e in Enum.GetValues(typeof(EElements))) { 
+                if (e == EElements.NONE) { continue; }
+                elemProbabilities[e] = avgProb;
+            }
+        }
+
         while (remainingPairs > 0) {
             Random.InitState((int)System.DateTime.Now.Ticks);
-            randomSuit = (int) Random.Range(1, 6); //0 is reserved for empty tile
+            randomSuit = GetRandomTile(); //0 is reserved for empty tile
 
             Eppy.Tuple<int, int> tileOne;
             Eppy.Tuple<int, int> tileTwo;
@@ -75,7 +177,88 @@ public class BoardModel : IBoardModel {
 
         newBoardConstructedSignal.Dispatch();
     }
-    
+
+    private void SmoothenElemProbDist(Dictionary<EElements, float> elemProbs) {
+
+        int MAX_ITERATION = 20; // Don't let this loop run more than this many times
+        // if this limit is exceeded, something probably went wrong with the code 
+
+        float ONE_ELEM_ALLOWANCE = ONE_ELEM_MAX_PROB - BASE_PROB;
+
+        List<EElements> probAvailElems = new List<EElements>();
+        Queue<EElements> maxExceededElems = new Queue<EElements>();
+
+        foreach(EElements e in elemProbs.Keys) {
+            if (elemProbs[e] > ONE_ELEM_ALLOWANCE) {
+                maxExceededElems.Enqueue(e);
+            } else if (elemProbs[e] < ONE_ELEM_ALLOWANCE) {
+                probAvailElems.Add(e);
+            }
+        }
+
+        int iteration = 0;
+        while (maxExceededElems.Count > 0) {
+
+            if (iteration >= MAX_ITERATION) {
+                throw new Exception("SmoothenElemProbDist has exceeded MAX_ITERATION iterations!");
+            }
+
+            EElements elemToBeDistributed = maxExceededElems.Dequeue();
+
+            float splitProb = (elemProbs[elemToBeDistributed] - ONE_ELEM_ALLOWANCE) / probAvailElems.Count;
+
+            elemProbs[elemToBeDistributed] = ONE_ELEM_ALLOWANCE;
+
+            List<EElements> probsNoLongerAvailable = new List<EElements>();
+            foreach(EElements e in probAvailElems) {
+                elemProbs[e] += splitProb;
+                if (elemProbs[e] >= ONE_ELEM_ALLOWANCE) {
+                    probsNoLongerAvailable.Add(e);
+                    if (elemProbs[e] > ONE_ELEM_ALLOWANCE) {
+                        maxExceededElems.Enqueue(e);
+                    }
+                }
+            }
+            foreach(EElements e in probsNoLongerAvailable) {
+                probAvailElems.Remove(e);
+            }
+            probsNoLongerAvailable.Clear();
+
+            iteration++;
+        }
+    }
+
+    private int GetRandomTile() {
+        // 0 is reserved for empty
+        // Let the order of elements that form up to 100.0f% be
+        // Metal, Wood, Water, Fire, Earth
+        // Each occupy a percentage. Line the percentage up from 0 to 100.0f%
+        // then generate a random float from 0 to 100.0f,
+        // and determine which range the float belongs to
+        // which corresponds to the random element
+
+        float randomElem = Random.Range(0.0f, 100.0f);
+        float upperBoundary = 100.0f;
+        float lowerBoundary = 100.0f;
+        for (int i = elemOrder.Count - 1; i >= 0; --i) {
+            float temp = lowerBoundary;
+            lowerBoundary -= elemProbabilities[elemOrder[i]];
+            upperBoundary = temp;
+
+            if (randomElem >= lowerBoundary && randomElem <= upperBoundary) {
+                return i + 1; // i should corresponds to the elem order of the game
+            }
+        }
+
+        // Should never reach this code
+        string warningMsg = "BoardModel GetRandomTile() code reached a place it shouldn't be in!\n";
+        warningMsg += "Generated Random is: " + randomElem + "\n";
+        warningMsg += "Final Lower Boundary is: " + lowerBoundary + "\n";
+        warningMsg += "Final Upper Boundary is: " + upperBoundary + "\n";
+        Debug.LogWarning( warningMsg );
+        return 1;
+    }
+
     public bool isRemovable(int r1, int c1, int r2, int c2) {
         
         //If the tile isn't the same, not removable
