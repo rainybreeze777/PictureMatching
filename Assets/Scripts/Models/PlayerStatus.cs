@@ -21,7 +21,7 @@ public class PlayerStatus : IPlayerStatus {
     private List<Weapon> equippedWeapons = new List<Weapon>();
 
     // Metal, Wood, Water, Fire, Earth
-    private List<int> essence = new List<int>() { 999,999,999,999,999 };
+    private List<int> essence = new List<int>() { 0, 0, 0, 0, 0 };
 
     private WeaponsFetcher weaponsFetcher;
 

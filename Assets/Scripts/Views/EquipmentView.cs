@@ -63,6 +63,10 @@ public class EquipmentView : View {
         weaponsInPossession = weapons;
         equippedWeapons.Clear();
         equippedWeapons = alreadyEquippedWeapons;
+        numOfEquipped = alreadyEquippedWeapons.Count;
+        if (numOfEquipped >= EQUIP_NUM_MAX) {
+            UpdateInteractableOfUnchecked(false);
+        }
     }
 
     private void OnConfirmEquipButtonClicked() {
