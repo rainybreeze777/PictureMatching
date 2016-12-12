@@ -10,6 +10,10 @@ public class BoardModel : IBoardModel {
     public TileDestroyedSignal tileDestroyedSignal{ get; set; }
     [Inject]
     public TileRangeDestroyedSignal tileRangeDestroyedSignal{ get; set; }
+    [Inject]
+    public NewBoardConstructedSignal newBoardConstructedSignal { get; set; }
+    [Inject]
+    public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
     
     private const int numOfRow = 7;
     private const int numOfColumn = 8;
@@ -20,6 +24,11 @@ public class BoardModel : IBoardModel {
 
     private int[,] gameBoard = new int[numOfRow, numOfColumn];
     
+    [PostConstruct]
+    public void PostConstruct() {
+        battleResultUpdatedSignal.AddListener(OnBattleResultUpdated);
+    }
+
     public int numOfRows () {
         return numOfRow;
     }
@@ -63,6 +72,8 @@ public class BoardModel : IBoardModel {
             tileGen.removeFromFreeTile(tileTwo.Item1, tileTwo.Item2);
             remainingPairs--;
         }
+
+        newBoardConstructedSignal.Dispatch();
     }
     
     public bool isRemovable(int r1, int c1, int r2, int c2) {
@@ -133,6 +144,12 @@ public class BoardModel : IBoardModel {
 
     public bool isEmpty() {
         return numOfTiles == 0;
+    }
+
+    private void OnBattleResultUpdated(EBattleResult result) {
+        if (result == EBattleResult.UNRESOLVED) {
+            GenerateBoard();
+        }
     }
 
     private class RemainingTileGenerator {

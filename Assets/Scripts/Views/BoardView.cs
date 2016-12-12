@@ -73,7 +73,7 @@ public class BoardView : View {
         get { return onScreenColEnd; }
     }
 
-    internal void Init(IBoardModel boardModel) {
+    internal void Init() {
 
         infoFetcher = TileInfoFetcher.GetInstance();
 
@@ -83,17 +83,6 @@ public class BoardView : View {
                 tiles.Add(Resources.Load(prefabPath + tilePathName) as GameObject);
             }
         }
-
-        BoardSetup(boardModel);
-    }
-
-    public void ResetBoard (IBoardModel boardModel) {
-        if (boardHolder != null) {
-            Destroy(boardHolder);
-        }
-        onScreenTiles = new List<List<GameObject>>();
-
-        BoardSetup(boardModel);
     }
 
     public void DestroyTile(int row, int col) {
@@ -184,8 +173,13 @@ public class BoardView : View {
         }
     }
 
-    private void BoardSetup (IBoardModel boardModel) {
+    public void BoardSetup(IBoardModel boardModel) {
+
+        if (boardHolder != null) {
+            Destroy(boardHolder);
+        }
         boardHolder = new GameObject ("Board");
+        onScreenTiles = new List<List<GameObject>>();
 
         int numOfRows = boardModel.numOfRows();
         int numOfColumns = boardModel.numOfColumns();

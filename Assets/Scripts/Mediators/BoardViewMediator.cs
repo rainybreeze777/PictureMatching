@@ -20,8 +20,6 @@ public class BoardViewMediator : Mediator {
     [Inject]
     public BoardIsEmptySignal boardIsEmptySignal { get; set; }
     [Inject]
-    public ResetActiveStateSignal resetActiveStateSignal { get; set; }
-    [Inject]
     public TileDestroyedSignal tileDestroyedSignal { get; set; }
     [Inject]
     public TileRangeDestroyedSignal tileRangeDestroyedSignal { get; set; }
@@ -29,12 +27,29 @@ public class BoardViewMediator : Mediator {
     public UserInputDataRequestSignal dataRequestSignal { get; set; }
     [Inject]
     public UserInputDataResponseSignal dataResponseSignal { get; set; }
+    [Inject]
+    public NewBoardConstructedSignal newBoardConstructedSignal { get; set; }
 
     private Tile tile1;
     private Tile tile2;
 
     private bool requestingUserInput = false;
     private Enum pendingRequestType = null;
+
+    public override void OnRegister() {
+        boardView.Init();
+
+        boardView.tileSelectedSignal.AddListener(TileSelected);
+        boardView.tileDeselectedSignal.AddListener(TileDeselected);
+        boardView. inputCancelledSignal.AddListener(OnInputCancelled);
+
+        tileDestroyedSignal.AddListener(boardView.DestroyTile);
+        tileRangeDestroyedSignal.AddListener(DestroyTileRange);
+
+        dataRequestSignal.AddListener(ResolveRequest);
+
+        newBoardConstructedSignal.AddListener(OnNewBoardConstructed);
+    }
 
     public void TileSelected(Tile aTile) {
         if (requestingUserInput) {
@@ -71,27 +86,6 @@ public class BoardViewMediator : Mediator {
 
     public bool BoardIsEmpty() {
         return boardModel.isEmpty();
-    }
-
-    public void ResetBoard() {
-        boardModel.GenerateBoard();
-        boardView.ResetBoard(boardModel);
-    }
-
-    public override void OnRegister() {
-        boardModel.GenerateBoard();
-        boardView.Init(boardModel);
-
-        resetActiveStateSignal.AddListener(ResetBoard);
-
-        boardView.tileSelectedSignal.AddListener(TileSelected);
-        boardView.tileDeselectedSignal.AddListener(TileDeselected);
-        boardView. inputCancelledSignal.AddListener(OnInputCancelled);
-
-        tileDestroyedSignal.AddListener(boardView.DestroyTile);
-        tileRangeDestroyedSignal.AddListener(DestroyTileRange);
-
-        dataRequestSignal.AddListener(ResolveRequest);
     }
 
     private void ResolveRequest(Enum userInputRequest) {
@@ -144,5 +138,9 @@ public class BoardViewMediator : Mediator {
         requestingUserInput = false;
         pendingRequestType = null;
         dataResponseSignal.Dispatch(ESkillStatus.INPUT_CANCELLED, null);
+    }
+
+    private void OnNewBoardConstructed() {
+        boardView.BoardSetup(boardModel);
     }
 }

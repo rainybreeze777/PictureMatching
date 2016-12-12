@@ -19,8 +19,6 @@ public class GameViewMediator : Mediator {
     [Inject]
     public BoardIsEmptySignal boardIsEmptySignal { get; set; }
     [Inject]
-    public ResetActiveStateSignal resetActiveStateSignal { get; set; }
-    [Inject]
     public InitiateBattleResolutionSignal initiateBattleResolutionSignal { get; set; }
     [Inject]
     public PlayerHealthUpdatedSignal playerHealthUpdatedSignal { get; set; }
@@ -84,14 +82,14 @@ public class GameViewMediator : Mediator {
 
     private void OnBattleResultUpdated(EBattleResult battleResult) {
         if (battleResult == EBattleResult.WON || battleResult == EBattleResult.LOST) {
-            ResetActiveState();
+            timer = TIME_PER_CANCEL;
             gameView.SwitchToBattleEndScreen();
             gameFlowStateChangeSignal.Dispatch(EGameFlowState.BATTLE_END);
         } else if (battleResult == EBattleResult.UNRESOLVED) {
 #if !UNLIMITED_TIME
             countingDown = true;
 #endif
-            ResetActiveState();
+            timer = TIME_PER_CANCEL;
             gameView.SwitchToCancelTiles();
             gameFlowStateChangeSignal.Dispatch(EGameFlowState.CANCELLATION);
         }
@@ -99,12 +97,6 @@ public class GameViewMediator : Mediator {
 
     public void AddToTimer(double seconds) {
         timer += (float) seconds;
-    }
-
-    private void ResetActiveState()
-    {
-        timer = TIME_PER_CANCEL;
-        resetActiveStateSignal.Dispatch();
     }
 
     private void SwitchToBattleResolve()

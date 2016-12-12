@@ -10,6 +10,8 @@ public class EngageCombatCommand : Command
     [Inject]
     public IEnemyModel enemyModel { get; set; }
     [Inject]
+    public IBoardModel boardModel { get; set; }
+    [Inject]
     public ResetBattleSignal resetBattleSignal { get; set; }
     [Inject]
     public ISkillInitiator skillInitiator { get; set; }
@@ -24,6 +26,7 @@ public class EngageCombatCommand : Command
 
     public override void Execute()
     {
+        boardModel.GenerateBoard();
         EnemyData theEnemy = enemyDataFetcher.GetEnemyDataById(enemyId);
         enemyModel.SetUpEnemyData(theEnemy);
     	enemyModel.GenerateSequence();

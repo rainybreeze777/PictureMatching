@@ -14,13 +14,13 @@ public class ComboViewMediator : Mediator {
     [Inject]
     public IEnemyModel enemyModel { get; set; }
     [Inject]
-    public ResetActiveStateSignal resetActiveStateSignal { get; set; }
+    public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
 
     public override void OnRegister() {
         view.Init();
 
         comboModel.CancelAddedSignal.AddListener(OnTileCancelled);
-        resetActiveStateSignal.AddListener(ResetRound);
+        battleResultUpdatedSignal.AddListener(ResetRound);
         enemySeqGenSignal.AddListener(OnEnemySeqGeneration);
     }
 
@@ -32,8 +32,7 @@ public class ComboViewMediator : Mediator {
         view.ConstructNewEnemySequence(enemyModel.GetPrevGeneratedSequence(), enemyModel.GetPrevSequenceMask());
     }
 
-    public void ResetRound() {
-        comboModel.ClearCancelSequence();
+    public void ResetRound(EBattleResult result) {
         view.Reset();
     }
 }

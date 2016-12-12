@@ -1,6 +1,6 @@
 ﻿using System;
 using strange.extensions.signal.impl;
 
-public class ResetActiveStateSignal : Signal
+public class NewBoardConstructedSignal : Signal
 {
 }

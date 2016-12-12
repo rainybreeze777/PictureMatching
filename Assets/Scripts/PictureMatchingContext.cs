@@ -76,7 +76,6 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<ComboPossibleSignal>().ToSingleton();
         injectionBinder.Bind<BoardIsEmptySignal>().ToSingleton();
         injectionBinder.Bind<InitiateBattleResolutionSignal>().ToSingleton();
-        injectionBinder.Bind<ResetActiveStateSignal>().ToSingleton();
         injectionBinder.Bind<ResetBattleSignal>().ToSingleton();
         injectionBinder.Bind<TileDestroyedSignal>().ToSingleton();
         injectionBinder.Bind<TileRangeDestroyedSignal>().ToSingleton();
@@ -102,6 +101,7 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<OpenSaveLoadViewSignal>().ToSingleton();
         injectionBinder.Bind<GameSaveFileOpSignal>().ToSingleton();
         injectionBinder.Bind<SceneLoadFromSaveSignal>().ToSingleton();
+        injectionBinder.Bind<NewBoardConstructedSignal>().ToSingleton();
         // Manually Instantiate instances and inject
         injectionBinder.GetInstance<ISkillInitiator>().InjectInitialize(injectionBinder);
         // Second Round injection for special circumstances

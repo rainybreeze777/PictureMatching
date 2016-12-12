@@ -23,7 +23,8 @@ public class ComboModel : IComboModel {
     {
         get { return cancelAddedSignal; }
     }
-
+    [Inject]
+    public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
 
     private List<int> cancelSequence = new List<int>();
     //List used to track the range of formed combos
@@ -53,6 +54,7 @@ public class ComboModel : IComboModel {
         comboExecFinishedSignal.AddListener(DeductComboElems);
         playerEquipComboUpdatedSignal.AddListener(RefreshEquippedCombo);
         resetBattleSignal.AddListener(ResetBattleStatus);
+        battleResultUpdatedSignal.AddListener(OnBattleResultUpdated);
     }
 
     public void AddToCancelSequence(int tileNumber) {
@@ -69,10 +71,6 @@ public class ComboModel : IComboModel {
 
     public List<int> GetCancelSeq() {
         return cancelSequence;
-    }
-
-    public void ClearCancelSequence() {
-        cancelSequence.Clear();
     }
 
     public void ResetBattleStatus() {
@@ -134,6 +132,12 @@ public class ComboModel : IComboModel {
                 // Notify others that the availability of this combo has changed
                 comboPossibleSignal.Dispatch(kvp.Key, isEnough);
             }
+        }
+    }
+
+    private void OnBattleResultUpdated(EBattleResult result) {
+        if (result != EBattleResult.NULL) {
+            cancelSequence.Clear();
         }
     }
 }
