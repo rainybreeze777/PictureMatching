@@ -93,6 +93,11 @@ public class BoardViewMediator : Mediator {
 
     private void ResolveRequest(Enum userInputRequest) {
         if (userInputRequest.GetType().Equals(typeof(BoardViewRequest))) {
+
+            if (requestingUserInput) {
+                boardView.ResetAllSkillRequest();
+            }
+
             requestingUserInput = true;
             pendingRequestType = userInputRequest;
 
