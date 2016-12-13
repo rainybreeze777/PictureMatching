@@ -8,7 +8,10 @@
             "englishName" : "comboOne",
             "chineseName" : "4木",
             "skillReqAndArg" : {
-                "wood" : 4
+                "wood" : 4,
+                "arguments" : [
+                    2
+                ]
             },
             "description" : "cancel 2 by 2 square area",
             "validState" : "CANCELLATION"
@@ -23,7 +26,10 @@
             "skillReqAndArg" : {
                 "wood" : 2,
                 "water" : 1,
-                "fire" : 1
+                "fire" : 1,
+                "arguments" : [
+                    2
+                ]
             },
             "description" : "cancel a column",
             "validState" : "CANCELLATION"

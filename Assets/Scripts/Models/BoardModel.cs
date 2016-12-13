@@ -303,9 +303,13 @@ public class BoardModel : IBoardModel {
         }
     }
     
-    public void removeColumn(int col) {
+    public List<int> removeColumn(int col) {
+        // Metal, Wood, Water, Fire, Earth
+        List<int> removedCount = new List<int> { 0, 0, 0, 0, 0 };
+
         for (int r = 0; r < numOfRow; ++r) {
             if (gameBoard[r, col] != 0) {
+                removedCount[gameBoard[r, col] - 1] += 1;
                 gameBoard[r, col] = 0;
                 numOfTiles--;
                 tileDestroyedSignal.Dispatch(r, col);
@@ -315,14 +319,19 @@ public class BoardModel : IBoardModel {
         if (numOfTiles == 0) {
             boardIsEmptySignal.Dispatch();
         }
+
+        return removedCount;
     }
 
     // Removing indices are inclusive
-    public void removeRange(int startRow, int endRow, int startCol, int endCol)
-    {
+    public List<int> removeRange(int startRow, int endRow, int startCol, int endCol) {
+        // Metal, Wood, Water, Fire, Earth
+        List<int> removedCount = new List<int> { 0, 0, 0, 0, 0 };
+
         for (int r = startRow; r <= endRow; ++r ) {
             for (int c = startCol; c <= endCol; ++c ) {
                 if (gameBoard[r, c] != 0) {
+                    removedCount[gameBoard[r, c] - 1] += 1;
                     gameBoard[r, c] = 0;
                     numOfTiles--;
                 }
@@ -333,6 +342,8 @@ public class BoardModel : IBoardModel {
         if (numOfTiles == 0) {
             boardIsEmptySignal.Dispatch();
         }
+
+        return removedCount;
     }
 
     public bool isEmpty() {

@@ -15,4 +15,6 @@ public interface IComboModel {
     void DeductComboElems(int comboId);
 
     void RefreshEquippedCombo();
+
+    void GainSkillElem(List<int> skillElem);
 }

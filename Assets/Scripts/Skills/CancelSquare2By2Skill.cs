@@ -1,5 +1,4 @@
 ﻿using System;
-
 using EUserInputDataRequests;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -9,6 +8,8 @@ public class CancelSquare2By2Skill : ComboSkill {
 
     [Inject]
     public IBoardModel playerBoardModel { get; set; }
+    [Inject]
+    public IComboModel comboModel { get; set; }
 
     [Construct]
     public CancelSquare2By2Skill()
@@ -57,11 +58,28 @@ public class CancelSquare2By2Skill : ComboSkill {
             }
         }
 
-        playerBoardModel.removeRange(
+        // Then verify that comboList arguments ActionParams object
+        // contains the parameters this skill needs
+        if (skillParams == null)
+            throw new ArgumentNullException("CancelSquare2By2Skill received null skill argument list");
+        else if (skillParams.Count() < 1)
+            throw new ArgumentException("CancelSquare2By2Skill received skill argument list with length 0; Expecting arguments length 1");
+        else if (skillParams.GetParamType(0) != typeof(int))
+            throw new ArgumentException("CancelSquare2By2Skill received skill argument of invalid type " + inputData.GetParamType(0) + "; Expecting type int");
+        // If ActionParams has more than 1 argument returned, warn and ignore
+        else if (skillParams.Count() != 1) {
+            Debug.LogWarning("CancelSquare2By2Skill received more than 1 skill argument; Make sure this is the desired data");
+        }
+
+        List<int> gainedSkillElem = playerBoardModel.removeRange(
             (int) inputData.GetArg(0),
             (int) inputData.GetArg(1),
             (int) inputData.GetArg(2),
             (int) inputData.GetArg(3));
+        for (int i = 0; i < gainedSkillElem.Count; ++i) {
+            gainedSkillElem[i] *= (int) skillParams.GetArg(0);
+        }
+        comboModel.GainSkillElem(gainedSkillElem);
     }
 
     protected override void ExecuteBattleSkill() {
