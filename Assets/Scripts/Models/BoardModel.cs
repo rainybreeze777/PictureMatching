@@ -307,8 +307,13 @@ public class BoardModel : IBoardModel {
         for (int r = 0; r < numOfRow; ++r) {
             if (gameBoard[r, col] != 0) {
                 gameBoard[r, col] = 0;
+                numOfTiles--;
                 tileDestroyedSignal.Dispatch(r, col);
             }
+        }
+
+        if (numOfTiles == 0) {
+            boardIsEmptySignal.Dispatch();
         }
     }
 
@@ -319,10 +324,15 @@ public class BoardModel : IBoardModel {
             for (int c = startCol; c <= endCol; ++c ) {
                 if (gameBoard[r, c] != 0) {
                     gameBoard[r, c] = 0;
+                    numOfTiles--;
                 }
             }
         }
         tileRangeDestroyedSignal.Dispatch(startRow, endRow, startCol, endCol);
+
+        if (numOfTiles == 0) {
+            boardIsEmptySignal.Dispatch();
+        }
     }
 
     public bool isEmpty() {
