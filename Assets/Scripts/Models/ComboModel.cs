@@ -116,6 +116,16 @@ public class ComboModel : IComboModel {
         }
     }
 
+    public void GainSkillElem(List<int> skillElem) {
+        // Hard-code to Metal, Wood, Water, Fire, Earth
+        // this should be the accepted protocol
+        for(int elem = 0; elem < skillElem.Count; ++elem) {
+            EElements e = tileInfoFetcher.GetElemEnumFromTileNumber(elem + 1);
+            elemGathered[e] += skillElem[elem];
+            elemGatherUpdatedSignal.Dispatch(e, elemGathered[e]);
+        }
+    }
+
     private void RefreshSkillPrepStatus() {
         foreach (KeyValuePair<int, OneCombo> kvp in equippedComboList) {
 
