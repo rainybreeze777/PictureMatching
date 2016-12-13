@@ -25,11 +25,14 @@ public class ComboModel : IComboModel {
     }
     [Inject]
     public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
+    [Inject]
+    public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
+
+    [Inject]
+    public IGameStateMachine gameStateMachine { get; set; }
 
     private List<int> cancelSequence = new List<int>();
-    //List used to track the range of formed combos
-    //For example, combo may start from index 2 and end at index 6
-    //Then comboTracker will be [2, 6]
+
     private Dictionary<int, OneCombo> equippedComboList;
     private Dictionary<int, bool> skillPrepStatus;
 
@@ -55,6 +58,7 @@ public class ComboModel : IComboModel {
         playerEquipComboUpdatedSignal.AddListener(RefreshEquippedCombo);
         resetBattleSignal.AddListener(ResetBattleStatus);
         battleResultUpdatedSignal.AddListener(OnBattleResultUpdated);
+        gameFlowStateChangeSignal.AddListener(OnGameFlowStateChange);
     }
 
     public void AddToCancelSequence(int tileNumber) {
@@ -130,7 +134,10 @@ public class ComboModel : IComboModel {
             if (isEnough != prevStatus) {
                 skillPrepStatus[kvp.Key] = isEnough;
                 // Notify others that the availability of this combo has changed
-                comboPossibleSignal.Dispatch(kvp.Key, isEnough);
+                // if the combo is valid in current gameflow state
+                if (kvp.Value.ValidState == gameStateMachine.CurrentState) {
+                    comboPossibleSignal.Dispatch(kvp.Key, isEnough);
+                }
             }
         }
     }
@@ -138,6 +145,20 @@ public class ComboModel : IComboModel {
     private void OnBattleResultUpdated(EBattleResult result) {
         if (result != EBattleResult.NULL) {
             cancelSequence.Clear();
+        }
+    }
+
+    private void OnGameFlowStateChange(EGameFlowState state) {
+        if (state == EGameFlowState.CANCELLATION
+            || state == EGameFlowState.BATTLE_RESOLUTION) {
+
+            foreach(int comboId in skillPrepStatus.Keys) {
+                if (equippedComboList[comboId].ValidState != state) {
+                    comboPossibleSignal.Dispatch(comboId, false);
+                } else {
+                    comboPossibleSignal.Dispatch(comboId, skillPrepStatus[comboId]);
+                }
+            }
         }
     }
 }

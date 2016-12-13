@@ -88,6 +88,7 @@ public class ComboListFetcher {
 
             OneCombo aCombo = ScriptableObject.CreateInstance(typeof(OneCombo)) as OneCombo;
             JsonUtility.FromJsonOverwrite(combosArray[i].ToString(), aCombo);
+            aCombo.SerializeValidState(combosArray[i]["validState"]);
             aCombo.SerializeSkillReqAndArg(combosArray[i]["skillReqAndArg"] as JSONClass);
             comboMap.Add(aCombo.ComboId, aCombo);
         }

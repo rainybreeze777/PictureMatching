@@ -29,6 +29,9 @@ public class OneCombo : ScriptableObject {
             return newSkillIds; 
         } 
     }
+    [SerializeField]
+    private EGameFlowState validState;
+    public EGameFlowState ValidState { get { return validState; } }
 
     public int Metal() { return GetReqFromEElements(EElements.METAL); }
     public int Wood() { return GetReqFromEElements(EElements.WOOD); } 
@@ -53,5 +56,10 @@ public class OneCombo : ScriptableObject {
         JsonUtility.FromJsonOverwrite(jsonClass.ToString(), skillReqAndArg);
         skillReqAndArg.InitRequirements();
         skillReqAndArg.SerializeArguments(jsonClass["arguments"] as JSONArray); // JsonUtility does not support polymorphic array serialization
+    }
+
+    public void SerializeValidState (string stateString) {
+        validState = (EGameFlowState) Enum.Parse(typeof(EGameFlowState), stateString);
+        Assert.IsTrue(validState == EGameFlowState.CANCELLATION || validState == EGameFlowState.BATTLE_RESOLUTION);
     }
 }

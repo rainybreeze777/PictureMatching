@@ -10,7 +10,8 @@
             "skillReqAndArg" : {
                 "wood" : 4
             },
-            "description" : "cancel 2 by 2 square area"
+            "description" : "cancel 2 by 2 square area",
+            "validState" : "CANCELLATION"
         },
         {
             "id" : 2,
@@ -24,7 +25,8 @@
                 "water" : 1,
                 "fire" : 1
             },
-            "description" : "cancel a column"
+            "description" : "cancel a column",
+            "validState" : "CANCELLATION"
         },
         {
             "id" : 3,
@@ -40,7 +42,8 @@
                     5.0
                 ]
             },
-            "description" : "add 5 seconds to timer"
+            "description" : "add 5 seconds to timer",
+            "validState" : "CANCELLATION"
         },
         {
             "id" : 4,
@@ -56,7 +59,8 @@
                     20
                 ]
             },
-            "description" : "heal for 20 health"
+            "description" : "heal for 20 health",
+            "validState" : "BATTLE_RESOLUTION"
         },
         {
             "id" : 5,
@@ -72,7 +76,8 @@
                     3
                 ]
             },
-            "description" : "reduce damage by half for 3 turns"
+            "description" : "reduce damage by half for 3 turns",
+            "validState" : "BATTLE_RESOLUTION"
         }
     ]
 }
