@@ -29,6 +29,8 @@ public class BoardViewMediator : Mediator {
     public UserInputDataResponseSignal dataResponseSignal { get; set; }
     [Inject]
     public NewBoardConstructedSignal newBoardConstructedSignal { get; set; }
+    [Inject]
+    public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
 
     private Tile tile1;
     private Tile tile2;
@@ -41,7 +43,7 @@ public class BoardViewMediator : Mediator {
 
         boardView.tileSelectedSignal.AddListener(TileSelected);
         boardView.tileDeselectedSignal.AddListener(TileDeselected);
-        boardView. inputCancelledSignal.AddListener(OnInputCancelled);
+        boardView.inputCancelledSignal.AddListener(OnInputCancelled);
 
         tileDestroyedSignal.AddListener(boardView.DestroyTile);
         tileRangeDestroyedSignal.AddListener(DestroyTileRange);
@@ -49,6 +51,7 @@ public class BoardViewMediator : Mediator {
         dataRequestSignal.AddListener(ResolveRequest);
 
         newBoardConstructedSignal.AddListener(OnNewBoardConstructed);
+        gameFlowStateChangeSignal.AddListener(OnGameFlowStateChange);
     }
 
     public void TileSelected(Tile aTile) {
@@ -142,5 +145,14 @@ public class BoardViewMediator : Mediator {
 
     private void OnNewBoardConstructed() {
         boardView.BoardSetup(boardModel);
+    }
+
+    private void OnGameFlowStateChange(EGameFlowState state) {
+        if (requestingUserInput && state == EGameFlowState.BATTLE_RESOLUTION) {
+            boardView.ResetAllSkillRequest();
+            // Cancel the skill request, because the timer just ran out
+            // and the game has entered Battle resolution stage
+            OnInputCancelled();
+        }
     }
 }

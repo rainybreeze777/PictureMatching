@@ -229,6 +229,12 @@ public class BoardView : View {
         }
     }
 
+    public void ResetAllSkillRequest() {
+        DisableHighlightArea();
+        DisableHighlightingColumn();
+        DehighlightPrevSelection();
+    }
+
     private void HighlightColumn(int col) {
 
         if (prevHoverCol != col) {
