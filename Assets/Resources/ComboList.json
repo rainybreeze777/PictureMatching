@@ -84,6 +84,23 @@
             },
             "description" : "reduce damage by half for 3 turns",
             "validState" : "BATTLE_RESOLUTION"
+        },
+        {
+            "id" : 6,
+            "skillIds" : [
+                5
+            ],
+            "englishName" : "Direct Damage",
+            "chineseName" : "3火1金",
+            "skillReqAndArg" : {
+                "metal" : 1,
+                "fire" : 3,
+                "arguments" : [
+                    50
+                ]
+            },
+            "description" : "Direct damage for 50",
+            "validState" : "BATTLE_RESOLUTION"
         }
     ]
 }

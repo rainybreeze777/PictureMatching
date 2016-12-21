@@ -4,6 +4,7 @@
         "1" : "CancelColumnSkill",
         "2" : "AddToTimeSkill",
         "3" : "HealSkill",
-        "4" : "ReduceDamageSkill"
+        "4" : "ReduceDamageSkill",
+        "5" : "DirectDamageSkill"
     }
 }
