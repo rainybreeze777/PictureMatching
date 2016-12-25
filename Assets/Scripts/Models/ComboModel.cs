@@ -41,13 +41,15 @@ public class ComboModel : IComboModel {
     // Dict to store gathered elements amount
     private Dictionary<EElements, int> elemGathered = new Dictionary<EElements, int>();
 
+    private int INIT_ELEM_GATHERED_VALUE = 999;
+
     public ComboModel() {
         skillPrepStatus = new Dictionary<int, bool>();
 
         tileInfoFetcher = TileInfoFetcher.GetInstance();
         List<EElements> validElems = tileInfoFetcher.GetElementsList();
         foreach(EElements elem in validElems) {
-            elemGathered.Add(elem, 0);
+            elemGathered.Add(elem, INIT_ELEM_GATHERED_VALUE);
         }
     }
 
@@ -84,8 +86,8 @@ public class ComboModel : IComboModel {
         // and access the dictionary using the list
         List<EElements> elems = new List<EElements>(elemGathered.Keys);
         foreach(EElements e in elems) {
-            elemGathered[e] = 0;
-            elemGatherUpdatedSignal.Dispatch(e, 0);
+            elemGathered[e] = INIT_ELEM_GATHERED_VALUE;
+            elemGatherUpdatedSignal.Dispatch(e, INIT_ELEM_GATHERED_VALUE);
         }
 
         RefreshSkillPrepStatus();

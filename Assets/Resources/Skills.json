@@ -5,6 +5,9 @@
         "2" : "AddToTimeSkill",
         "3" : "HealSkill",
         "4" : "ReduceDamageSkill",
-        "5" : "DirectDamageSkill"
+        "5" : "DirectDamageSkill",
+        "6" : "NerfEnemyDamageSkill",
+        "7" : "BuffOwnDamageSkill",
+        "8" : "IncEnemyVulnerSkill"
     }
 }

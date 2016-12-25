@@ -5,6 +5,7 @@ public interface IInBattleStatus {
 
     int CurrentHealth { get; }
     int MaxHealth { get; }
+    int BaseDamage { get; }
     int Damage { get; }
     bool IsDead { get; }
 
@@ -13,6 +14,7 @@ public interface IInBattleStatus {
     void ResetHealth();
 
     void UpdateReceiveDamageModifier(double modifier, int inEffectExchangeCount);
+    void UpdateDealDamageModifier(double modifier, int inEffectExchangeCount);
     void UpdateEquipWeapon(List<Weapon> equippedWeaponList);
     Dictionary<int, OneCombo> GetEquippedCombos();
 
