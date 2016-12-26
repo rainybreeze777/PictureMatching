@@ -39,7 +39,7 @@ public class BuffOwnDamageSkill : ComboSkill {
 
     public override void AIUseSkill(ActionParams args) {
         Debug.Log("BuffOwnDamageSkill used!");
-        playerBattleStatus.UpdateReceiveDamageModifier((double) args.GetArg(0), (int) args.GetArg(1));
+        enemyBattleStatus.UpdateDealDamageModifier((double) args.GetArg(0), (int) args.GetArg(1));
         return;
     }
 
@@ -50,7 +50,7 @@ public class BuffOwnDamageSkill : ComboSkill {
     protected override void ExecuteBattleSkill() {
         ArgumentCheck(skillParams);
 
-        enemyBattleStatus.UpdateReceiveDamageModifier((double) skillParams.GetArg(0), (int) skillParams.GetArg(1));
+        playerBattleStatus.UpdateDealDamageModifier((double) skillParams.GetArg(0), (int) skillParams.GetArg(1));
     }
 
     private void ArgumentCheck(ActionParams args) {

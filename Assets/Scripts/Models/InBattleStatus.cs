@@ -113,7 +113,8 @@ public abstract class InBattleStatus : IInBattleStatus {
     }
 
     public void UpdateDealDamageModifier(double modifier, int inEffectExchangeCount) {
-
+        TemporalEffects.Category cate = modifier > 1.0 ? TemporalEffects.Category.BUFF : TemporalEffects.Category.DEBUFF;
+        temporalEffects.AddEffect(DAMAGE_MODIFIER_KEY, onExchange + inEffectExchangeCount + 1, modifier, cate);
     }
 
     public Dictionary<int, OneCombo> GetEquippedCombos() {
