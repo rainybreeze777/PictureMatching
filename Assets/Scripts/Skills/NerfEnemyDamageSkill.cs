@@ -14,15 +14,31 @@ public class NerfEnemyDamageSkill : ComboSkill {
 
         ArgumentCheck(args);
 
-        // Always want to deal damage
+        int windowSize = (int) args.GetArg(1);
+        List<EOneExchangeWinner> forecastResult = battleResolver.ForecastExchangeResult(windowSize);
+        if (forecastResult.Count < windowSize - 1) {
+            // Don't use the skill if there are not enough exchange
+            // left for this round, save it for later
+            return false;
+        }
+
+        // Don't the skill if player is not going to win for more than half
+        // of the next windowSize exchanges
+        int PlayerWinCount = 0;
+        for (int i = 0; i < forecastResult.Count; ++i) {
+            PlayerWinCount += (forecastResult[i] == EOneExchangeWinner.PLAYER) ? 1 : 0;
+        }
+        if (PlayerWinCount <= (int) (forecastResult.Count / 2)) {
+            return false;
+        }
+
         return true;
     }
 
     // This function should only be called after calling AIDeduceIsLogicalToUseLogic
     public override void AIUseSkill(ActionParams args) {
         Debug.Log("NerfEnemyDamageSkill used!");
-        int result = (int) args.GetArg(0);
-        playerBattleStatus.ReceiveDmg(result);
+        playerBattleStatus.UpdateDealDamageModifier((int) skillParams.GetArg(0));
         return;
     }
 
@@ -34,8 +50,7 @@ public class NerfEnemyDamageSkill : ComboSkill {
 
         ArgumentCheck(skillParams);
 
-        int result = (int) skillParams.GetArg(0);
-        enemyBattleStatus.ReceiveDmg(result);
+        enemyBattleStatus.UpdateDealDamageModifier((int) skillParams.GetArg(0));
     }
 
     private void ArgumentCheck(ActionParams args) {
