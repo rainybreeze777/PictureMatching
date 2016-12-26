@@ -9,6 +9,8 @@ public class NerfEnemyDamageSkill : ComboSkill {
     public IInBattleStatus playerBattleStatus { get; set; }
     [Inject(EInBattleStatusType.ENEMY)]
     public IInBattleStatus enemyBattleStatus { get; set; }
+    [Inject]
+    public IBattleResolver battleResolver { get; set; }
 
     protected override bool AIDeduceIsLogicalToUseLogic(ActionParams args) {
 
@@ -38,7 +40,7 @@ public class NerfEnemyDamageSkill : ComboSkill {
     // This function should only be called after calling AIDeduceIsLogicalToUseLogic
     public override void AIUseSkill(ActionParams args) {
         Debug.Log("NerfEnemyDamageSkill used!");
-        playerBattleStatus.UpdateDealDamageModifier((int) skillParams.GetArg(0));
+        playerBattleStatus.UpdateDealDamageModifier((double) args.GetArg(0), (int) args.GetArg(1));
         return;
     }
 
@@ -50,7 +52,7 @@ public class NerfEnemyDamageSkill : ComboSkill {
 
         ArgumentCheck(skillParams);
 
-        enemyBattleStatus.UpdateDealDamageModifier((int) skillParams.GetArg(0));
+        enemyBattleStatus.UpdateDealDamageModifier((double) skillParams.GetArg(0), (int) skillParams.GetArg(1));
     }
 
     private void ArgumentCheck(ActionParams args) {
