@@ -87,7 +87,8 @@
                         "zh_cn" : "五行元素相生相克。"
                     }
                 ],
-                "combatEnemyId" : 3
+                "combatEnemyId" : 3,
+                "enableSceneIdAfterVictory" : 2
             }
         ]
     }

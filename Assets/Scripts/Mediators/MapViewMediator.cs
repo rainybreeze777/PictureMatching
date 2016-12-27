@@ -9,14 +9,22 @@ public class MapViewMediator : Mediator {
     public MapView mapView{ get; set;}
 
     [Inject]
+    public IBiographer playerBiographer { get; set; }
+
+    [Inject]
     public SceneChangeSignal sceneChangeSignal { get; set; }
     [Inject]
     public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
+    [Inject]
+    public AvailableScenesUpdateSignal availableScenesUpdateSignal { get; set; }
 
     public override void OnRegister() {
 
         mapView.mapButtonClickedSignal.AddListener(OnMapButtonClicked);
         mapView.swapToStatusButtonClickedSignal.AddListener(OnSwapToStatusClicked);
+
+        availableScenesUpdateSignal.AddListener(OnAvailableScenesUpdated);
+
         mapView.Init();
     }
 
@@ -27,5 +35,21 @@ public class MapViewMediator : Mediator {
 
     private void OnSwapToStatusClicked() {
         gameFlowStateChangeSignal.Dispatch(EGameFlowState.STATUS);
+    }
+
+    private void OnAvailableScenesUpdated(int gameSceneId, EAvailScenesUpdateType updateType) {
+        switch (updateType) {
+            case EAvailScenesUpdateType.ADD:
+                mapView.ToggleSceneAvailability(gameSceneId, true);
+                break;
+            case EAvailScenesUpdateType.REMOVE:
+                mapView.ToggleSceneAvailability(gameSceneId, false);
+                break;
+            case EAvailScenesUpdateType.BATCH_UPDATE:
+                mapView.ReconfigureAllScenesAvailability(playerBiographer.GetAllAvailableSceneIds());
+                break;
+            default:
+                break;
+        }
     }
 }

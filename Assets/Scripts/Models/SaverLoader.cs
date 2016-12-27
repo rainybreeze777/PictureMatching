@@ -19,6 +19,8 @@ public class SaverLoader : ISaverLoader {
     public SceneLoadFromSaveSignal sceneLoadFromSaveSignal { get; set; }
     [Inject]
     public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
+    [Inject]
+    public AvailableScenesUpdateSignal availableScenesUpdateSignal { get; set; }
 
     private const int SLOTS_COUNT = 20; 
     public int SlotsCount { get { return SLOTS_COUNT; } }
@@ -61,6 +63,7 @@ public class SaverLoader : ISaverLoader {
 
         playerStatus.InitFromGameSave(saveToLoad);
         playerBiographer.InitFromGameSave(saveToLoad);
+        availableScenesUpdateSignal.Dispatch(-1, EAvailScenesUpdateType.BATCH_UPDATE);
         gameFlowStateChangeSignal.Dispatch(saveToLoad.GameState);
         if (saveToLoad.GameState == EGameFlowState.SCENE) {
             sceneLoadFromSaveSignal.Dispatch(saveToLoad.GameScene);

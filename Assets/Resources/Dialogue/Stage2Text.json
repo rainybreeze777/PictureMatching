@@ -1,0 +1,21 @@
+{
+    "gameScene" : 2,
+    "dialogue" : {
+        "random" : [
+            {
+                "characterId" : 101,
+                "texts" : [
+                    {
+                        "en_ca" : "You are here too.",
+                        "zh_cn" : "你也来这里了。"
+                    },
+                    {
+                        "en_ca" : "This is a nice place.",
+                        "zh_cn" : "这儿风景不错。"
+                    }
+                ],
+                "combatEnemyId" : 3
+            }
+        ]
+    }
+}

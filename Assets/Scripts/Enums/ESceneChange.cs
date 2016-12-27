@@ -1,8 +1,5 @@
 ﻿public enum ESceneChange {
-	VOID,
-	METAL_ARENA,
-	WOOD_ARENA,
-	WATER_ARENA,
-	FIRE_ARENA,
-	EARTH_ARENA    
+    VOID,
+    STAGE1,
+    STAGE2
 }

@@ -33,7 +33,8 @@ public class SceneViewMediator : Mediator {
         // Hand-wire the mapping because Unity3D
         // is too dumb to serialize a dictionary
         // Always make sure the mappings are correct
-        scripts.Add(ESceneChange.METAL_ARENA, Resources.Load("Dialogue/Stage1Text") as TextAsset);
+        scripts.Add(ESceneChange.STAGE1, Resources.Load("Dialogue/Stage1Text") as TextAsset);
+        scripts.Add(ESceneChange.STAGE2, Resources.Load("Dialogue/Stage2Text") as TextAsset);
 
         sceneChangeSignal.AddListener(OnSceneChange);
         sceneLoadFromSaveSignal.AddListener(OnDirectLoadScene);
