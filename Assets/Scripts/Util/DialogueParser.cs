@@ -32,6 +32,7 @@ public class DialogueParser : IDialogueParser {
 
             int charId = node["characterId"].AsInt;
             int combatEnemyId = node["combatEnemyId"].AsInt;
+            int enableSceneId = node["enableSceneIdAfterVictory"].AsInt;
             JSONArray randomText = node["texts"] as JSONArray;
 
             List<List<Dialogue>> possibleDialogues = new List<List<Dialogue>>();
@@ -40,7 +41,7 @@ public class DialogueParser : IDialogueParser {
                 List<Dialogue> dialogues = new List<Dialogue>();
 
                 dialogues.Add(new Dialogue(charId, textNode[language]));
-                dialogues.Add(new Dialogue(combatEnemyId));
+                dialogues.Add(new Dialogue(combatEnemyId, enableSceneId));
 
                 possibleDialogues.Add(dialogues);
             }
@@ -53,16 +54,19 @@ public class DialogueParser : IDialogueParser {
         List<Dialogue> dialogues = new List<Dialogue>();
 
         JSONArray onEnterArray = parsedDialogue["onEnter"] as JSONArray;
-        foreach (JSONNode node in onEnterArray) {
+        if (onEnterArray != null) {
+            foreach (JSONNode node in onEnterArray) {
 
-            int charId = node["characterId"].AsInt;
-            string text = node["text"][language];
-            int combatEnemyId = node["combatEnemyId"].AsInt;
+                int charId = node["characterId"].AsInt;
+                string text = node["text"][language];
+                int combatEnemyId = node["combatEnemyId"].AsInt;
+                int enableSceneId = node["enableSceneIdAfterVictory"].AsInt;
 
-            if (charId != 0 && combatEnemyId == 0) {
-                dialogues.Add(new Dialogue(charId, text));
-            } else if (charId == 0 && combatEnemyId != 0){
-                dialogues.Add(new Dialogue(combatEnemyId));
+                if (charId != 0 && combatEnemyId == 0) {
+                    dialogues.Add(new Dialogue(charId, text));
+                } else if (charId == 0 && combatEnemyId != 0){
+                    dialogues.Add(new Dialogue(combatEnemyId, enableSceneId));
+                }
             }
         }
 

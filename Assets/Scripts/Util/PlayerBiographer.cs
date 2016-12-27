@@ -7,6 +7,9 @@ using System.Collections.Generic;
 // Currently records places player have visited, and to people player have talked
 // if the player have done so, the id of the scene/nested scene and characterId
 // will be present under the appropriate parent node
+// It also stores a list of ids that indicates where the player can go
+// WARNING: This class cannot have any signals, as this class
+// will be serialized, but public signals does not support serialization
 [Serializable]
 public class PlayerBiographer : IBiographer {
 
@@ -15,6 +18,8 @@ public class PlayerBiographer : IBiographer {
     // to gameScene ids as listed in the stage texts json files
     // Nested levels follow a different rule as specified in PointNode
     [SerializeField] private Stack<PointNode> playerTrail;
+    // This keeps track of scenes the player can visit
+    [SerializeField] private List<int> availableSceneIds;
 
     public void Visit(int destId) {
         playerTrail.Push(playerTrail.Peek().AddChildPoint(destId));
@@ -34,10 +39,25 @@ public class PlayerBiographer : IBiographer {
     public void InitFromGameSave(GameSave save) {
         PlayerBiographer saveBiographer = save.PlayerBio;
         playerTrail = saveBiographer.playerTrail;
+        availableSceneIds = saveBiographer.availableSceneIds;
     }
 
     public bool IsAtMap() {
         return playerTrail.Count == 1 && playerTrail.Peek().Id == 0;
+    }
+
+    public void MakeSceneAvailable(int sceneId) {
+        if (!availableSceneIds.Contains(sceneId)) {
+            availableSceneIds.Add(sceneId);
+        }
+    }
+
+    public bool CanAccessScene(int sceneId) {
+        return availableSceneIds.Contains(sceneId);
+    }
+
+    public List<int> GetAllAvailableSceneIds() {
+        return new List<int>(availableSceneIds);
     }
 
     [PostConstruct]
@@ -45,6 +65,10 @@ public class PlayerBiographer : IBiographer {
         if (playerTrail == null) {
             playerTrail = new Stack<PointNode>();
             playerTrail.Push(new PointNode(0));
+        }
+        if (availableSceneIds == null) {
+            availableSceneIds = new List<int>();
+            availableSceneIds.Add(1); // Scene 1 is always available at start
         }
     }
 

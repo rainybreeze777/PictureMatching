@@ -19,6 +19,9 @@ public class SceneView : View {
     [SerializeField] private Button sceneButton;
     private Dictionary<Button, int> charButtons = new Dictionary<Button, int>();
 
+    [Inject]
+    public EnableSceneAfterVictorySignal enableSceneAfterVictorySignal { get; set; }
+
     public Signal<int> dialogueTriggerCombatSignal = new Signal<int>();
     public Signal<int> charButtonClickedSignal = new Signal<int>();
     public Signal toMapButtonClickedSignal = new Signal();
@@ -92,6 +95,9 @@ public class SceneView : View {
         } 
         if (readingDialogue[lineNumber].IsCombatSignal()) {
             dialogueTriggerCombatSignal.Dispatch(readingDialogue[lineNumber].GetCombatEnemyId());
+            if (readingDialogue[lineNumber].WillEnableSceneAfterVictory()) {
+                enableSceneAfterVictorySignal.Dispatch(readingDialogue[lineNumber].GetEnableSceneIdAfterVictory());
+            }
             ++lineNumber;
         }
         if (lineNumber >= readingDialogue.Count) {
