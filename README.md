@@ -10,7 +10,7 @@ Clone directly from this repository using Git, and set up the project according 
 
 # Future Plans
 1. Develop the game on Android and iOS after PC Beta version is released.
-2. Currently the game has Mandarin as the language. Release English version later.
+2. Currently the game has Simplified Chinese as the language. Release English version later.
 3. Have a complete plot to the game. (YarnSpinner)
 4. Add more Xian weapons and skills to improve gameplay.
 
