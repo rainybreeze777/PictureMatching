@@ -10,7 +10,6 @@ public class Character : ScriptableObject {
     // http://unicode.org/repos/cldr-tmp/trunk/diff/supplemental/language_territory_information.html
     // Locale code to localized name
     // [SerializeField] StringStringDict nameDict = new StringStringDict();
-    [SerializeField] SerializableDictionary<string, string> nameDict;
     [SerializeField] private string en_caName;
     [SerializeField] private string zh_cnName;
 
