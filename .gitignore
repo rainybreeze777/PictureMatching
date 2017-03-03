@@ -5,6 +5,8 @@ Temp/
 Library/
 Build/
 Assets/Saves/*.sav*
+Assets/UnityTestTools/
+Assets/UnityTestTools.meta
 
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
