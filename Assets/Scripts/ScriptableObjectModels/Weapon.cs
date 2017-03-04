@@ -27,8 +27,11 @@ public class Weapon : ScriptableObject {
         if (ReferenceEquals(this, other)) { return true; }
         if (typeof(Weapon) != other.GetType()) { return false; }
         Weapon otherWeapon = (Weapon) other;
-        return possessComboIdList.Equals(otherWeapon.possessComboIdList) 
-                && weaponName.Equals(otherWeapon.weaponName);
+        return possessComboIdList.Equals(otherWeapon.possessComboIdList)
+                && weaponName.Equals(otherWeapon.weaponName)
+                && tier == otherWeapon.tier
+                && id == otherWeapon.id
+                && weaponElem == otherWeapon.weaponElem;
     }
 
     public override int GetHashCode() {
@@ -40,4 +43,31 @@ public class Weapon : ScriptableObject {
         return hash;
     }
 
+#if DEVELOPMENT_BUILD
+    /* Development only methods. These methods are to be
+        used with unit-testing classes exclusively! Calling
+        these methods by anything other than unit-testing classes
+        are strictly undefined and will not be able to compile
+        when releasing a production build! */
+    public void UnitTesting_SetPossessComboIdList(List<int> comboIdList) {
+        possessComboIdList = comboIdList;
+    }
+
+    public void UnitTesting_SetWeaponName(string name) {
+        weaponName = name;
+    }
+
+    public void UnitTesting_SetWeaponDescription(string desc) {
+        weaponDescription = desc;
+    }
+    public void UnitTesting_SetTier(int tier) {
+        this.tier = tier;
+    }
+    public void UnitTesting_SetId(int id) {
+        this.id = id;
+    }
+    public void UnitTesting_SetWeaponElem(EElements elem) {
+        this.weaponElem = elem;
+    }
+#endif
 }

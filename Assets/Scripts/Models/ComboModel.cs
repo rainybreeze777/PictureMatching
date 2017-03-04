@@ -19,7 +19,7 @@ public class ComboModel : IComboModel {
     [Inject]
     public ResetBattleSignal resetBattleSignal{ get; set; }
     public Signal<int> cancelAddedSignal = new Signal<int>();
-    public Signal<int> CancelAddedSignal 
+    public Signal<int> CancelAddedSignal
     {
         get { return cancelAddedSignal; }
     }
@@ -173,4 +173,16 @@ public class ComboModel : IComboModel {
             }
         }
     }
+
+#if DEVELOPMENT_BUILD
+    /* Development only methods. These methods are to be
+        used with unit-testing classes exclusively! Calling
+        these methods by anything other than unit-testing classes
+        are strictly undefined and will not be able to compile
+        when releasing a production build! */
+
+    public void UnitTesting_SetEquippedCombolist(Dictionary<int, OneCombo> comboList) {
+        equippedComboList = comboList;
+    }
+#endif
 }

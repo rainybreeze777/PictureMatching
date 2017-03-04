@@ -7,7 +7,7 @@ public abstract class InBattleStatus : IInBattleStatus {
     public int CurrentHealth { get { return currentHealth; } }
     public int MaxHealth { get { return maxHealth; } }
     public int BaseDamage { get { return damage; } }
-    public int Damage { 
+    public int Damage {
         get { return (int) temporalEffects.CalculateEffectResult(DAMAGE_MODIFIER_KEY, (double) damage, onExchange); }
     }
     public bool IsDead { get { return isDead; } }
@@ -92,7 +92,7 @@ public abstract class InBattleStatus : IInBattleStatus {
         }
         FireHealthUpdatedSignal();
     }
-    
+
     public void ResetHealth() {
         currentHealth = maxHealth;
         isDead = false;
@@ -121,10 +121,6 @@ public abstract class InBattleStatus : IInBattleStatus {
         return equippedComboMap;
     }
 
-    public void OnOneExchangeDone(Enum winner, int winningTile) {
-        ++onExchange;
-    }
-
     public void UpdateEquipWeapon(List<Weapon> equippedWeaponList) {
         equippedComboMap.Clear();
         ComboListFetcher fetcher = ComboListFetcher.GetInstance();
@@ -144,6 +140,10 @@ public abstract class InBattleStatus : IInBattleStatus {
     private void OnResetBattle() {
         ResetHealth();
         temporalEffects.ClearAllEffects();
+    }
+
+    private void OnOneExchangeDone(Enum winner, int winningTile) {
+        ++onExchange;
     }
 
     private class TemporalEffects {
