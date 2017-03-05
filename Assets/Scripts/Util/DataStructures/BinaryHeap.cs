@@ -53,7 +53,7 @@ public class BinaryHeap<T> where T : IComparable<T> {
         int leftChildIndex = checkingIndex * 2 + 1;
         int rightChildIndex = (checkingIndex + 1) * 2;
 
-        if (leftChildIndex >= m_heap.Count && rightChildIndex >= m_heap.Count) { 
+        if (leftChildIndex >= m_heap.Count && rightChildIndex >= m_heap.Count) {
             return;
         } else if (rightChildIndex >= m_heap.Count) {
             if (m_comparer.Compare(m_heap[leftChildIndex], m_heap[checkingIndex]) < 0) {
@@ -73,4 +73,15 @@ public class BinaryHeap<T> where T : IComparable<T> {
         m_heap[index1] = m_heap[index2];
         m_heap[index2] = temp;
     }
+
+#if DEVELOPMENT_BUILD
+    /* Development only methods. These methods are to be
+        used with unit-testing classes exclusively! Calling
+        these methods by anything other than unit-testing classes
+        are strictly undefined and will not be able to compile
+        when releasing a production build! */
+    public List<T> UnitTesting_GetHeap() {
+        return m_heap;
+    }
+#endif
 }
