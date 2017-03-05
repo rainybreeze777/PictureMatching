@@ -15,7 +15,7 @@ public class SkillReqAndArg : ScriptableObject {
     [SerializeField] private int earth;
 
     public int Metal() { return GetReqFromEElements(EElements.METAL); }
-    public int Wood() { return GetReqFromEElements(EElements.WOOD); } 
+    public int Wood() { return GetReqFromEElements(EElements.WOOD); }
     public int Water() { return GetReqFromEElements(EElements.WATER); }
     public int Fire() { return GetReqFromEElements(EElements.FIRE); }
     public int Earth() { return GetReqFromEElements(EElements.EARTH); }
@@ -25,7 +25,7 @@ public class SkillReqAndArg : ScriptableObject {
     }
 
     private List<object> arguments;
-    public ActionParams Arguments { 
+    public ActionParams Arguments {
         get {
             ActionParams ap = new ActionParams();
             foreach (object arg in arguments) {
@@ -43,7 +43,7 @@ public class SkillReqAndArg : ScriptableObject {
 
     public void SerializeArguments(JSONArray jsonArray) {
         if (jsonArray == null)
-            return; 
+            return;
 
         for (int i = 0; i < jsonArray.Count; ++i) {
             switch(jsonArray[i].Tag) {
@@ -85,4 +85,28 @@ public class SkillReqAndArg : ScriptableObject {
 
         initialized = true;
     }
+#if DEVELOPMENT_BUILD
+    /* Development only methods. These methods are to be
+        used with unit-testing classes exclusively! Calling
+        these methods by anything other than unit-testing classes
+        are strictly undefined and will not be able to compile
+        when releasing a production build! */
+    public void UnitTesting_SetElemReq(string elem, int amount) {
+        if (elem.Equals("metal")) {
+            metal = amount;
+        } else if (elem.Equals("wood")) {
+            wood = amount;
+        } else if (elem.Equals("water")) {
+            water = amount;
+        } else if (elem.Equals("fire")) {
+            fire = amount;
+        } else if (elem.Equals("earth")) {
+            earth = amount;
+        }
+    }
+
+    public bool UnitTesting_IsInitialized() {
+        return initialized;
+    }
+#endif
 }
