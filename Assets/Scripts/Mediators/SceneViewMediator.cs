@@ -24,7 +24,7 @@ public class SceneViewMediator : Mediator {
     [Inject]
     public IBiographer playerBiographer { get; set; }
 
-    private Dictionary<ESceneChange, TextAsset> scripts = new Dictionary<ESceneChange, TextAsset>();
+    private Dictionary<ESceneChange, string> scripts = new Dictionary<ESceneChange, string>();
 
     private int gameSceneId = -1;
 
@@ -33,8 +33,8 @@ public class SceneViewMediator : Mediator {
         // Hand-wire the mapping because Unity3D
         // is too dumb to serialize a dictionary
         // Always make sure the mappings are correct
-        scripts.Add(ESceneChange.STAGE1, Resources.Load("Dialogue/Stage1Text") as TextAsset);
-        scripts.Add(ESceneChange.STAGE2, Resources.Load("Dialogue/Stage2Text") as TextAsset);
+        scripts.Add(ESceneChange.STAGE1, "Scene1");
+        scripts.Add(ESceneChange.STAGE2, "Scene2");
 
         sceneChangeSignal.AddListener(OnSceneChange);
         sceneLoadFromSaveSignal.AddListener(OnDirectLoadScene);
@@ -49,9 +49,14 @@ public class SceneViewMediator : Mediator {
     private void OnSceneChange(ESceneChange changeTo) {
 
         if (changeTo != ESceneChange.VOID) {
+
+            Assert.IsTrue(playerBiographer.IsAtMap()); // Integrity check
+
+            sceneView.InitiateDialogue(scripts[changeTo]);
+
+            /*
             dialogueParser.ParseDialogue(scripts[changeTo]);
             gameSceneId = dialogueParser.GetGameSceneId();
-            Assert.IsTrue(playerBiographer.IsAtMap()); // Integrity check
 
             List<Dialogue> onEnterDialogues;
             if (playerBiographer.AlreadyVisitedFromCurrentPoint(gameSceneId)) {
@@ -62,6 +67,7 @@ public class SceneViewMediator : Mediator {
             sceneView.PrepareScene(dialogueParser.GetAllCharsInScene(), onEnterDialogues);
 
             playerBiographer.Visit(gameSceneId);
+            */
         }
     }
 
@@ -82,7 +88,7 @@ public class SceneViewMediator : Mediator {
         } else {
             // TODO: Stud for now
         }
-        sceneView.StartConversation(dialogueParser.GetRandomDialogueForChar(charId));
+        // sceneView.StartConversation(dialogueParser.GetRandomDialogueForChar(charId));
         playerBiographer.Visit(charId);
     }
 
@@ -93,10 +99,10 @@ public class SceneViewMediator : Mediator {
     private void OnDirectLoadScene(ESceneChange loadScene) {
         Assert.IsTrue(loadScene != ESceneChange.VOID);
 
-        dialogueParser.ParseDialogue(scripts[loadScene]);
-        gameSceneId = dialogueParser.GetGameSceneId();
+        // dialogueParser.ParseDialogue(scripts[loadScene]);
+        // gameSceneId = dialogueParser.GetGameSceneId();
         // For now there are no nested scenes implemented, so dialogue parser
         // won't be able to handle scenes that have nested scenes
-        sceneView.PrepareScene(dialogueParser.GetAllCharsInScene(), new List<Dialogue>());
+        // sceneView.PrepareScene(dialogueParser.GetAllCharsInScene(), new List<Dialogue>());
     }
 }

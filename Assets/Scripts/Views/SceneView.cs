@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using strange.extensions.signal.impl;
 using strange.extensions.mediation.impl;
+using Yarn.Unity;
 
 // Consider using this as dialogue system:
 // https://github.com/thesecretlab/YarnSpinner
@@ -15,12 +16,15 @@ public class SceneView : View {
 
     [SerializeField] private GameObject dialogueSystemPanel;
     [SerializeField] private GameObject interestPointsPanel;
+    [SerializeField] private DialogueRunner dialogueRunner;
 
     [SerializeField] private Button sceneButton;
     private Dictionary<Button, int> charButtons = new Dictionary<Button, int>();
 
     [Inject]
     public EnableSceneAfterVictorySignal enableSceneAfterVictorySignal { get; set; }
+    [Inject]
+    public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
 
     public Signal<int> dialogueTriggerCombatSignal = new Signal<int>();
     public Signal<int> charButtonClickedSignal = new Signal<int>();
@@ -37,9 +41,8 @@ public class SceneView : View {
             Character c = (Character) objs[i];
             charactersMap.Add(c.CharId, c);
         }
-    
-        dialogueSystemPanel.GetComponent<ClickDetector>().clickSignal.AddListener(OnPanelClicked);
-    
+
+
         // Init ToMapButton
         Button toMapButton = Instantiate(sceneButton, interestPointsPanel.transform) as Button;
         toMapButton.name = "ToMapButton";
@@ -48,8 +51,74 @@ public class SceneView : View {
 
         dialogueSystemPanel.SetActive(false);
         interestPointsPanel.SetActive(false);
+
+        DialogueSystemUI systemUI = dialogueSystemPanel.GetComponent<DialogueSystemUI>();
+        dialogueSystemPanel.GetComponent<ClickDetector>().clickSignal.AddListener(() => {
+            systemUI.ReadNextLine();
+        });
+        systemUI.AddLineObserver(DisplayLine);
+        systemUI.AddInteractTargetObserver(DisplayInteractTargets);
+        systemUI.AddOptionChosenObserver(OnOptionChosen);
+        systemUI.AddDialogueCompleteObserver(OnDialogueComplete);
+        systemUI.AddInitCombatObserver(OnTriggerCombat);
+
+        battleResultUpdatedSignal.AddListener(OnBattleResultUpdated);
     }
 
+    public void InitiateDialogue(string scriptName) {
+        dialogueRunner.StartDialogue(scriptName);
+    }
+
+    public void DisplayLine(int speakerId, string line) {
+
+        dialogueSystemPanel.SetActive(true);
+
+        charNameText.text = charactersMap[speakerId].DisplayName;
+        dialogueText.text = line;
+    }
+
+    public void DisplayInteractTargets(List<string> targets) {
+        // Clear the existing buttons in interestPointsPanel
+        foreach(KeyValuePair<Button, int> kvp in charButtons) {
+            Destroy(kvp.Key.gameObject);
+        }
+        charButtons.Clear();
+
+        // Build the interest points panel
+        int index = 0;
+        foreach(string targ in targets) {
+            Button newButton = Instantiate(sceneButton, interestPointsPanel.transform) as Button;
+            newButton.name = targ + "Button";
+            newButton.GetComponentInChildren<Text>().text = targ;
+            newButton.onClick.AddListener(() => {
+                dialogueSystemPanel.GetComponent<DialogueSystemUI>().SelectOption(charButtons[newButton]);
+            });
+            charButtons.Add(newButton, index);
+            index++;
+        }
+
+        interestPointsPanel.SetActive(true);
+    }
+
+    public void OnOptionChosen(int chosenOption) {
+        // parameter can be ignored
+        interestPointsPanel.SetActive(false);
+    }
+
+    public void OnDialogueComplete() {
+        dialogueSystemPanel.SetActive(false);
+        interestPointsPanel.SetActive(true);
+    }
+
+    public void OnTriggerCombat(int enemyId) {
+        dialogueTriggerCombatSignal.Dispatch(enemyId);
+    }
+
+    public void OnBattleResultUpdated(EBattleResult result) {
+        dialogueSystemPanel.GetComponent<DialogueSystemUI>().SetBattleComplete();
+    }
+
+    /*
     public void PrepareScene(List<int> allCharsInScene, List<Dialogue> onEnterDialogues) {
         // Clear the existing buttons in interestPointsPanel
         foreach(KeyValuePair<Button, int> kvp in charButtons) {
@@ -92,7 +161,7 @@ public class SceneView : View {
 
         if (readingDialogue == null || readingDialogue.Count == 0) {
             return;
-        } 
+        }
         if (readingDialogue[lineNumber].IsCombatSignal()) {
             dialogueTriggerCombatSignal.Dispatch(readingDialogue[lineNumber].GetCombatEnemyId());
             if (readingDialogue[lineNumber].WillEnableSceneAfterVictory()) {
@@ -119,4 +188,5 @@ public class SceneView : View {
     public void OnPanelClicked() {
         ReadNextLine();
     }
+    */
 }

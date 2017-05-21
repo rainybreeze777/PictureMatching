@@ -71,11 +71,14 @@ public abstract class InBattleStatus : IInBattleStatus {
 
     [PostConstruct]
     public void PostConstruct() {
-        // This ran once check is necessary, as the enemy instance of this class
-        // will be binded to two different enemy interfaces, thus causing
-        // this PostConstruct function to be called twice for enemy instance.
-        // If the check is not there, everything will be binded twice
-        // and stuff gets messed up
+        /*
+        This ran once check is necessary, as the enemy instance of this class
+        will be binded to two different enemy interfaces, thus causing
+        this PostConstruct function to be called twice for enemy instance
+        If the check is not there, everything will be binded twice
+        and stuff gets messed up
+        */
+        
         if (!postConstructRan) {
             postConstructRan = true;
             resetBattleSignal.AddListener(OnResetBattle);

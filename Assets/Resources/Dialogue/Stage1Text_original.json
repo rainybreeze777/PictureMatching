@@ -1,0 +1,95 @@
+{
+    "gameScene" : 1,
+    "dialogue" : {
+        "onEnter" : [
+            {
+                "characterId" : 1,
+                "text" : {
+                    "en_ca" : "Where am I?",
+                    "zh_cn" : "我在哪儿？"
+                }
+            },
+            {
+                "characterId" : 10,
+                "text" : {
+                    "en_ca" : "Who the heck are you?! Get out!",
+                    "zh_cn" : "你丫谁？快滚！"
+                }
+            },
+            {
+                "characterId" : 1,
+                "text" : {
+                    "en_ca" : "Fight me then!",
+                    "zh_cn" : "打我呀~"
+                }
+            },
+            {
+                "characterId" : 10,
+                "text" : {
+                    "en_ca" : "You are so dead!",
+                    "zh_cn" : "小子活腻了!"
+                }
+            },
+            {
+                "combatEnemyId" : 1
+            }
+        ],
+        "random" : [
+            {
+                "characterId" : 10,
+                "texts" : [
+                    {
+                        "en_ca" : "You again?",
+                        "zh_cn" : "怎么又是你?"
+                    },
+                    {
+                        "en_ca" : "Please leave me alone...",
+                        "zh_cn" : "饶了我吧……"
+                    },
+                    {
+                        "en_ca" : "Ugh... Fine.",
+                        "zh_cn" : "哎……打吧。"
+                    }
+                ],
+                "combatEnemyId" : 1
+            },
+            {
+                "characterId" : 11,
+                "texts" : [
+                    {
+                        "en_ca" : "Hu! Ha! Hey!",
+                        "zh_cn" : "呼！哈！嘿！"
+                    },
+                    {
+                        "en_ca" : "You want to practice with me? Bring it on!",
+                        "zh_cn" : "要跟我练手？出招吧！"
+                    },
+                    {
+                        "en_ca" : "I've been practicing for quite a while now...",
+                        "zh_cn" : "我练了有一阵子了……"
+                    },
+                    {
+                        "en_ca" : "Was about to rest a bit but sure.",
+                        "zh_cn" : "本来打算歇下的，打完再说吧。"
+                    }
+                ],
+                "combatEnemyId" : 2
+            },
+            {
+                "characterId" : 101,
+                "texts" : [
+                    {
+                        "en_ca" : "Here to learn the celestial art?",
+                        "zh_cn" : "来讨教仙术了吗？"
+                    },
+                    {
+                        "en_ca" : "The five elements destroys and produces each other.",
+                        "zh_cn" : "五行元素相生相克。"
+                    }
+                ],
+                "combatEnemyId" : 3,
+                "enableSceneIdAfterVictory" : 2
+            }
+        ]
+    }
+}

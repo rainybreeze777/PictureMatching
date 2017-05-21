@@ -163,7 +163,7 @@ namespace Yarn.Unity
 
 					var commandResult = step as Yarn.Dialogue.CommandResult;
 
-					if (DispatchCommand(commandResult.command.text) == true) {
+					if (automaticCommands && DispatchCommand(commandResult.command.text) == true) {
 						// command was dispatched
 					} else {
 						yield return StartCoroutine (this.dialogueUI.RunCommand (commandResult.command));
@@ -218,7 +218,7 @@ namespace Yarn.Unity
 			// We can dispatch this command if:
 			// 1. it has at least 2 words
 			// 2. the second word is the name of an object
-			// 3. that object has components that have methods 
+			// 3. that object has components that have methods
 			//    with the YarnCommand attribute that have the
 			//    correct commandString set
 
@@ -286,7 +286,7 @@ namespace Yarn.Unity
 
 						}
 					}
-				} 
+				}
 			}
 
 			// Warn if we found multiple things that could respond
