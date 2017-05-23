@@ -2,20 +2,20 @@
 	{
 		"title": "Scene1",
 		"tags": "",
-		"body": "[[新门徒|Scene1.newPupil]]\n[[武师|Scene1.fighter]]",
+		"body": "<<if visited(\"Scene1\") is false>>\n1:我在哪儿？\n10:你丫谁？快滚！\n1:打我呀~\n10:小子活腻了！\n<<set $scene2_available to true>>\n<<init battle 1>>\n10:大……大爷，我错了，饶了我吧我再也不敢了！\n1:就这点儿伎俩还敢出来丢人现眼？再练个十年吧！\n<<endif>>\n[[Scene1.locations]]",
 		"position": {
-			"x": 471,
-			"y": 99
+			"x": 410,
+			"y": -11
 		},
 		"colorID": 0
 	},
 	{
 		"title": "Scene1.newPupil",
 		"tags": "",
-		"body": "1:我在哪儿？\n10:你丫谁？快滚！\n1:打我呀~\n10:小子活腻了！\n<<init battle 1>>\n10:大……大爷，我错了，饶了我吧我再也不敢了！\n1:就这点儿伎俩还敢出来丢人现眼？再练个十年吧！",
+		"body": "1:来陪我切磋切磋。\n10:大爷我真的再也不敢了，饶了我吧！\n1:少废话。\n<<init battle 1>>",
 		"position": {
-			"x": 266,
-			"y": 451
+			"x": 261,
+			"y": 620
 		},
 		"colorID": 0
 	},
@@ -24,8 +24,18 @@
 		"tags": "",
 		"body": "11:呼！哈！嘿！",
 		"position": {
-			"x": 519,
-			"y": 450
+			"x": 537,
+			"y": 626
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Scene1.locations",
+		"tags": "",
+		"body": "[[新门徒|Scene1.newPupil]]\n[[武师|Scene1.fighter]]",
+		"position": {
+			"x": 407,
+			"y": 295
 		},
 		"colorID": 0
 	}

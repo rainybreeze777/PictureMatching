@@ -34,6 +34,9 @@ public class SceneView : View {
     private List<Dialogue> readingDialogue;
     private int lineNumber = 0;
 
+    private string YARN_LOCATION_NODE_SUFFIX = ".locations";
+    private string previousScriptName;
+
     internal void Init() {
 
         object[] objs = Resources.LoadAll("Characters", typeof(Character));
@@ -59,13 +62,15 @@ public class SceneView : View {
         systemUI.AddLineObserver(DisplayLine);
         systemUI.AddInteractTargetObserver(DisplayInteractTargets);
         systemUI.AddOptionChosenObserver(OnOptionChosen);
-        systemUI.AddDialogueCompleteObserver(OnDialogueComplete);
+        systemUI.AddConvoCompleteObserver(OnConvoComplete);
         systemUI.AddInitCombatObserver(OnTriggerCombat);
+        systemUI.AddDialogueCompleteObserver(OnDialogueComplete);
 
         battleResultUpdatedSignal.AddListener(OnBattleResultUpdated);
     }
 
     public void InitiateDialogue(string scriptName) {
+        previousScriptName = scriptName;
         dialogueRunner.StartDialogue(scriptName);
     }
 
@@ -105,9 +110,8 @@ public class SceneView : View {
         interestPointsPanel.SetActive(false);
     }
 
-    public void OnDialogueComplete() {
+    public void OnConvoComplete(string nextNode) {
         dialogueSystemPanel.SetActive(false);
-        interestPointsPanel.SetActive(true);
     }
 
     public void OnTriggerCombat(int enemyId) {
@@ -116,6 +120,10 @@ public class SceneView : View {
 
     public void OnBattleResultUpdated(EBattleResult result) {
         dialogueSystemPanel.GetComponent<DialogueSystemUI>().SetBattleComplete();
+    }
+
+    public void OnDialogueComplete() {
+        dialogueRunner.StartDialogue(previousScriptName + YARN_LOCATION_NODE_SUFFIX);
     }
 
     /*

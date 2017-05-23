@@ -12,13 +12,15 @@ public class DialogueSystemUI : Yarn.Unity.DialogueUIBehaviour {
     public delegate void LineObserver(int speakerId, string line);
     public delegate void InteractTargetObserver(List<string> targets);
     public delegate void OptionChosenObserver(int chosenOptionIndex);
-    public delegate void DialogueCompleteObserver();
+    public delegate void ConvoCompleteObserver(string nextNode);
     public delegate void InitCombatObserver(int enemyId);
+    public delegate void DialogueCompleteObserver();
     private List<LineObserver> lineObs = new List<LineObserver>();
     private List<InteractTargetObserver> intTarObs = new List<InteractTargetObserver>();
     private List<OptionChosenObserver> optObs = new List<OptionChosenObserver>();
-    private List<DialogueCompleteObserver> comptObs = new List<DialogueCompleteObserver>();
+    private List<ConvoCompleteObserver> comptObs = new List<ConvoCompleteObserver>();
     private List<InitCombatObserver> combatObs = new List<InitCombatObserver>();
+    private List<DialogueCompleteObserver> dialComptOb = new List<DialogueCompleteObserver>();
 
     private bool readNextLine = false;
     private bool battleComplete = false;
@@ -35,12 +37,16 @@ public class DialogueSystemUI : Yarn.Unity.DialogueUIBehaviour {
         optObs.Add(ob);
     }
 
-    public void AddDialogueCompleteObserver(DialogueCompleteObserver ob) {
+    public void AddConvoCompleteObserver(ConvoCompleteObserver ob) {
         comptObs.Add(ob);
     }
 
     public void AddInitCombatObserver(InitCombatObserver ob) {
         combatObs.Add(ob);
+    }
+
+    public void AddDialogueCompleteObserver(DialogueCompleteObserver ob) {
+        dialComptOb.Add(ob);
     }
 
     public void ReadNextLine() {
@@ -130,12 +136,15 @@ public class DialogueSystemUI : Yarn.Unity.DialogueUIBehaviour {
         }
     }
 
-    public override IEnumerator DialogueStarted() {
+    public override IEnumerator NodeComplete(string nextNode) {
+        foreach(ConvoCompleteObserver ob in comptObs) {
+            ob(nextNode);
+        }
         yield break;
     }
 
     public override IEnumerator DialogueComplete() {
-        foreach(DialogueCompleteObserver ob in comptObs) {
+        foreach(DialogueCompleteObserver ob in dialComptOb) {
             ob();
         }
         yield break;
