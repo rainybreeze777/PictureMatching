@@ -4306,13 +4306,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ea26c9c7bdf853418201563e47c32b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogueContainer: {fileID: 664127737}
-  interestPointsPanel: {fileID: 2079613010}
-  sceneView: {fileID: 1782255220}
-  dialogueSystemClickDetector: {fileID: 664127740}
-  dialogueText: {fileID: 417565150}
-  sceneButton: {fileID: 114000012584279176, guid: 24fadb2602e427042b2af6161df77660,
-    type: 2}
 --- !u!1 &674174497
 GameObject:
   m_ObjectHideFlags: 0
