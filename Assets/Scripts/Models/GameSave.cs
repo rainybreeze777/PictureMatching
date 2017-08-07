@@ -24,15 +24,22 @@ public class GameSave {
     public EGameFlowState GameState { get { return state; } }
     [SerializeField] private ESceneChange scene = ESceneChange.VOID; // default to void scene
     public ESceneChange GameScene { get { return scene; } }
-    [SerializeField] private PlayerBiographer playerBiographer;
-    public PlayerBiographer PlayerBio { get { return playerBiographer; } }
+    [SerializeField] private List<string> progressVarKeys;
+    public List<string> ProgressVarKeys { get { return progressVarKeys; } }
+    [SerializeField] private List<string> progressVarValues;
+    public List<string> ProgressVarValues { get { return progressVarValues; } }
+    [SerializeField] private List<Yarn.Value.Type> progressVarTypes;
+    public List<Yarn.Value.Type> ProgressVarTypes { get { return progressVarTypes; } }
+    [SerializeField] private List<string> visitedNodes;
+    public List<string> VisitedNodes { get { return visitedNodes; } }
+
 
     private static string DATE_FORMAT = "yyyy/MM/dd";
     public static string GetDateFormat() { return DATE_FORMAT; }
 
     public GameSave(
         IPlayerStatus status
-        , IBiographer biographer
+        , IProgressData progressData
         , int index
         , EGameFlowState gameState
         , ESceneChange gameScene) {
@@ -75,6 +82,9 @@ public class GameSave {
             equippedWeapons.Add(w.ID);
         }
 
-        playerBiographer = (PlayerBiographer) biographer;
+        progressVarKeys = progressData.GetProgressKeys();
+        progressVarValues = progressData.GetProgressValues();
+        progressVarTypes = progressData.GetProgressValueTypes();
+        visitedNodes = progressData.GetVisitedNodes();
     }
 }

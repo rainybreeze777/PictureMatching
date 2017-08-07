@@ -3,31 +3,17 @@ using System;
 using System.Collections.Generic;
 using Yarn.Unity;
 
-[System.Serializable]
-public class ProgressData {
-    [SerializeField]
-    private List<string> keys = new List<string>();
-    [SerializeField]
-    private List<string> values = new List<string>();
-    [SerializeField]
-    private List<Yarn.Value.Type> types = new List<Yarn.Value.Type>();
+public class ProgressData : IProgressData {
 
-    public ProgressData(Dictionary<string, Yarn.Value> dict) {
-        SerializeData(dict);
-    }
+    private Dictionary<string, Yarn.Value> yarnVariables = new Dictionary<string, Yarn.Value>();
+    private HashSet<string> visitedNodes = new HashSet<string>();
 
-    public void SerializeData(Dictionary<string, Yarn.Value> dict) {
-        Clear();
-        if (dict == null) { return; }
-        foreach(var pair in dict) {
-            keys.Add(pair.Key);
-            values.Add(pair.Value.AsString);
-            types.Add(pair.Value.type);
-        }
-    }
+    public void LoadFromGameSave(GameSave save) {
 
-    public Dictionary<string, Yarn.Value> DeserializeData() {
-        Dictionary<string, Yarn.Value> dict = new Dictionary<string, Yarn.Value>();
+        List<string> keys = save.ProgressVarKeys;
+        List<string> values = save.ProgressVarValues;
+        List<Yarn.Value.Type> types = save.ProgressVarTypes;
+
         for (int i = 0; i < keys.Count; ++i) {
             object value;
 
@@ -60,19 +46,48 @@ public class ProgressData {
             }
 
             try {
-                dict.Add(keys[i], new Yarn.Value(value));
+                yarnVariables.Add(keys[i], new Yarn.Value(value));
             } catch (ArgumentException e) {
                 Debug.LogErrorFormat("Attempting to add duplicate key {0} with value {1} in " +
                     "ProgresData deserialization! The save file may be corrupt!", keys[i], values[i]);
             }
         }
 
-        return dict;
+        visitedNodes = new HashSet<string>(save.VisitedNodes);
     }
 
-    public void Clear() {
-        keys.Clear();
-        values.Clear();
-        types.Clear();
+    public List<string> GetProgressKeys() {
+        return new List<string>(yarnVariables.Keys);
+    }
+
+    public List<string> GetProgressValues() {
+        List<Yarn.Value> values = new List<Yarn.Value>(yarnVariables.Values);
+        List<string> ret = new List<string>(values.Count);
+        foreach (var val in values) {
+            ret.Add(val.AsString);
+        }
+
+        return ret;
+    }
+
+    public List<Yarn.Value.Type> GetProgressValueTypes() {
+        List<Yarn.Value> values = new List<Yarn.Value>(yarnVariables.Values);
+        List<Yarn.Value.Type> ret = new List<Yarn.Value.Type>(values.Count);
+        foreach (var val in values) {
+            ret.Add(val.type);
+        }
+        return ret;
+    }
+
+    public List<string> GetVisitedNodes() {
+        return new List<string>(visitedNodes);
+    }
+
+    public Dictionary<string, Yarn.Value> Dict { get { return yarnVariables; } }
+
+    public bool VisitedNode(string yarnNodeName) {
+        bool alreadyVisited = visitedNodes.Contains(yarnNodeName);
+        visitedNodes.Add(yarnNodeName);
+        return alreadyVisited;
     }
 }

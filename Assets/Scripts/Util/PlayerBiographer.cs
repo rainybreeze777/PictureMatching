@@ -37,9 +37,9 @@ public class PlayerBiographer : IBiographer {
     }
 
     public void InitFromGameSave(GameSave save) {
-        PlayerBiographer saveBiographer = save.PlayerBio;
-        playerTrail = saveBiographer.playerTrail;
-        availableSceneIds = saveBiographer.availableSceneIds;
+        // PlayerBiographer saveBiographer = save.PlayerBio;
+        // playerTrail = saveBiographer.playerTrail;
+        // availableSceneIds = saveBiographer.availableSceneIds;
     }
 
     public bool IsAtMap() {
@@ -77,7 +77,7 @@ public class PlayerBiographer : IBiographer {
         // The first level follows a different rule, as specified in PlayerBiography
         // In nested PointNode, a < 0 id indicates a nested scene id, and > 0
         // id corresponds to a characterId in the game
-        [SerializeField] private int id; 
+        [SerializeField] private int id;
         public int Id { get { return id; } }
         [SerializeField] private SortedList<int, PointNode> nestedPoints = null;
 
@@ -101,10 +101,10 @@ public class PlayerBiographer : IBiographer {
             }
 
             if (!nestedPoints.ContainsKey(id)) {
-                PointNode newPointNode = new PointNode(id); 
+                PointNode newPointNode = new PointNode(id);
                 nestedPoints.Add(id, newPointNode);
                 return newPointNode;
-            } 
+            }
 
             // Has id as child already, return existing child node
             return nestedPoints[id];

@@ -2,7 +2,7 @@
 	{
 		"title": "Scene1",
 		"tags": "",
-		"body": "<<if visited(\"Scene1\") is false>>\n1:我在哪儿？\n10:你丫谁？快滚！\n1:打我呀~\n10:小子活腻了！\n<<set $scene2_available to true>>\n<<init battle 1>>\n10:大……大爷，我错了，饶了我吧我再也不敢了！\n1:就这点儿伎俩还敢出来丢人现眼？再练个十年吧！\n<<endif>>\n[[Scene1.locations]]",
+		"body": "<<if visitedNode(\"Scene1\") is false>>\n1:我在哪儿？\n10:你丫谁？快滚！\n1:打我呀~\n10:小子活腻了！\n<<set $scene2_available to true>>\n<<init battle 1>>\n10:大……大爷，我错了，饶了我吧我再也不敢了！\n1:就这点儿伎俩还敢出来丢人现眼？再练个十年吧！\n<<endif>>\n[[Scene1.locations]]",
 		"position": {
 			"x": 410,
 			"y": -11

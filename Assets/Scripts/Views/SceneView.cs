@@ -29,9 +29,8 @@ public class SceneView : View {
     public Signal<int> dialogueTriggerCombatSignal = new Signal<int>();
     public Signal<int> charButtonClickedSignal = new Signal<int>();
     public Signal toMapButtonClickedSignal = new Signal();
-    public Signal endConversationSignal = new Signal();
+    // public Signal endConversationSignal = new Signal();
 
-    private List<Dialogue> readingDialogue;
     private int lineNumber = 0;
 
     private string YARN_LOCATION_NODE_SUFFIX = ".locations";
@@ -125,76 +124,4 @@ public class SceneView : View {
     public void OnDialogueComplete() {
         dialogueRunner.StartDialogue(previousScriptName + YARN_LOCATION_NODE_SUFFIX);
     }
-
-    /*
-    public void PrepareScene(List<int> allCharsInScene, List<Dialogue> onEnterDialogues) {
-        // Clear the existing buttons in interestPointsPanel
-        foreach(KeyValuePair<Button, int> kvp in charButtons) {
-            Destroy(kvp.Key.gameObject);
-        }
-        charButtons.Clear();
-
-        // Build the interest points panel
-        foreach(int charId in allCharsInScene) {
-            Button newButton = Instantiate(sceneButton, interestPointsPanel.transform) as Button;
-            newButton.name = charId + "Button";
-            newButton.GetComponentInChildren<Text>().text = charactersMap[charId].DisplayName;
-            newButton.onClick.AddListener(() => {
-                charButtonClickedSignal.Dispatch(charButtons[newButton]);
-            });
-            charButtons.Add(newButton, charId);
-        }
-
-        // Init on enter dialogues, if they exist.
-        if (onEnterDialogues.Count > 0) {
-        // if (false) {
-            readingDialogue = onEnterDialogues;
-            lineNumber = 0;
-            dialogueSystemPanel.SetActive(true);
-            ReadNextLine();
-        } else {
-            interestPointsPanel.SetActive(true);
-        }
-    }
-
-    public void StartConversation(List<Dialogue> charRandomDialogue) {
-        readingDialogue = charRandomDialogue;
-        lineNumber = 0;
-        dialogueSystemPanel.SetActive(true);
-        interestPointsPanel.SetActive(false);
-        ReadNextLine();
-    }
-
-    private void ReadNextLine() {
-
-        if (readingDialogue == null || readingDialogue.Count == 0) {
-            return;
-        }
-        if (readingDialogue[lineNumber].IsCombatSignal()) {
-            dialogueTriggerCombatSignal.Dispatch(readingDialogue[lineNumber].GetCombatEnemyId());
-            if (readingDialogue[lineNumber].WillEnableSceneAfterVictory()) {
-                enableSceneAfterVictorySignal.Dispatch(readingDialogue[lineNumber].GetEnableSceneIdAfterVictory());
-            }
-            ++lineNumber;
-        }
-        if (lineNumber >= readingDialogue.Count) {
-            readingDialogue.Clear();
-            readingDialogue = null;
-            lineNumber = 0;
-            dialogueSystemPanel.SetActive(false);
-            interestPointsPanel.SetActive(true);
-            endConversationSignal.Dispatch();
-            return;
-        }
-
-        int charId = readingDialogue[lineNumber].GetCharId();
-        charNameText.text = charactersMap[charId].DisplayName;
-        dialogueText.text = readingDialogue[lineNumber].GetLine();
-        ++lineNumber;
-    }
-
-    public void OnPanelClicked() {
-        ReadNextLine();
-    }
-    */
 }

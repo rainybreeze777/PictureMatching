@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Formatters.Binary; 
+using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
 public class SaverLoader : ISaverLoader {
@@ -11,18 +11,18 @@ public class SaverLoader : ISaverLoader {
     [Inject]
     public IGameStateMachine gameStateMachine { get; set; }
     [Inject]
-    public IBiographer playerBiographer { get; set; }
+    public IProgressData progressData { get; set; }
 
     [Inject]
     public GameSaveFileOpSignal gameSaveFileOpSignal { get; set; }
     [Inject]
-    public SceneLoadFromSaveSignal sceneLoadFromSaveSignal { get; set; }
+    public SceneChangeSignal sceneChangeSignal { get; set; }
     [Inject]
     public GameFlowStateChangeSignal gameFlowStateChangeSignal { get; set; }
     [Inject]
     public AvailableScenesUpdateSignal availableScenesUpdateSignal { get; set; }
 
-    private const int SLOTS_COUNT = 20; 
+    private const int SLOTS_COUNT = 20;
     public int SlotsCount { get { return SLOTS_COUNT; } }
 
     private string savePath;
@@ -38,7 +38,7 @@ public class SaverLoader : ISaverLoader {
 
         System.IO.Directory.CreateDirectory(savePath);
 
-        GameSave save = new GameSave(playerStatus, playerBiographer, saveSlotIndex, gameStateMachine.CurrentState, gameStateMachine.CurrentScene);
+        GameSave save = new GameSave(playerStatus, progressData, saveSlotIndex, gameStateMachine.CurrentState, gameStateMachine.CurrentScene);
 
         BinaryFormatter bf = new BinaryFormatter();
         FileStream saveFile = File.Create(savePath + "saveFile" + saveSlotIndex + ".sav");
@@ -62,11 +62,12 @@ public class SaverLoader : ISaverLoader {
         }
 
         playerStatus.InitFromGameSave(saveToLoad);
-        playerBiographer.InitFromGameSave(saveToLoad);
+        // playerBiographer.InitFromGameSave(saveToLoad);
+        progressData.LoadFromGameSave(saveToLoad);
         availableScenesUpdateSignal.Dispatch(-1, EAvailScenesUpdateType.BATCH_UPDATE);
         gameFlowStateChangeSignal.Dispatch(saveToLoad.GameState);
         if (saveToLoad.GameState == EGameFlowState.SCENE) {
-            sceneLoadFromSaveSignal.Dispatch(saveToLoad.GameScene);
+            sceneChangeSignal.Dispatch(saveToLoad.GameScene);
         }
     }
 

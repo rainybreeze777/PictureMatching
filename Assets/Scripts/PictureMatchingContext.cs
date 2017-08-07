@@ -25,7 +25,7 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<ICommandBinder>().To<SignalCommandBinder>().ToSingleton();
     }
 
-    // Override Start so that we can fire the StartSignal 
+    // Override Start so that we can fire the StartSignal
     override public IContext Start()
     {
         base.Start();
@@ -66,11 +66,11 @@ public class PictureMatchingContext : MVCSContext {
         injectionBinder.Bind<IEnemyModel>().To<EnemyModel>().ToSingleton();
         injectionBinder.Bind<IBattleResolver>().To<BattleResolver>().ToSingleton();
         injectionBinder.Bind<IPlayerStatus>().To<PlayerStatus>().ToSingleton();
-        injectionBinder.Bind<IDialogueParser>().To<DialogueParser>();
         injectionBinder.Bind<ISmeltery>().To<Smeltery>().ToSingleton();
         injectionBinder.Bind<IGameStateMachine>().To<GameStateMachine>().ToSingleton();
         injectionBinder.Bind<ISaverLoader>().To<SaverLoader>().ToSingleton();
         injectionBinder.Bind<IBiographer>().To<PlayerBiographer>().ToSingleton();
+        injectionBinder.Bind<IProgressData>().To<ProgressData>().ToSingleton();
         // Instantiating Signals that are triggered manually
         injectionBinder.Bind<BattleResultUpdatedSignal>().ToSingleton();
         injectionBinder.Bind<ComboPossibleSignal>().ToSingleton();
@@ -107,6 +107,6 @@ public class PictureMatchingContext : MVCSContext {
         // Manually Instantiate instances and inject
         injectionBinder.GetInstance<ISkillInitiator>().InjectInitialize(injectionBinder);
         // Second Round injection for special circumstances
-        injectionBinder.Bind<IInBattleEnemyStatus>().ToValue(injectionBinder.GetInstance<IInBattleStatus>(EInBattleStatusType.ENEMY)).ToSingleton();    
+        injectionBinder.Bind<IInBattleEnemyStatus>().ToValue(injectionBinder.GetInstance<IInBattleStatus>(EInBattleStatusType.ENEMY)).ToSingleton();
     }
 }
