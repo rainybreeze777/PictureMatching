@@ -22,8 +22,6 @@ public class SceneView : View {
     private Dictionary<Button, int> charButtons = new Dictionary<Button, int>();
 
     [Inject]
-    public EnableSceneAfterVictorySignal enableSceneAfterVictorySignal { get; set; }
-    [Inject]
     public BattleResultUpdatedSignal battleResultUpdatedSignal { get; set; }
 
     public Signal<int> dialogueTriggerCombatSignal = new Signal<int>();

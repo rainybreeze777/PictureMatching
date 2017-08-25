@@ -14,7 +14,7 @@ public class PlayerStatus : IPlayerStatus {
     public int FireEssence { get { return essence[3]; } }
     public int EarthEssence { get { return essence[4]; } }
 
-    private int health = 500;
+    private int health = 50;
     private int damage = 10;
 
     private List<Weapon> weaponsInPossession = new List<Weapon>();
@@ -76,11 +76,11 @@ public class PlayerStatus : IPlayerStatus {
         Assert.IsTrue(spentEssence.Count == 5);
 
         for (int i = 0; i < spentEssence.Count; ++i) {
-            if (essence[i] < spentEssence[i]) { 
+            if (essence[i] < spentEssence[i]) {
                 // Insufficient Essence
                 weaponsInfoUpdatedSignal.Dispatch(EWeaponPossessionStatus.SMELT_INSUFFICIENT_ESSENCE, null);
 
-                return false; 
+                return false;
             }
         }
 

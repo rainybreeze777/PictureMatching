@@ -11,4 +11,5 @@ public interface IProgressData {
     List<string> GetVisitedNodes();
     Dictionary<string, Yarn.Value> Dict { get; }
     bool VisitedNode(string yarnNodeName);
+    void SetValue(string variableName, object value);
 }

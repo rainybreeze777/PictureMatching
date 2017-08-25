@@ -83,6 +83,10 @@ public class ProgressData : IProgressData {
         return new List<string>(visitedNodes);
     }
 
+    public void SetValue(string variableName, object value) {
+        Dict[variableName] = new Yarn.Value(value);
+    }
+
     public Dictionary<string, Yarn.Value> Dict { get { return yarnVariables; } }
 
     public bool VisitedNode(string yarnNodeName) {

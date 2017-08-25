@@ -14,7 +14,7 @@ public class BattleResolver : IBattleResolver {
     [Inject(EInBattleStatusType.ENEMY)]
     public IInBattleStatus enemyStatus { get; set; }
     [Inject]
-    public IBiographer playerBiographer { get; set; }
+    public IProgressData progressData { get; set; }
 
     // Injected Signals
     [Inject]
@@ -23,14 +23,10 @@ public class BattleResolver : IBattleResolver {
     public OneExchangeDoneSignal oneExchangeDoneSignal { get; set; }
     [Inject]
     public PlayerEssenceGainedSignal playerEssenceGainedSignal { get; set; }
-    [Inject]
-    public EnableSceneAfterVictorySignal enableSceneAfterVictorySignal { get; set; }
-    [Inject]
-    public AvailableScenesUpdateSignal availableScenesUpdateSignal { get; set; }
 
     private int resolvingIndex = 0;
     private int afterVictoryEnableSceneId;
-    private bool shouldEnable = false;
+    private string wasVictoriousKey = "$was_victorious";
 
     public void ResolveNextMove() {
 
@@ -39,15 +35,12 @@ public class BattleResolver : IBattleResolver {
         if (playerStatus.IsDead) {
             playerEssenceGainedSignal.Dispatch(new List<int>() {0, 0, 0, 0, 0});
             battleResultUpdatedSignal.Dispatch(EBattleResult.LOST);
+            progressData.SetValue(wasVictoriousKey, false);
         } else if (enemyStatus.IsDead) {
             IInBattleEnemyStatus inBattleEnemyStatus = enemyStatus as IInBattleEnemyStatus;
             playerEssenceGainedSignal.Dispatch(inBattleEnemyStatus.GetRewardEssence());
             battleResultUpdatedSignal.Dispatch(EBattleResult.WON);
-            if (shouldEnable) {
-                playerBiographer.MakeSceneAvailable(afterVictoryEnableSceneId);
-                availableScenesUpdateSignal.Dispatch(afterVictoryEnableSceneId, EAvailScenesUpdateType.ADD);
-                shouldEnable = false;
-            }
+            progressData.SetValue(wasVictoriousKey, true);
         }
 
         if (playerStatus.IsDead || enemyStatus.IsDead) {
@@ -131,16 +124,6 @@ public class BattleResolver : IBattleResolver {
         }
 
         return forecastResult;
-    }
-
-    [PostConstruct]
-    public void PostConstruct() {
-        enableSceneAfterVictorySignal.AddListener(OnEnableSceneAfterVictory);
-    }
-
-    private void OnEnableSceneAfterVictory(int gameSceneId) {
-        afterVictoryEnableSceneId = gameSceneId;
-        shouldEnable = true;
     }
 
     private void EnemyPonderUseSkill() {
