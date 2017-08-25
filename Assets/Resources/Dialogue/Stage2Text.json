@@ -1,0 +1,32 @@
+[
+	{
+		"title": "Scene2",
+		"tags": "",
+		"body": "[[Scene2.locations]]",
+		"position": {
+			"x": 527,
+			"y": 61
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Scene2.locations",
+		"tags": "",
+		"body": "[[师傅|Scene2.master]]",
+		"position": {
+			"x": 522,
+			"y": 321
+		},
+		"colorID": 0
+	},
+	{
+		"title": "Scene2.master",
+		"tags": "",
+		"body": "101:你也来这里了。",
+		"position": {
+			"x": 342,
+			"y": 633
+		},
+		"colorID": 0
+	}
+]

@@ -9,7 +9,9 @@ public interface IProgressData {
     List<string> GetProgressValues();
     List<Yarn.Value.Type> GetProgressValueTypes();
     List<string> GetVisitedNodes();
+    List<ESceneChange> GetAvailableScenes();
     Dictionary<string, Yarn.Value> Dict { get; }
     bool VisitedNode(string yarnNodeName);
     void SetValue(string variableName, object value);
+    void SetSceneAvailability(int sceneId, bool isAvailable);
 }

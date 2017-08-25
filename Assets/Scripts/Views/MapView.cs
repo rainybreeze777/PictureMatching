@@ -11,14 +11,11 @@ public class MapView : View {
     [SerializeField] private Button stage2Button;
     [SerializeField] private Button swapToStatusButton;
 
-    private Dictionary<int, Button> sceneIdToMapButtonDict = new Dictionary<int, Button>();
-    private Dictionary<Button, int> mapButtonToSceneIdDict = new Dictionary<Button, int>();
+    private Dictionary<ESceneChange, Button> eSceneChangeToMapButtonDict = new Dictionary<ESceneChange, Button>();
     private Dictionary<Button, ESceneChange> mapButtonToESceneChangeDict = new Dictionary<Button, ESceneChange>();
 
     public Signal swapToStatusButtonClickedSignal = new Signal();
     public Signal<ESceneChange> mapButtonClickedSignal = new Signal<ESceneChange>();
-
-    private int INITIAL_AVAIL_SCENE_ID = 1;
 
     internal void Init() {
 
@@ -26,29 +23,26 @@ public class MapView : View {
             swapToStatusButtonClickedSignal.Dispatch();
         });
 
-        InitButtonDict(stage1Button, 1, ESceneChange.STAGE1);
-        InitButtonDict(stage2Button, 2, ESceneChange.STAGE2);
-
-        sceneIdToMapButtonDict[INITIAL_AVAIL_SCENE_ID].gameObject.SetActive(true);
+        InitButtonDict(stage1Button, ESceneChange.STAGE1);
+        InitButtonDict(stage2Button, ESceneChange.STAGE2);
     }
 
-    public void ToggleSceneAvailability(int gameSceneId, bool isAvailable) {
-        sceneIdToMapButtonDict[gameSceneId].gameObject.SetActive(isAvailable);
+    public void ToggleSceneAvailability(ESceneChange sceneChange, bool isAvailable) {
+        eSceneChangeToMapButtonDict[sceneChange].gameObject.SetActive(isAvailable);
     }
 
-    public void ReconfigureAllScenesAvailability(List<int> availableGameSceneIds) {
-        foreach(KeyValuePair<int, Button> kvp in sceneIdToMapButtonDict) {
+    public void ReconfigureAllScenesAvailability(List<ESceneChange> availableGameScenes) {
+        foreach(KeyValuePair<ESceneChange, Button> kvp in eSceneChangeToMapButtonDict) {
             kvp.Value.gameObject.SetActive(false);
         }
 
-        foreach(int gameSceneId in availableGameSceneIds) {
-            sceneIdToMapButtonDict[gameSceneId].gameObject.SetActive(true);
+        foreach(ESceneChange scene in availableGameScenes) {
+            eSceneChangeToMapButtonDict[scene].gameObject.SetActive(true);
         }
     }
 
-    private void InitButtonDict(Button button, int gameSceneId, ESceneChange sceneChange) {
-        sceneIdToMapButtonDict.Add(gameSceneId, button);
-        mapButtonToSceneIdDict.Add(button, gameSceneId);
+    private void InitButtonDict(Button button, ESceneChange sceneChange) {
+        eSceneChangeToMapButtonDict.Add(sceneChange, button);
         mapButtonToESceneChangeDict.Add(button, sceneChange);
         button.onClick.AddListener(() => {
             mapButtonClickedSignal.Dispatch(mapButtonToESceneChangeDict[button]);

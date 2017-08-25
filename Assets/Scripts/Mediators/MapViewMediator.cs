@@ -6,10 +6,10 @@ using strange.extensions.mediation.impl;
 public class MapViewMediator : Mediator {
 
     [Inject]
-    public MapView mapView{ get; set;}
+    public MapView mapView { get; set; }
 
     [Inject]
-    public IBiographer playerBiographer { get; set; }
+    public IProgressData progressData { get; set; }
 
     [Inject]
     public SceneChangeSignal sceneChangeSignal { get; set; }
@@ -37,16 +37,16 @@ public class MapViewMediator : Mediator {
         gameFlowStateChangeSignal.Dispatch(EGameFlowState.STATUS);
     }
 
-    private void OnAvailableScenesUpdated(int gameSceneId, EAvailScenesUpdateType updateType) {
+    private void OnAvailableScenesUpdated(ESceneChange scene, EAvailScenesUpdateType updateType) {
         switch (updateType) {
             case EAvailScenesUpdateType.ADD:
-                mapView.ToggleSceneAvailability(gameSceneId, true);
+                mapView.ToggleSceneAvailability(scene, true);
                 break;
             case EAvailScenesUpdateType.REMOVE:
-                mapView.ToggleSceneAvailability(gameSceneId, false);
+                mapView.ToggleSceneAvailability(scene, false);
                 break;
             case EAvailScenesUpdateType.BATCH_UPDATE:
-                mapView.ReconfigureAllScenesAvailability(playerBiographer.GetAllAvailableSceneIds());
+                mapView.ReconfigureAllScenesAvailability(progressData.GetAvailableScenes());
                 break;
             default:
                 break;

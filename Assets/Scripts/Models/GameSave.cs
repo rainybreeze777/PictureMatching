@@ -32,7 +32,8 @@ public class GameSave {
     public List<Yarn.Value.Type> ProgressVarTypes { get { return progressVarTypes; } }
     [SerializeField] private List<string> visitedNodes;
     public List<string> VisitedNodes { get { return visitedNodes; } }
-
+    [SerializeField] private List<ESceneChange> availableGameScenes;
+    public List<ESceneChange> AvailableGameScenes { get { return availableGameScenes; } }
 
     private static string DATE_FORMAT = "yyyy/MM/dd";
     public static string GetDateFormat() { return DATE_FORMAT; }
@@ -86,5 +87,6 @@ public class GameSave {
         progressVarValues = progressData.GetProgressValues();
         progressVarTypes = progressData.GetProgressValueTypes();
         visitedNodes = progressData.GetVisitedNodes();
+        availableGameScenes = progressData.GetAvailableScenes();
     }
 }

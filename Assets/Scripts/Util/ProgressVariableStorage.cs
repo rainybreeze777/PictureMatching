@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,6 +18,13 @@ public class ProgressVariableStorage : VariableStorageBehaviour
         dialogue.library.RegisterFunction("visitedNode", 1, delegate(Yarn.Value[] parameters) {
             return progressData.VisitedNode(parameters[0].AsString);
         });
+        // setSceneAvailability
+        dialogue.library.RegisterFunction("setSceneAvailability", 2, delegate(Yarn.Value[] parameters) {
+            progressData.SetSceneAvailability(Int32.Parse(parameters[0].AsString), parameters[1].AsBool);
+        });
+
+        // Make first scene available
+        progressData.SetSceneAvailability(1, true);
     }
 
 	// Not Implemented yet

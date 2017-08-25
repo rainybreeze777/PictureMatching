@@ -5,8 +5,12 @@ using Yarn.Unity;
 
 public class ProgressData : IProgressData {
 
+    [Inject]
+    public AvailableScenesUpdateSignal availableScenesUpdateSignal { get; set; }
+
     private Dictionary<string, Yarn.Value> yarnVariables = new Dictionary<string, Yarn.Value>();
     private HashSet<string> visitedNodes = new HashSet<string>();
+    private HashSet<ESceneChange> availableScenes = new HashSet<ESceneChange>();
 
     public void LoadFromGameSave(GameSave save) {
 
@@ -54,6 +58,7 @@ public class ProgressData : IProgressData {
         }
 
         visitedNodes = new HashSet<string>(save.VisitedNodes);
+        availableScenes = new HashSet<ESceneChange>(save.AvailableGameScenes);
     }
 
     public List<string> GetProgressKeys() {
@@ -83,6 +88,10 @@ public class ProgressData : IProgressData {
         return new List<string>(visitedNodes);
     }
 
+    public List<ESceneChange> GetAvailableScenes() {
+        return new List<ESceneChange>(availableScenes);
+    }
+
     public void SetValue(string variableName, object value) {
         Dict[variableName] = new Yarn.Value(value);
     }
@@ -93,5 +102,20 @@ public class ProgressData : IProgressData {
         bool alreadyVisited = visitedNodes.Contains(yarnNodeName);
         visitedNodes.Add(yarnNodeName);
         return alreadyVisited;
+    }
+
+    public void SetSceneAvailability(int sceneId, bool isAvailable) {
+        if (Enum.IsDefined(typeof(ESceneChange), sceneId)) {
+            ESceneChange scene = (ESceneChange) sceneId;
+            if (isAvailable && !availableScenes.Contains(scene)) {
+                availableScenes.Add(scene);
+                availableScenesUpdateSignal.Dispatch(scene, EAvailScenesUpdateType.ADD);
+            } else if (!isAvailable && availableScenes.Contains(scene)) {
+                availableScenes.Remove(scene);
+                availableScenesUpdateSignal.Dispatch(scene, EAvailScenesUpdateType.REMOVE);
+            }
+        } else {
+            throw new ArgumentException("Unrecognized SceneId! The sceneId " + sceneId + " cannot be converted to ESceneChange!");
+        }
     }
 }

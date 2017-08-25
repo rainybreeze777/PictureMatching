@@ -62,9 +62,8 @@ public class SaverLoader : ISaverLoader {
         }
 
         playerStatus.InitFromGameSave(saveToLoad);
-        // playerBiographer.InitFromGameSave(saveToLoad);
         progressData.LoadFromGameSave(saveToLoad);
-        availableScenesUpdateSignal.Dispatch(-1, EAvailScenesUpdateType.BATCH_UPDATE);
+        availableScenesUpdateSignal.Dispatch(ESceneChange.VOID, EAvailScenesUpdateType.BATCH_UPDATE);
         gameFlowStateChangeSignal.Dispatch(saveToLoad.GameState);
         if (saveToLoad.GameState == EGameFlowState.SCENE) {
             sceneChangeSignal.Dispatch(saveToLoad.GameScene);
