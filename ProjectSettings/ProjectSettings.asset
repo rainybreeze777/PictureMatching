@@ -435,7 +435,7 @@ PlayerSettings:
   webGLUseWasm: 0
   webGLCompressionFormat: 1
   scriptingDefineSymbols:
-    1: DEVELOPMENT_BUILD
+    1: DEVELOPMENT_BUILD;UNLIMITED_TIME
   platformArchitecture:
     iOS: 2
   scriptingBackend:
