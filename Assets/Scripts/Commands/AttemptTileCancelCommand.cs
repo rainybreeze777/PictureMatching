@@ -14,6 +14,8 @@ public class AttemptTileCancelCommand : Command
     [Inject]
     public Tuple<Tile, Tile> cancellingPair{ get; set; }
 
+    private string ElemGatheredPanelTag = "ElemGathered";
+
     public override void Execute()
     {
         Tile tile1 = cancellingPair.Item1;
@@ -28,6 +30,19 @@ public class AttemptTileCancelCommand : Command
             // the last cancel tile number
             comboModel.AddToCancelSequence(tile1.TileNumber);
             boardModel.remove(tile1.Row, tile1.Column, tile2.Row, tile2.Column);
+            GameObject partiSys = Resources.Load("Prefabs/Particles/TileDestroyParticle") as GameObject;
+            AcceleratedMoveTowards instance1 = (GameObject.Instantiate(partiSys
+                        , tile1.transform.position
+                        , Quaternion.identity) as GameObject).GetComponent<AcceleratedMoveTowards>();
+            AcceleratedMoveTowards instance2 = (GameObject.Instantiate(partiSys
+                        , tile2.transform.position
+                        , Quaternion.identity) as GameObject).GetComponent<AcceleratedMoveTowards>();
+
+            GameObject elemGatheredPanel = GameObject.FindWithTag(ElemGatheredPanelTag);
+            Vector3 panelPos = Camera.main.ScreenToWorldPoint(elemGatheredPanel.transform.position);
+
+            instance1.StartMove(panelPos, true);
+            instance2.StartMove(panelPos, true);
         } else {
             tile1.Deselect();
             tile2.Deselect();
